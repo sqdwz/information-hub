@@ -1,3 +1,4 @@
+(() => {
 const BRIEF_ENDPOINT = "/data/brief/latest.json";
 const BRIEF_FALLBACK_URL = "https://raw.githubusercontent.com/sqdwz/industry-brief/main/data/latest.json";
 
@@ -87,3 +88,4 @@ async function loadIndustryBrief() {
 }
 
 loadIndustryBrief();
+})();
