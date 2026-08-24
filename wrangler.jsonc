@@ -6,12 +6,16 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/data/airspace.json"]
+    "run_worker_first": ["/data/airspace.json", "/data/brief/*"]
   },
   "kv_namespaces": [
     {
       "binding": "AIRSPACE_DATA",
       "id": "53bf63bf9ea6410aa4b6b9398f07de54"
+    },
+    {
+      "binding": "INDUSTRY_BRIEF_DATA",
+      "id": "994908dd915644d2b56c90f310ffe5c0"
     }
   ],
   "triggers": {
