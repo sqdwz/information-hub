@@ -31,12 +31,11 @@ function renderIndustryBrief(data, source) {
   const items = data.items.map((item) => `
     <article class="brief-item-card">
       <div class="brief-item-meta"><span class="brief-category">${escapeHtml(item.category)}</span><time>${escapeHtml(item.publish_date)}</time></div>
-      <h3>${externalLink(item.url, item.title, "brief-item-link")}</h3>
+      <h3>${escapeHtml(item.title)}</h3>
       <p>${escapeHtml(item.summary)}</p>
       <p class="brief-item-impact"><strong>项目提示：</strong>${escapeHtml(item.impact)}</p>
-      <p class="brief-publisher">来源：${escapeHtml(item.publisher)}</p>
+      <p class="brief-publisher">来源：${externalLink(item.url, item.publisher, "brief-publisher-link")}</p>
     </article>`).join("");
-  const sources = (data.sources || []).map((item) => externalLink(item.url, item.name, "brief-source-link")).join("");
   const tool = data.tool_recommendation ? `<p class="brief-tool"><strong>本期工具：</strong>${externalLink(data.tool_recommendation.url, data.tool_recommendation.name)} — ${escapeHtml(data.tool_recommendation.reason)}</p>` : "";
 
   section.innerHTML = `
@@ -49,8 +48,7 @@ function renderIndustryBrief(data, source) {
     ${sections ? `<div class="brief-section-grid">${sections}</div>` : ""}
     ${tool}
     <h3 class="brief-list-title">本期动态</h3>
-    <div class="brief-item-grid">${items}</div>
-    ${sources ? `<p class="brief-sources"><strong>原始来源：</strong>${sources}</p>` : ""}`;
+    <div class="brief-item-grid">${items}</div>`;
 
   const portal = document.querySelector('[data-go="ai"]');
   if (portal) {
