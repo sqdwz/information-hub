@@ -121,7 +121,7 @@ function createIndustryBriefArchiveEntry(path) {
   if (!BRIEF_ARCHIVE_PATH.test(path || "")) return null;
   return {
     key: `industry-brief:archive:${path}`,
-    url: `${GITHUB_BRIEF_BASE_URL}/${path}`
+    url: `${GITHUB_BRIEF_BASE_URL}/${path.replace(/^data\//, "")}`
   };
 }
 
