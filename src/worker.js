@@ -11,6 +11,7 @@ const BRIEF_ENTRIES = {
     url: `${GITHUB_BRIEF_BASE_URL}/index.json`
   }
 };
+const BRIEF_ARCHIVE_PATH = /^data\/(daily|weekly)\/(\d{4}-\d{2}-\d{2})\.json$/;
 
 function jsonResponse(body, { storage, syncedAt, dataset } = {}) {
   const headers = new Headers({
@@ -116,6 +117,14 @@ async function serveIndustryBriefData(request, env, entry, label) {
   }
 }
 
+function createIndustryBriefArchiveEntry(path) {
+  if (!BRIEF_ARCHIVE_PATH.test(path || "")) return null;
+  return {
+    key: `industry-brief:archive:${path}`,
+    url: `${GITHUB_BRIEF_BASE_URL}/${path}`
+  };
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -127,6 +136,17 @@ export default {
     }
     if ((request.method === "GET" || request.method === "HEAD") && url.pathname === "/data/brief/index.json") {
       return serveIndustryBriefData(request, env, BRIEF_ENTRIES.index, "index");
+    }
+    if ((request.method === "GET" || request.method === "HEAD") && url.pathname === "/data/brief/archive") {
+      const path = url.searchParams.get("path");
+      const entry = createIndustryBriefArchiveEntry(path);
+      if (!entry) {
+        return new Response(JSON.stringify({ error: "Invalid archive path" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" }
+        });
+      }
+      return serveIndustryBriefData(request, env, entry, `archive:${path}`);
     }
     return env.ASSETS.fetch(request);
   },
