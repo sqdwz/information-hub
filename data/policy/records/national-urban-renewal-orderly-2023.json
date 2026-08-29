@@ -1,0 +1,20 @@
+{
+  "id": "national-urban-renewal-orderly-2023",
+  "title": "住房城乡建设部关于扎实有序推进城市更新工作的通知",
+  "document_no": "建科〔2023〕30号",
+  "issuer": ["住房城乡建设部"],
+  "jurisdiction_level": "national",
+  "regions": ["全国"],
+  "themes": ["城市更新", "规划用地"],
+  "policy_type": "部门通知",
+  "status": "current",
+  "published_at": "2023-07-05",
+  "effective_at": "2023-07-05",
+  "summary": "提出城市体检先行、专项规划统筹、项目库管理、全生命周期实施和公众参与等城市更新工作要求。",
+  "applies_to": ["城市更新组织实施", "城市体检和问题识别", "城市更新专项规划", "城市更新项目库管理"],
+  "highlights": ["将城市体检作为城市更新前提", "建立专项规划和项目库", "明确不搞大拆大建并防止变相房地产开发", "推动政府、企业、产权人和群众多主体参与"],
+  "status_note": "商务部法规数据库标注为现行有效；应用时仍应核对住房城乡建设部最新文件。",
+  "related_policy_ids": ["national-urban-renewal-2025"],
+  "source_url": "https://policy.mofcom.gov.cn/claw/clawContent.shtml?id=97278",
+  "verified_at": "2026-08-29"
+}

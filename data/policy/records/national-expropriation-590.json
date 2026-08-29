@@ -1,0 +1,20 @@
+{
+  "id": "national-expropriation-590",
+  "title": "国有土地上房屋征收与补偿条例",
+  "document_no": "国务院令第590号",
+  "issuer": ["国务院"],
+  "jurisdiction_level": "national",
+  "regions": ["全国"],
+  "themes": ["征收补偿"],
+  "policy_type": "条例",
+  "status": "current",
+  "published_at": "2011-01-21",
+  "effective_at": "2011-01-21",
+  "summary": "规范国有土地上房屋征收与补偿活动，明确公共利益、补偿原则、评估程序、征收决定和法律责任。",
+  "applies_to": ["国有土地上单位和个人房屋征收", "房屋价值补偿", "搬迁与临时安置", "停产停业损失补偿"],
+  "highlights": ["征收应基于公共利益并遵循民主决策、程序正当和结果公开原则", "补偿不得低于房屋征收决定公告之日类似房地产市场价格", "实行先补偿后搬迁", "被征收人可依法申请行政复议或提起行政诉讼"],
+  "status_note": "官方法规页面可访问；个案适用还需结合地方补偿办法、征收决定和司法解释。",
+  "related_policy_ids": [],
+  "source_url": "https://www.mee.gov.cn/zcwj/gwywj/202001/t20200109_758422.shtml",
+  "verified_at": "2026-08-29"
+}

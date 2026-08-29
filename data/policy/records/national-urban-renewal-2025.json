@@ -1,0 +1,20 @@
+{
+  "id": "national-urban-renewal-2025",
+  "title": "中共中央办公厅 国务院办公厅关于持续推进城市更新行动的意见",
+  "document_no": "中办发〔2025〕34号",
+  "issuer": ["中共中央办公厅", "国务院办公厅"],
+  "jurisdiction_level": "national",
+  "regions": ["全国"],
+  "themes": ["城市更新", "老旧小区", "规划用地", "资金支持"],
+  "policy_type": "指导意见",
+  "status": "current",
+  "published_at": "2025-05-15",
+  "effective_at": "2025-05-02",
+  "summary": "面向2030年部署持续推进城市更新的总体要求、主要任务和支撑保障，是当前城市更新工作的国家级纲领性文件。",
+  "applies_to": ["城市更新专项规划和行动计划", "既有建筑与老旧小区改造", "老旧街区、厂区和城中村更新", "城市基础设施和公共服务完善"],
+  "highlights": ["建立城市体检、专项规划、项目实施和评估反馈相衔接的工作机制", "坚持保护第一并加强历史文化遗产保护", "完善用地政策和多元化投融资方式", "强调公众参与和城市更新全过程管理"],
+  "status_note": "官方公开页面可访问；具体项目适用条件应结合配套政策和属地规定核对。",
+  "related_policy_ids": ["national-urban-renewal-orderly-2023", "national-old-community-2020"],
+  "source_url": "https://www.mee.gov.cn/zcwj/zyygwj/202505/t20250516_1119546.shtml",
+  "verified_at": "2026-08-29"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "hainan-new-urbanization-2017",
+  "title": "海南省人民政府关于深入推进新型城镇化建设的实施意见",
+  "document_no": "海南省人民政府实施意见",
+  "issuer": ["海南省人民政府"],
+  "jurisdiction_level": "province",
+  "regions": ["海南省"],
+  "themes": ["新型城镇化", "城市更新", "老旧小区"],
+  "policy_type": "实施意见",
+  "status": "review",
+  "published_at": "2017-03-30",
+  "effective_at": null,
+  "summary": "部署海南新型城镇化建设，涉及棚户区、城中村、旧住宅小区综合整治和城市基础设施完善等内容。",
+  "applies_to": ["海南省新型城镇化建设", "棚户区和城中村改造", "旧住宅小区综合整治", "城市基础设施完善"],
+  "highlights": ["推动棚户区改造与城镇更新相结合", "推进旧住宅小区综合整治和危旧住房改造", "完善交通、给排水、垃圾污水处理等基础设施", "加强城市道路、地下空间和海绵城市建设"],
+  "status_note": "已核对海南省政府公开页面，但尚未完成规范性文件现行有效性专项复核。",
+  "related_policy_ids": ["national-old-community-2020"],
+  "source_url": "https://en.hainan.gov.cn/hainan/62531/201703/579c7c6e775040ff839d86c7be57b443.shtml",
+  "verified_at": "2026-08-29"
+}

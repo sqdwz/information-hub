@@ -13,7 +13,10 @@
     <div class="site-shell">
       <header class="topbar">
         <div class="topbar__inner">
-          <a class="brand" href="#home" aria-label="返回瑞雪的小栈首页"><img class="brand__avatar" src="./assets/avatar-klee.png" alt="瑞雪的小栈头像" /><span>瑞雪的小栈</span></a>
+          <div class="brand">
+            <button class="brand__avatar-button" id="avatar-unlock" type="button" aria-label="瑞雪的小栈头像，可左右拖动"><img class="brand__avatar" src="./assets/avatar-klee.png" alt="" draggable="false" /></button>
+            <a class="brand__home" href="#home" aria-label="返回瑞雪的小栈首页">瑞雪的小栈</a>
+          </div>
           <nav class="nav" aria-label="主导航">
             <a href="#home" data-route="home">首页</a>
             <a href="#airspace" data-route="airspace">空域信息</a>
@@ -30,13 +33,13 @@
             <p class="eyebrow"><span></span>个人信息聚合中心</p>
             <h1 id="home-title">把分散的信息，整理成每天能用的内容。</h1>
             <p class="hero__copy">聚合空域、AI、城市更新与政策资料。重要信息先看结论，原始来源保持可追溯，历史信息逐步形成可检索资料库。</p>
-            <p class="hero__note">当前已接入：<strong>空域信息</strong><span aria-hidden="true">·</span>其余板块将按数据源逐步接入</p>
+            <p class="hero__note">当前已接入：<strong>空域信息、城市更新每日巡检、政策资料库</strong><span aria-hidden="true">·</span>其余板块将按数据源逐步接入</p>
           </div>
           <div class="portal-grid" aria-label="信息板块入口">
             <button class="portal portal--air" data-go="airspace"><span class="status status--active">已接入</span><h2>空域信息</h2><p>海南省禁飞、临时空域管制与无人机作业相关公告巡检。</p><span class="portal__metric" id="home-airspace-metric">加载巡检信息中…</span><span class="portal__arrow">进入 <b>→</b></span></button>
             <button class="portal" data-go="ai"><span class="status">待接入</span><h2>行业日报与周汇总</h2><p>行业日报、周报、模型发布与 AI 工具动态。</p><span class="portal__metric">日报 / 周报 / 归档</span><span class="portal__arrow">查看 <b>→</b></span></button>
-            <button class="portal" data-go="urban"><span class="status">待接入</span><h2>城市更新</h2><p>海南省城市更新领域招投标信息每日巡检报告。</p><span class="portal__metric">招标 / 中标 / 成交</span><span class="portal__arrow">查看 <b>→</b></span></button>
-            <button class="portal" data-go="policy"><span class="status">待接入</span><h2>政策面板</h2><p>城市更新、征收补偿和实施意见等政策资料库。</p><span class="portal__metric">分类 / 检索 / 原文</span><span class="portal__arrow">查看 <b>→</b></span></button>
+            <button class="portal" data-go="urban"><span class="status status--active">已接入</span><h2>城市更新</h2><p>海南省城市更新领域招投标信息每日巡检报告。</p><span class="portal__metric" id="home-urban-metric">加载巡检信息中…</span><span class="portal__arrow">查看巡检 <b>→</b></span></button>
+            <button class="portal" data-go="policy"><span class="status status--active">已接入</span><h2>政策面板</h2><p>城市更新、征收补偿和实施意见等政策资料库。</p><span class="portal__metric" id="home-policy-metric">加载政策索引中…</span><span class="portal__arrow">检索政策 <b>→</b></span></button>
           </div>
         </section>
 
@@ -48,17 +51,74 @@
           <section class="summary panel" aria-labelledby="summary-title">
             <div class="summary__message"><p class="eyebrow"><span></span>巡检摘要</p><h2 id="summary-title" data-summary-message>正在读取巡检结论…</h2><p>公开信息辅助核查，实际飞行前仍应核对 UOM 实时空域、NOTAM、军民航空管和属地临时管制要求。</p></div>
             <div class="summary__stats" id="airspace-stats" aria-label="空域公告统计"></div>
-          </section>
-          <section class="content-section" aria-labelledby="new-title"><div class="section-heading"><div><p class="eyebrow"><span></span>本轮发现</p><h2 id="new-title">本次巡检新增</h2></div><p id="new-date"></p></div><div class="notice-grid" id="new-list"></div></section>
-          <section class="content-section" aria-labelledby="active-title"><div class="section-heading"><div><p class="eyebrow"><span></span>重点关注</p><h2 id="active-title">当前生效</h2></div><p>按结束时间排序</p></div><div class="notice-grid" id="active-list"></div></section>
-          <section class="content-section" aria-labelledby="upcoming-title"><div class="section-heading"><div><p class="eyebrow"><span></span>提前准备</p><h2 id="upcoming-title">即将生效</h2></div></div><div class="notice-grid" id="upcoming-list"></div></section>
-          <section class="content-section" aria-labelledby="ended-title"><div class="section-heading"><div><p class="eyebrow"><span></span>保留记录</p><h2 id="ended-title">近期结束</h2></div></div><div class="notice-grid" id="ended-list"></div></section>
-          <section class="content-section panel source-panel" aria-labelledby="source-title"><div class="section-heading"><div><p class="eyebrow"><span></span>检索范围</p><h2 id="source-title">信息来源</h2></div><p>官方优先，权威媒体补充</p></div><ul class="source-list" id="source-list"></ul></section>
+          </section><p class="filter-status" id="airspace-filter-status" aria-live="polite"></p>
+          <section class="content-section" data-airspace-filter-section="new" aria-labelledby="new-title"><div class="section-heading"><div><p class="eyebrow"><span></span>本轮发现</p><h2 id="new-title">本次巡检新增</h2></div><p id="new-date"></p></div><div class="notice-grid" id="new-list"></div></section>
+          <section class="content-section" data-airspace-filter-section="active" aria-labelledby="active-title"><div class="section-heading"><div><p class="eyebrow"><span></span>重点关注</p><h2 id="active-title">当前生效</h2></div><p>按结束时间排序</p></div><div class="notice-grid" id="active-list"></div></section>
+          <section class="content-section" data-airspace-filter-section="upcoming" aria-labelledby="upcoming-title"><div class="section-heading"><div><p class="eyebrow"><span></span>提前准备</p><h2 id="upcoming-title">即将生效</h2></div></div><div class="notice-grid" id="upcoming-list"></div></section>
+          <section class="content-section" data-airspace-filter-section="ended" aria-labelledby="ended-title"><div class="section-heading"><div><p class="eyebrow"><span></span>保留记录</p><h2 id="ended-title">近期结束</h2></div></div><div class="notice-grid" id="ended-list"></div></section>
+          <section class="content-section panel source-panel" data-airspace-filter-section="sources" aria-labelledby="source-title"><div class="section-heading"><div><p class="eyebrow"><span></span>检索范围</p><h2 id="source-title">信息来源</h2></div><p>官方优先，权威媒体补充</p></div><ul class="source-list" id="source-list"></ul></section>
         </section>
 
         <section class="page" id="ai" data-page="ai" aria-labelledby="ai-title"><div class="page-head panel"><div><p class="eyebrow"><span></span>行业动态</p><h1 id="ai-title">行业日报与周汇总</h1><p>AI 模型、工具与行业动态，后续支持日报、周报和重点事件归档。</p></div></div><div class="empty-state panel"><span>AI</span><h2>数据暂未接入</h2><p>已预留行业日报、行业周报、模型发布与工具动态的数据接口。</p><div><i>行业日报</i><i>行业周报</i><i>模型发布</i><i>AI工具</i></div></div></section>
-        <section class="page" id="urban" data-page="urban" aria-labelledby="urban-title"><div class="page-head panel"><div><p class="eyebrow"><span></span>海南 · 每日巡检</p><h1 id="urban-title">城市更新</h1><p>海南省城市更新领域招投标信息每日巡检报告。</p></div></div><div class="empty-state panel"><span>更</span><h2>数据暂未接入</h2><p>后续展示每日新增项目、招标公告、中标结果、成交信息、项目地区和相关单位。</p><div><i>今日新增</i><i>招标公告</i><i>中标结果</i><i>项目地区</i></div></div></section>
-        <section class="page" id="policy" data-page="policy" aria-labelledby="policy-title"><div class="page-head panel"><div><p class="eyebrow"><span></span>政策资料库</p><h1 id="policy-title">政策面板</h1><p>城市更新常用政策文件、指导意见以及征收补偿相关政策依据。</p></div></div><div class="empty-state panel"><span>政</span><h2>政策资料待整理</h2><p>后续按国家、海南省、海口市及专项主题分类收录，并支持检索与原文跳转。</p><div><i>590号令</i><i>补偿指导意见</i><i>城市更新</i><i>征收依据</i></div></div></section>
+        <section class="page" id="urban" data-page="urban" aria-labelledby="urban-title"><div class="page-head panel"><div><p class="eyebrow"><span></span>海南 · 每日巡检</p><h1 id="urban-title">城市更新</h1><p>海南省城市更新领域招投标信息每日巡检报告。</p></div><div class="urban-page-head-actions"><div class="urban-view-switch" role="tablist" aria-label="城市更新信息视图"><button class="urban-view-button is-active" type="button" role="tab" aria-selected="true" data-urban-view-button="current">正在招标 <span id="urban-current-count">0</span></button><button class="urban-view-button" type="button" role="tab" aria-selected="false" data-urban-view-button="history">近三年历史库 <span id="urban-history-count">0</span></button></div><p class="update" id="urban-updated">正在读取最新巡检数据…</p></div></div><div data-urban-section="current"><section class="summary panel urban-summary" aria-labelledby="urban-summary-title"><div class="summary__message"><p class="eyebrow"><span></span>巡检摘要</p><h2 id="urban-summary-title" data-urban-message>正在读取巡检结论…</h2><p>信息中心每 15 分钟同步公开巡检数据；项目要求、资格条件、截止时间及变更事项以官方原文为准。</p></div><div class="summary__stats" id="urban-stats" aria-label="城市更新巡检统计"></div></section><p class="filter-status" id="urban-filter-status" aria-live="polite"></p><section class="content-section" aria-labelledby="urban-active-title"><div class="section-heading"><div><p class="eyebrow"><span></span>重点项目</p><h2 id="urban-active-title">正在招标</h2></div><p id="urban-active-note"></p></div><div class="notice-grid" id="urban-active-list"></div></section><section class="content-section panel source-panel" aria-labelledby="urban-source-title"><div class="section-heading"><div><p class="eyebrow"><span></span>检索范围</p><h2 id="urban-source-title">本次检索来源</h2></div><p>官方优先，聚合线索待回溯</p></div><ul class="source-list" id="urban-source-list"></ul></section></div><section class="content-section" data-urban-section="history" aria-labelledby="urban-history-title" hidden><div class="section-heading"><div><p class="eyebrow"><span></span>近三年历史库</p><h2 id="urban-history-title">历史招标信息</h2></div><p id="urban-history-note">正在读取历史索引…</p></div><div class="urban-history-timeline" id="urban-history-timeline" aria-label="历史招标时间线"></div><section class="urban-history-filter panel" aria-label="筛选历史招标信息"><label>关键词<input id="urban-history-search" type="search" placeholder="项目名称、编号、采购人"></label><label>地区<select id="urban-history-region"><option value="">全部地区</option></select></label><label>项目类型<select id="urban-history-type"><option value="">全部项目类型</option></select></label><label>服务类型<select id="urban-history-service"><option value="">全部服务类型</option></select></label><label>核验状态<select id="urban-history-verification"><option value="">全部核验状态</option></select></label><button class="button urban-history-clear" id="urban-history-clear" type="button">清除筛选</button><p id="urban-history-filter-status" aria-live="polite">正在加载历史记录…</p></section><div class="urban-history-summary panel"><p id="urban-history-message">正在汇总历史招标信息…</p><div class="urban-history-stats" id="urban-history-stats" aria-label="历史招标信息统计"></div></div><div class="notice-grid" id="urban-history-list"></div><button class="button urban-history-more" id="urban-history-more" type="button" hidden>加载更多历史招标信息</button></section></section>
+        <section class="page" id="policy" data-page="policy" aria-labelledby="policy-title">
+          <div class="page-head panel">
+            <div><p class="eyebrow"><span></span>可检索 · 可追溯 · 可核验</p><h1 id="policy-title">政策面板</h1><p>围绕城市更新、征收补偿和老旧小区改造建立政策索引；先看政策要点，再回到发文机关核对原文。</p></div>
+            <p class="update" id="policy-updated">正在读取政策索引…</p>
+          </div>
+          <section class="policy-overview panel" aria-labelledby="policy-overview-title">
+            <div class="policy-overview__lead"><p class="eyebrow"><span></span>政策概览</p><h2 id="policy-overview-title">从政策名称，快速定位适用依据</h2><p id="policy-overview-note">正在整理政策层级、主题和效力状态…</p></div>
+            <div class="policy-overview__stats" id="policy-stats" aria-label="政策资料统计"></div>
+          </section>
+          <section class="policy-workbench" aria-labelledby="policy-search-title">
+            <div class="section-heading"><div><p class="eyebrow"><span></span>检索工作台</p><h2 id="policy-search-title">筛选政策资料</h2></div><p>层级、主题和效力状态独立筛选</p></div>
+            <div class="policy-topics" id="policy-topics" aria-label="政策专题快捷筛选"></div>
+            <div class="policy-filter panel">
+              <label class="policy-filter__search">搜索政策<input id="policy-search" type="search" placeholder="政策名称、文号、发文机关、要点关键词"></label>
+              <label>政策层级<select id="policy-level"><option value="">全部层级</option></select></label>
+              <label>政策主题<select id="policy-theme"><option value="">全部主题</option></select></label>
+              <label>效力状态<select id="policy-status"><option value="">全部状态</option></select></label>
+              <button class="button policy-filter__clear" id="policy-clear" type="button">清除筛选</button>
+              <p id="policy-filter-status" aria-live="polite">正在加载政策资料…</p>
+            </div>
+            <div class="policy-list" id="policy-list"></div>
+          </section>
+        </section>
+        <section class="page" id="policy-detail" data-page="policy-detail" aria-labelledby="policy-detail-title">
+          <div class="policy-detail-shell">
+            <a class="policy-detail__back" href="#policy">← 返回政策面板</a>
+            <article class="policy-detail panel" id="policy-detail-content"><div class="empty-card">正在读取政策详情…</div></article>
+          </div>
+        </section>
+        <section class="page" id="showcase" data-page="showcase" aria-label="演示与分享">
+          <div class="showcase panel">
+            <div class="showcase-tabs" role="tablist" aria-label="演示与分享">
+              <button class="showcase-tab" type="button" role="tab" aria-selected="false" aria-controls="showcase-demo-page" data-showcase-tab="demo">演示</button>
+              <button class="showcase-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="showcase-share-page" data-showcase-tab="share">分享</button>
+            </div>
+            <section class="showcase-page" id="showcase-demo-page" data-showcase-page="demo" role="tabpanel" hidden>
+              <p class="showcase-empty">独立演示项目将在这里持续收录。</p>
+            </section>
+            <section class="showcase-page" id="showcase-share-page" data-showcase-page="share" role="tabpanel">
+              <p class="showcase-page__note">按创建时间排序，较早创建的项目在前。</p>
+              <div class="showcase-grid">
+                <a class="showcase-card" href="https://sqdwz.github.io/demos-share/demos/ai-gis-share/">
+                  <span class="status status--active">公开访问</span>
+                  <h2>AI × GIS 会议互动分享</h2>
+                  <p>把重复工作变成可复用工具：AI Agent 使用经验与 GIS 自动化案例互动分享页。</p>
+                  <span class="showcase-card__action">进入分享 <b aria-hidden="true">→</b></span>
+                </a>
+                <a class="showcase-card" href="https://sqdwz.github.io/demos-share/demos/vibe-coding-share-0730/">
+                  <span class="status status--active">公开访问</span>
+                  <h2>Vibe Coding 互动演示</h2>
+                  <p>公司分享会使用的 Vibe Coding 互动演示页，支持现场展开案例与互动讲解。</p>
+                  <span class="showcase-card__action">进入分享 <b aria-hidden="true">→</b></span>
+                </a>
+              </div>
+            </section>
+            <a class="showcase__back" href="#home">← 返回信息中心</a>
+          </div>
+        </section>
       </main>
     </div>
     <dialog class="detail-dialog" id="notice-dialog" aria-labelledby="dialog-title"><div class="dialog__body"><button class="dialog__close" type="button" aria-label="关闭详情" data-close-dialog>×</button><div id="dialog-content"></div></div></dialog>

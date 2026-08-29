@@ -1,0 +1,20 @@
+{
+  "id": "national-old-community-2020",
+  "title": "国务院办公厅关于全面推进城镇老旧小区改造工作的指导意见",
+  "document_no": "国办发〔2020〕23号",
+  "issuer": ["国务院办公厅"],
+  "jurisdiction_level": "national",
+  "regions": ["全国"],
+  "themes": ["老旧小区", "城市更新", "资金支持"],
+  "policy_type": "指导意见",
+  "status": "current",
+  "published_at": "2020-07-20",
+  "effective_at": "2020-07-10",
+  "summary": "明确城镇老旧小区改造对象、基础类完善类提升类改造内容，以及居民、政府和社会力量合理共担机制。",
+  "applies_to": ["城镇老旧小区改造", "配套基础设施完善", "社区公共服务提升", "改造资金筹措"],
+  "highlights": ["改造内容划分为基础类、完善类和提升类", "建立居民参与和基层协商机制", "推动政府、居民和社会力量合理共担资金", "改造与长效管理机制同步建设"],
+  "status_note": "官方公开页面可访问；其中阶段性目标应结合当前年度工作部署理解。",
+  "related_policy_ids": ["national-urban-renewal-2025"],
+  "source_url": "https://app.www.gov.cn/govdata/gov/202007/20/460935/article.html",
+  "verified_at": "2026-08-29"
+}

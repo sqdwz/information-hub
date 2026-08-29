@@ -1,0 +1,16 @@
+{
+  "updated_at": "2026-08-29T00:00:00+08:00",
+  "jurisdiction_levels": [
+    { "id": "national", "label": "国家" },
+    { "id": "province", "label": "省级" },
+    { "id": "city", "label": "市县" }
+  ],
+  "regions": ["全国", "海南省", "海口市"],
+  "themes": ["城市更新", "征收补偿", "老旧小区", "规划用地", "资金支持", "新型城镇化"],
+  "policy_types": ["条例", "指导意见", "部门通知", "实施意见", "转发通知"],
+  "statuses": [
+    { "id": "current", "label": "持续适用" },
+    { "id": "historical", "label": "阶段性文件" },
+    { "id": "review", "label": "效力待复核" }
+  ]
+}
