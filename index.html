@@ -27,7 +27,7 @@
       <header class="topbar">
         <div class="topbar__inner">
           <div class="brand">
-            <button class="brand__avatar-button" id="avatar-unlock" type="button" aria-label="瑞雪的小栈头像，可左右拖动"><img class="brand__avatar" src="./assets/avatar-klee.png" alt="" draggable="false" /></button>
+            <button class="brand__avatar-button" id="avatar-unlock" type="button" aria-label="打开本站分享二维码，可左右拖动"><img class="brand__avatar" src="./assets/avatar-klee.png" alt="" draggable="false" /></button>
             <a class="brand__home" href="#home" aria-label="返回瑞雪的小栈首页">瑞雪的小栈</a>
           </div>
           <nav class="nav" aria-label="主导航">
@@ -83,6 +83,11 @@
             <div class="policy-overview__lead"><p class="eyebrow"><span></span>政策概览</p><h2 id="policy-overview-title">从政策名称，快速定位适用依据</h2><p id="policy-overview-note">正在整理政策层级、主题和效力状态…</p></div>
             <div class="policy-overview__stats" id="policy-stats" aria-label="政策资料统计"></div>
           </section>
+          <section class="policy-gaps panel" aria-labelledby="policy-gaps-title">
+            <div class="policy-gaps__head"><div><p class="eyebrow"><span></span>待补齐政策链</p><h2 id="policy-gaps-title">国家依据已接入，属地标准仍需收集</h2></div><p>缺口清单与政策库一起更新</p></div>
+            <div class="policy-gaps__summary" id="policy-gaps-summary">正在核对省级和市县级配套文件…</div>
+            <div class="policy-gaps__list" id="policy-gaps-list"></div>
+          </section>
           <section class="policy-workbench" aria-labelledby="policy-search-title">
             <div class="section-heading"><div><p class="eyebrow"><span></span>检索工作台</p><h2 id="policy-search-title">筛选政策资料</h2></div><p>层级、主题和效力状态独立筛选</p></div>
             <div class="policy-topics" id="policy-topics" aria-label="政策专题快捷筛选"></div>
@@ -134,6 +139,12 @@
         </section>
       </main>
     </div>
+    <dialog class="share-dialog" id="share-dialog" aria-label="本站分享二维码">
+      <div class="share-dialog__body">
+        <button class="share-dialog__close" type="button" aria-label="关闭分享二维码" data-close-share>×</button>
+        <img class="share-dialog__image" src="./assets/site-share-qr.png" alt="信息聚合中心首页分享二维码，扫码进入 new.103535.xyz" />
+      </div>
+    </dialog>
     <dialog class="detail-dialog" id="notice-dialog" aria-labelledby="dialog-title"><div class="dialog__body"><button class="dialog__close" type="button" aria-label="关闭详情" data-close-dialog>×</button><div id="dialog-content"></div></div></dialog>
     <script src="./app.js" defer></script>
     <script src="./industry-brief.js" defer></script>

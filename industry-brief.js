@@ -22,19 +22,32 @@ function externalLink(url, label, className = "") {
   return `<a class="${className}" href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${escapeHtml(label)} <span aria-hidden="true">↗</span></a>`;
 }
 
-function renderIndustryBrief(data, source) {
+function filterLabel(category) {
+  return String(category || "其他").split(" /")[0].trim() || "其他";
+}
+
+function briefHighlights(summary) {
+  const parts = String(summary || "").split(/[；;。]/).map((part) => part.trim()).filter(Boolean);
+  if (!parts.length) return "";
+  return `<div class="brief-highlights" aria-label="本期重点"><span>本期重点</span><ul>${parts.map((part) => `<li>${escapeHtml(part.replace(/^本次日报聚焦\d+条当天动态[：:]?/, ""))}</li>`).join("")}</ul></div>`;
+}
+
+function renderIndustryBrief(data, source = "cloudflare") {
   const section = document.querySelector("#ai");
   if (!section || !Array.isArray(data.items)) return;
 
   const reportType = data.type === "weekly" ? "行业周汇总" : "行业日报";
   const itemCount = data.items.length;
+  const dailyCount = data.type === "weekly" ? 0 : itemCount;
+  const weeklyCount = data.type === "weekly" ? itemCount : 0;
+  const filterLabels = [...new Set(data.items.map((item) => filterLabel(item.category)))];
   const sections = (data.sections || []).map((item) => `
     <article class="brief-section-card">
       <h3>${escapeHtml(item.name)}</h3>
       <p>${escapeHtml(item.summary)}</p>
     </article>`).join("");
   const items = data.items.map((item) => `
-    <article class="brief-item-card">
+    <article class="brief-item-card" data-brief-filter-item="${escapeHtml(filterLabel(item.category))}">
       <div class="brief-item-meta"><span class="brief-category">${escapeHtml(item.category)}</span><time>${escapeHtml(item.publish_date)}</time></div>
       <h3>${escapeHtml(item.title)}</h3>
       <p>${escapeHtml(item.summary)}</p>
@@ -44,17 +57,52 @@ function renderIndustryBrief(data, source) {
   const tool = data.tool_recommendation ? `<p class="brief-tool"><strong>本期工具：</strong>${externalLink(data.tool_recommendation.url, data.tool_recommendation.name)} — ${escapeHtml(data.tool_recommendation.reason)}</p>` : "";
 
   section.innerHTML = `
-    <div class="page-head brief-head">
-      <div><p class="eyebrow">行业日报与周汇总</p><h2>${escapeHtml(data.title || `${reportType}｜${data.date || ""}`)}</h2><p>${escapeHtml(data.summary || "")}</p></div>
-      <div class="brief-stats"><span class="brief-stat"><b>${itemCount}</b>条动态</span><span class="brief-stat"><b>${escapeHtml(data.type === "weekly" ? "周" : "日")}</b>报</span></div>
+    <div class="page-head brief-head panel">
+      <div><p class="eyebrow">行业日报与周汇总</p><h2>${escapeHtml(data.title || `${reportType}｜${data.date || ""}`)}</h2>${briefHighlights(data.summary)}<p class="brief-collection">本期已收录：<strong>${dailyCount} 条日报</strong><span>·</span><strong>${weeklyCount} 条周报</strong></p></div>
     </div>
     <div class="brief-notice">数据来自 <a href="https://github.com/sqdwz/industry-brief" target="_blank" rel="noreferrer">sqdwz/industry-brief</a>，${source === "fallback" ? "已使用 GitHub 直连数据" : "由 Cloudflare 自动同步"}。</div>
     <p class="brief-coverage">${escapeHtml(data.coverage_note || "")}</p>
-    ${sections ? `<div class="brief-section-grid">${sections}</div>` : ""}
-    ${tool}
-    <h3 class="brief-list-title">本期动态</h3>
+    <div class="brief-filter" aria-label="按标签筛选本期动态">
+      <span class="brief-filter__label">标签筛选</span>
+      <div class="brief-filter__tags">${filterLabels.map((label) => `<button class="brief-filter__tag" type="button" data-brief-filter="${escapeHtml(label)}" aria-pressed="false">${escapeHtml(label)}</button>`).join("")}</div>
+      <p class="brief-filter__hint" aria-live="polite">点击标签筛选，再次点击即可取消。</p>
+    </div>
+    ${sections ? `<div class="brief-section-grid" data-brief-overview>${sections}</div>` : ""}
+    ${tool ? `<div data-brief-overview>${tool}</div>` : ""}
+    <h3 class="brief-list-title">本期动态 <span data-brief-count>${itemCount} 条</span></h3>
     <div class="brief-item-grid">${items}</div>
     <section class="brief-archive" data-brief-archive aria-labelledby="brief-archive-title"><p class="brief-archive__loading">正在读取往期归档…</p></section>`;
+
+  let activeFilter = null;
+  const filterButtons = [...section.querySelectorAll("[data-brief-filter]")];
+  const filterItems = [...section.querySelectorAll("[data-brief-filter-item]")];
+  const overview = [...section.querySelectorAll("[data-brief-overview]")];
+  const filterHint = section.querySelector(".brief-filter__hint");
+  const filterCount = section.querySelector("[data-brief-count]");
+
+  filterButtons.forEach((button) => button.addEventListener("click", () => {
+    const nextFilter = button.dataset.briefFilter;
+    activeFilter = activeFilter === nextFilter ? null : nextFilter;
+    let visibleCount = 0;
+
+    filterButtons.forEach((tag) => {
+      const selected = tag.dataset.briefFilter === activeFilter;
+      tag.classList.toggle("is-active", selected);
+      tag.setAttribute("aria-pressed", String(selected));
+    });
+    filterItems.forEach((item) => {
+      const visible = !activeFilter || item.dataset.briefFilterItem === activeFilter;
+      item.classList.toggle("is-filter-hidden", !visible);
+      item.setAttribute("aria-hidden", String(!visible));
+      if (visible) visibleCount += 1;
+    });
+    overview.forEach((item) => {
+      item.classList.toggle("is-filter-hidden", Boolean(activeFilter));
+      item.setAttribute("aria-hidden", String(Boolean(activeFilter)));
+    });
+    filterCount.textContent = activeFilter ? `${visibleCount} 条 · ${activeFilter}` : `${itemCount} 条`;
+    filterHint.textContent = activeFilter ? `正在显示“${activeFilter}”相关内容；再次点击该标签即可取消。` : "点击标签筛选，再次点击即可取消。";
+  }));
 
   const portal = document.querySelector('[data-go="ai"]');
   if (portal) {

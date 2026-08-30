@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-29T00:00:00+08:00",
+  "updated_at": "2026-08-30T00:00:00+08:00",
   "jurisdiction_levels": [
     { "id": "national", "label": "国家" },
     { "id": "province", "label": "省级" },
@@ -12,5 +12,79 @@
     { "id": "current", "label": "持续适用" },
     { "id": "historical", "label": "阶段性文件" },
     { "id": "review", "label": "效力待复核" }
+  ],
+  "coverage_gaps": [
+    {
+      "id": "province-expropriation-guidance",
+      "title": "海南省房屋征收与补偿配套规定",
+      "level": "省级",
+      "priority": "high",
+      "status": "待收集",
+      "scope": "评估机构选定、复核鉴定、住房保障、停产停业损失等省级细化规则",
+      "reason": "590号令将多项具体办法交由省级制定或细化。"
+    },
+    {
+      "id": "city-expropriation-measures",
+      "title": "各市县国有土地上房屋征收与补偿办法",
+      "level": "市县级",
+      "priority": "high",
+      "status": "待收集",
+      "scope": "优先海口、三亚、儋州、琼海，再覆盖海南其他市县",
+      "reason": "项目职责、办理流程和属地适用口径通常由市县办法明确。"
+    },
+    {
+      "id": "city-compensation-standards",
+      "title": "市县补偿、补助与奖励标准",
+      "level": "市县级",
+      "priority": "high",
+      "status": "待收集",
+      "scope": "搬迁费、临时安置费、附属物和装修补偿、停产停业损失、奖励标准",
+      "reason": "590号令规定补偿项目，但不直接给出海南各市县的金额标准。"
+    },
+    {
+      "id": "unregistered-buildings",
+      "title": "未经登记建筑认定处理规则",
+      "level": "省级/市县级",
+      "priority": "high",
+      "status": "待收集",
+      "scope": "调查、认定、合法性处理、临时建筑与补偿衔接",
+      "reason": "具体认定直接影响是否补偿和补偿范围。"
+    },
+    {
+      "id": "urban-renewal-local-rules",
+      "title": "海南及市县城市更新指导意见和管理办法",
+      "level": "省级/市县级",
+      "priority": "high",
+      "status": "待收集",
+      "scope": "更新单元、专项规划、项目库、实施主体、审批和监督规则",
+      "reason": "现有库以国家纲领文件为主，缺少属地落地规则。"
+    },
+    {
+      "id": "urban-village-project-rules",
+      "title": "城中村和旧城改造专项办法及项目方案",
+      "level": "市县级/项目级",
+      "priority": "medium",
+      "status": "待收集",
+      "scope": "一村一策、改造模式、安置方案、征收补偿方案和资金平衡",
+      "reason": "同一城市不同项目可能采用不同方案，不能由国家文件直接推导。"
+    },
+    {
+      "id": "collective-land-compensation",
+      "title": "集体土地征收补偿安置政策",
+      "level": "省级/市县级",
+      "priority": "medium",
+      "status": "待收集",
+      "scope": "征地补偿、青苗附着物、村民住宅和安置保障",
+      "reason": "集体土地征收不属于590号令的直接适用范围，需要单独建立政策链。"
+    },
+    {
+      "id": "old-community-local-policies",
+      "title": "市县老旧小区改造清单与资金办法",
+      "level": "市县级",
+      "priority": "medium",
+      "status": "待收集",
+      "scope": "对象认定、三类改造清单、居民出资、财政补助、加装电梯和长效管理",
+      "reason": "国家指导意见只给出框架，具体标准由地方确定。"
+    }
   ]
 }

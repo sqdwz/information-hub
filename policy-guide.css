@@ -1,0 +1,118 @@
+:root {
+  --ink: #291b18;
+  --muted: #6f5d57;
+  --wine: #8e3028;
+  --red: #b54236;
+  --cream: #f7efe5;
+  --paper: #fffdf9;
+  --line: #ead9ce;
+  --gold: #b47a25;
+  font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  color: var(--ink);
+  background: var(--cream);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: linear-gradient(180deg, #f5e5d7 0, #f9f2e9 520px, #f3ece5 100%); }
+a { color: inherit; }
+.skip-link { position: fixed; z-index: 20; top: 8px; left: 8px; padding: 9px 12px; border-radius: 7px; color: white; background: var(--wine); transform: translateY(-160%); }
+.skip-link:focus { transform: translateY(0); }
+.guide-topbar { position: sticky; z-index: 10; top: 0; display: flex; min-height: 64px; align-items: center; justify-content: space-between; gap: 24px; padding: 10px max(22px, calc((100vw - 1240px) / 2)); border-bottom: 1px solid rgba(112, 56, 43, .16); background: rgba(255, 250, 245, .9); box-shadow: 0 5px 20px rgba(67, 29, 20, .08); backdrop-filter: blur(14px); }
+.guide-brand { display: flex; align-items: baseline; gap: 11px; text-decoration: none; }
+.guide-brand span { font-family: "Songti SC", STSong, serif; font-size: 21px; font-weight: 800; }
+.guide-brand b { color: var(--wine); font-size: 12px; letter-spacing: .1em; }
+.guide-topbar nav { display: flex; gap: 8px; }
+.guide-topbar nav a { padding: 8px 11px; border: 1px solid var(--line); border-radius: 99px; color: var(--wine); background: rgba(255,255,255,.7); font-size: 12px; font-weight: 750; text-decoration: none; }
+.guide-loading { display: grid; min-height: calc(100vh - 64px); place-items: center; align-content: center; gap: 15px; color: var(--muted); }
+.guide-loading span { width: 34px; height: 34px; border: 3px solid #e6c8b8; border-top-color: var(--red); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.guide-hero { padding: clamp(54px, 8vw, 102px) max(22px, calc((100vw - 1120px) / 2)) 72px; color: #fffaf3; background: radial-gradient(circle at 78% 20%, rgba(255, 215, 151, .22), transparent 30%), linear-gradient(135deg, #72231d, #a63b30 62%, #79271f); }
+.guide-hero__meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.guide-hero__meta span { padding: 6px 9px; border: 1px solid rgba(255, 242, 224, .25); border-radius: 7px; background: rgba(255, 255, 255, .08); font-size: 12px; font-weight: 700; }
+.guide-hero h1 { max-width: 980px; margin: 24px 0 12px; font-family: "Songti SC", STSong, serif; font-size: clamp(36px, 6.4vw, 68px); line-height: 1.2; }
+.guide-hero h1 small { display: block; margin-bottom: 12px; color: #ffd99e; font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 14px; letter-spacing: .12em; }
+.guide-hero__subtitle { max-width: 860px; color: #ffe7cf; font-size: clamp(17px, 2.3vw, 23px); line-height: 1.6; }
+.guide-hero__intro { max-width: 910px; margin-top: 25px; padding-left: 17px; border-left: 3px solid #e0aa59; color: rgba(255, 248, 238, .86); line-height: 1.85; }
+.guide-hero__facts { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 28px; }
+.guide-hero__facts div { display: grid; gap: 4px; }
+.guide-hero__facts b { font-family: "Songti SC", STSong, serif; font-size: 27px; }
+.guide-hero__facts span { color: rgba(255, 245, 230, .68); font-size: 11px; }
+.guide-shell { display: grid; width: min(1240px, calc(100% - 40px)); grid-template-columns: 235px minmax(0, 1fr); align-items: start; gap: 34px; margin: -28px auto 80px; }
+.guide-toc { position: sticky; top: 88px; padding: 18px; border: 1px solid var(--line); border-radius: 15px; background: rgba(255, 253, 249, .94); box-shadow: 0 14px 34px rgba(64, 31, 21, .1); }
+.guide-toc h2 { margin: 0 0 12px; color: var(--wine); font-size: 13px; letter-spacing: .08em; }
+.guide-toc nav { display: grid; gap: 6px; }
+.guide-toc a { padding: 9px 10px; border-radius: 8px; color: var(--muted); font-size: 12px; line-height: 1.5; text-decoration: none; }
+.guide-toc a:hover, .guide-toc a:focus-visible { color: var(--wine); background: #f5e7dd; outline: 0; }
+.guide-source-note { margin-top: 16px; padding-top: 13px; border-top: 1px solid var(--line); color: #8a746b; font-size: 10px; line-height: 1.6; }
+.guide-main { min-width: 0; }
+.guide-chapter { scroll-margin-top: 86px; margin-bottom: 42px; }
+.guide-chapter__head { padding: 24px 28px; border-radius: 17px 17px 0 0; color: #fff9f0; background: linear-gradient(120deg, #753028, #a74136); }
+.guide-chapter__head p { margin: 8px 0 0; color: rgba(255, 245, 232, .78); line-height: 1.65; }
+.guide-chapter__head h2 { margin: 0; font-family: "Songti SC", STSong, serif; font-size: clamp(27px, 4vw, 38px); }
+.guide-entry-index { display: flex; gap: 7px; padding: 12px 14px; overflow-x: auto; border: 1px solid var(--line); border-top: 0; background: rgba(255, 253, 249, .72); }
+.guide-entry-index a { flex: 0 0 auto; padding: 6px 9px; border-radius: 7px; color: var(--wine); background: #f4e6dc; font-size: 11px; font-weight: 750; text-decoration: none; }
+.guide-entry-list { display: grid; gap: 18px; margin-top: 18px; }
+.guide-entry { scroll-margin-top: 84px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); box-shadow: 0 12px 28px rgba(67, 34, 24, .08); }
+.guide-entry__head { display: flex; align-items: center; gap: 13px; padding: 19px 22px; border-bottom: 1px solid var(--line); background: #fff7f0; }
+.guide-entry__number { display: grid; min-width: 52px; min-height: 52px; place-items: center; padding: 6px; border-radius: 50%; color: #fff; background: var(--red); font-family: "Songti SC", STSong, serif; font-size: 15px; font-weight: 800; text-align: center; }
+.guide-entry__head h3 { margin: 0; font-size: 21px; line-height: 1.45; }
+.guide-entry__body { padding: 23px; }
+.guide-source-text { margin-bottom: 19px; padding: 17px 18px; border-left: 4px solid var(--wine); border-radius: 7px; color: #4c3831; background: #f5eee9; font-family: "Songti SC", STSong, serif; line-height: 1.9; white-space: pre-line; }
+.guide-analysis { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 14px; padding: 12px 0; border-bottom: 1px dashed var(--line); }
+.guide-analysis:last-of-type { border-bottom: 0; }
+.guide-analysis dt { align-self: start; padding: 5px 8px; border-radius: 6px; color: #fff; background: var(--wine); font-size: 12px; font-weight: 750; text-align: center; }
+.guide-analysis:nth-of-type(2) dt { color: #6f4509; background: #f1d9ae; }
+.guide-analysis:nth-of-type(3) dt { background: #397269; }
+.guide-analysis:nth-of-type(4) dt { background: #5f607d; }
+.guide-analysis dd { margin: 0; color: var(--muted); line-height: 1.82; white-space: pre-line; }
+.guide-takeaway { margin-top: 18px; padding: 14px 16px; border: 1px solid #e9ca8e; border-radius: 10px; color: #65410c; background: #fff5dd; line-height: 1.75; }
+.guide-takeaway b { margin-right: 6px; }
+.guide-companions { margin-top: 46px; padding: clamp(24px, 4vw, 38px); border: 1px solid #e1c18c; border-radius: 18px; background: #fff8e9; }
+.guide-companions h2 { margin: 0; font-family: "Songti SC", STSong, serif; font-size: 29px; }
+.guide-companions > p { margin-top: 9px; color: var(--muted); line-height: 1.7; }
+.guide-companions ol { display: grid; gap: 9px; margin: 20px 0 0; padding-left: 26px; }
+.guide-companions li { padding-left: 5px; color: #5e4d46; line-height: 1.7; }
+.guide-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.guide-actions a { padding: 10px 14px; border: 1px solid var(--wine); border-radius: 9px; color: var(--wine); background: white; font-size: 13px; font-weight: 750; text-decoration: none; }
+.guide-actions a:first-child { color: white; background: var(--wine); }
+.guide-disclaimer { margin-top: 18px; color: #8b766e; font-size: 11px; line-height: 1.7; }
+.back-top { position: fixed; z-index: 8; right: 22px; bottom: 22px; display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; color: white; background: rgba(116, 35, 29, .88); box-shadow: 0 8px 20px rgba(64,20,16,.25); text-decoration: none; }
+.guide-error { width: min(760px, calc(100% - 40px)); margin: 80px auto; padding: 35px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: 0 18px 44px rgba(70,34,24,.12); }
+.guide-error h1 { margin-top: 0; font-family: "Songti SC", STSong, serif; font-size: 35px; }
+.guide-error p { color: var(--muted); line-height: 1.8; }
+.guide-error a { display: inline-flex; margin-top: 12px; padding: 10px 14px; border-radius: 8px; color: white; background: var(--wine); text-decoration: none; }
+
+@media (max-width: 860px) {
+  .guide-shell { width: min(100% - 28px, 760px); grid-template-columns: 1fr; margin-top: -20px; }
+  .guide-toc { position: static; }
+  .guide-toc nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .guide-hero { padding-inline: 22px; }
+}
+
+@media (max-width: 560px) {
+  .guide-topbar { align-items: flex-start; flex-direction: column; gap: 7px; padding: 9px 14px; }
+  .guide-topbar nav { width: 100%; }
+  .guide-topbar nav a { flex: 1; text-align: center; }
+  .guide-hero { padding-top: 42px; padding-bottom: 52px; }
+  .guide-hero__facts { gap: 18px; }
+  .guide-toc nav { grid-template-columns: 1fr; }
+  .guide-chapter__head { padding: 20px; }
+  .guide-entry__head { align-items: flex-start; padding: 16px; }
+  .guide-entry__number { min-width: 44px; min-height: 44px; font-size: 12px; }
+  .guide-entry__head h3 { font-size: 18px; }
+  .guide-entry__body { padding: 17px; }
+  .guide-analysis { grid-template-columns: 1fr; gap: 8px; }
+  .guide-analysis dt { width: max-content; }
+  .guide-actions a { width: 100%; text-align: center; }
+}
+
+@media print {
+  .guide-topbar, .guide-toc, .back-top, .guide-entry-index, .guide-actions { display: none; }
+  body { background: white; }
+  .guide-hero { padding: 32px; color: var(--ink); background: white; }
+  .guide-hero__subtitle, .guide-hero__intro, .guide-hero__facts span { color: var(--muted); }
+  .guide-shell { display: block; width: 100%; margin: 0; }
+  .guide-entry { break-inside: avoid; box-shadow: none; }
+}
