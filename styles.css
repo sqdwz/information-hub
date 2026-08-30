@@ -456,11 +456,11 @@ body::before {
 }
 .signature-intro__trace,
 .signature-intro__ink {
-  font-family: "Segoe Script", "Snell Roundhand", "Brush Script MT", cursive;
-  font-size: 132px;
-  font-style: italic;
-  font-weight: 700;
-  letter-spacing: .035em;
+  font-family: "Avenir Next", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 116px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: .14em;
 }
 .signature-intro__trace {
   fill: transparent;
@@ -516,7 +516,7 @@ body::before {
   .signature-intro { padding: 16px; backdrop-filter: blur(21px) saturate(150%); -webkit-backdrop-filter: blur(21px) saturate(150%); }
   .signature-intro__glass { width: calc(100vw - 32px); min-height: 265px; padding: 38px 16px 34px; border-radius: 30px; }
   .signature-intro__mark { width: 108%; }
-  .signature-intro__trace, .signature-intro__ink { font-size: 116px; letter-spacing: .02em; }
+  .signature-intro__trace, .signature-intro__ink { font-size: 108px; letter-spacing: .12em; }
   .signature-intro__label { font-size: 9px; }
   .signature-intro__caption { margin-top: -16px; font-size: 10px; }
 }
