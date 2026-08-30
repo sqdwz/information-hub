@@ -21,6 +21,14 @@ const policyStatusMeta = {
   review: ["效力待复核", "policy-status--review"]
 };
 const policyLevelLabels = { national: "国家", province: "省级", city: "市县" };
+const policyGuideIds = new Set([
+  "national-urban-renewal-2025",
+  "national-urban-renewal-orderly-2023",
+  "national-old-community-2020",
+  "national-expropriation-590",
+  "hainan-new-urbanization-2017",
+  "hainan-urban-renewal-demo-2024"
+]);
 let airspaceData;
 let airspaceFilter = null;
 let urbanData;
@@ -710,7 +718,9 @@ function renderPolicyCoverageGaps() {
 function policyCard(item) {
   const [statusLabel, statusClass] = policyStatusMeta[item.status] || ["状态未标注", "policy-status--review"];
   const tags = [...(item.regions || []), ...(item.themes || []).slice(0, 3)];
-  return `<article class="policy-card"><div class="policy-card__meta"><span>${escapeHtml(policyLevelLabels[item.jurisdiction_level] || "未分级")}</span><span class="policy-status ${statusClass}">${escapeHtml(statusLabel)}</span></div><h3>${escapeHtml(item.title)}</h3><p class="policy-card__number">${escapeHtml(item.document_no || "文号未标注")}</p><p class="policy-card__summary">${escapeHtml(item.summary)}</p><div class="policy-card__tags">${tags.map(tag => `<span>${escapeHtml(tag)}</span>`).join("")}</div><div class="policy-card__foot"><p><b>${escapeHtml((item.issuer || []).join("、"))}</b><span>发布于 ${escapeHtml(policyDate(item.published_at))}</span></p><div><a class="button button--primary" href="./policy-guide.html?id=${encodeURIComponent(item.id)}">讲解网页</a><a class="button" href="#policy/${encodeURIComponent(item.id)}">政策要点</a><a class="button" href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener">原文 ↗</a></div></div></article>`;
+  const hasGuide = policyGuideIds.has(item.id);
+  const guideLink = hasGuide ? `<a class="button button--primary" href="./policy-guide.html?id=${encodeURIComponent(item.id)}">讲解网页</a>` : "";
+  return `<article class="policy-card"><div class="policy-card__meta"><span>${escapeHtml(policyLevelLabels[item.jurisdiction_level] || "未分级")}</span><span class="policy-status ${statusClass}">${escapeHtml(statusLabel)}</span></div><h3>${escapeHtml(item.title)}</h3><p class="policy-card__number">${escapeHtml(item.document_no || "文号未标注")}</p><p class="policy-card__summary">${escapeHtml(item.summary)}</p><div class="policy-card__tags">${tags.map(tag => `<span>${escapeHtml(tag)}</span>`).join("")}</div><div class="policy-card__foot"><p><b>${escapeHtml((item.issuer || []).join("、"))}</b><span>发布于 ${escapeHtml(policyDate(item.published_at))}</span></p><div>${guideLink}<a class="button${hasGuide ? "" : " button--primary"}" href="#policy/${encodeURIComponent(item.id)}">政策要点</a><a class="button" href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener">原文 ↗</a></div></div></article>`;
 }
 
 function applyPolicyFilters() {
