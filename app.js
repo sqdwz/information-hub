@@ -437,6 +437,29 @@ function applyUrbanCurrentFilter(nextFilter) {
   renderUrbanCurrentItems();
 }
 
+function urbanSummaryText(value) {
+  return String(value || "")
+    .replace(/source_error/gi, "来源访问异常")
+    .replace(/complete\/zero_verified/gi, "“巡检完整/零新增已核验”");
+}
+
+function urbanSummaryLabel(value) {
+  if (/补录|修正/.test(value)) return "重点修正";
+  if (/排除|未纳入|不能确认|暂不能确认/.test(value)) return "排除说明";
+  if (/超时|异常|巡检完整|零新增已核验/.test(value)) return "数据完整性";
+  return "补充说明";
+}
+
+function renderUrbanSummary(note) {
+  const container = $("[data-urban-message]");
+  const sentences = urbanSummaryText(note || "暂未生成巡检结论。")
+    .match(/[^。！？]+[。！？]?/g)
+    ?.map(value => value.trim())
+    .filter(Boolean) || [];
+  const [lead = "暂未生成巡检结论。", ...details] = sentences;
+  container.innerHTML = `<h2>${escapeHtml(lead)}</h2>${details.length ? `<ul>${details.map(value => `<li><span>${urbanSummaryLabel(value)}</span><p>${escapeHtml(value)}</p></li>`).join("")}</ul>` : ""}`;
+}
+
 function renderUrban(data) {
   const summary = data.summary || {};
   const active = urbanCurrentItems(data);
@@ -445,7 +468,7 @@ function renderUrban(data) {
   const deadlines = urbanCurrentItems(data, "deadline");
   urbanData = data;
   $("#urban-updated").textContent = `最近更新 · ${formatUrbanDate(data.generated_at || data.date)}`;
-  $("[data-urban-message]").textContent = summary.note || "暂未生成巡检结论。";
+  renderUrbanSummary(summary.note);
   $("#urban-current-count").textContent = active.length;
   $("#urban-stats").innerHTML = [["new", "今日新增", summary.new_today ?? newToday.length], ["tender", "正在招标", active.length], ["deadline", "即将截止", deadlines.length], ["expanded", "扩展候选", expanded.length]].map(([key, label, value]) => `<button class="metric metric--filter" type="button" data-urban-filter="${key}" aria-pressed="false"><span>${label}</span><b>${escapeHtml(value)}<em>条</em></b></button>`).join("");
   document.querySelectorAll("[data-urban-filter]").forEach((button) => button.addEventListener("click", () => applyUrbanCurrentFilter(button.dataset.urbanFilter)));
@@ -632,7 +655,7 @@ async function initUrbanHistory() {
 
 function renderUrbanError() {
   $("#urban-updated").textContent = "城市更新数据暂时无法读取";
-  $("[data-urban-message]").textContent = "数据暂未载入，请稍后重试。";
+  renderUrbanSummary("数据暂未载入，请稍后重试。");
   $("#urban-active-list").innerHTML = '<div class="empty-card">无法读取 Cloudflare 数据备份及 GitHub 公开数据源。</div>';
   $("#urban-source-list").innerHTML = "";
   $("#home-urban-metric").textContent = "数据暂未载入";
@@ -754,7 +777,6 @@ function renderPolicyIndex() {
   populatePolicySelect("#policy-level", policyCategories.jurisdiction_levels || [], item => item.id, item => item.label);
   populatePolicySelect("#policy-theme", policyCategories.themes || []);
   populatePolicySelect("#policy-status", policyCategories.statuses || [], item => item.id, item => item.label);
-  $("#policy-updated").textContent = `资料核验至 ${policyData.verified_at || policyData.updated_at?.slice(0, 10) || "未标注"}`;
   renderPolicyOverview();
   renderPolicyTopics();
   renderPolicyCoverageGaps();
@@ -795,7 +817,6 @@ async function initPolicyData() {
     route();
   } catch (error) {
     console.error("Failed to load policy library", error);
-    $("#policy-updated").textContent = "资料索引暂时无法读取";
     $("#policy-overview-note").textContent = "无法读取资料索引，请稍后重试。";
     $("#policy-list").innerHTML = '<div class="empty-card">资料源与本地快照均未能载入。</div>';
     $("#home-policy-metric").textContent = "资料索引暂未载入";
@@ -847,7 +868,7 @@ async function loadPolicyDetail(id) {
     const record = await fetchPolicyRecord(item);
     if (activePolicyDetailId !== id) return;
     const [statusLabel, statusClass] = policyStatusMeta[record.status] || ["状态未标注", "policy-status--review"];
-    container.innerHTML = `<header class="policy-detail__head"><p class="eyebrow"><span></span>${escapeHtml(policyLevelLabels[record.jurisdiction_level] || "文件资料")}</p><div class="policy-detail__badges"><span>${escapeHtml(record.policy_type)}</span><span class="policy-status ${statusClass}">${escapeHtml(statusLabel)}</span></div><h1 id="policy-detail-title">${escapeHtml(record.title)}</h1><p class="policy-detail__number">${escapeHtml(record.document_no || "文号未标注")}</p><p class="policy-detail__summary">${escapeHtml(record.summary)}</p></header><dl class="policy-detail__facts"><div><dt>发文机关</dt><dd>${escapeHtml((record.issuer || []).join("、"))}</dd></div><div><dt>发布日期</dt><dd>${escapeHtml(policyDate(record.published_at))}</dd></div><div><dt>施行日期</dt><dd>${escapeHtml(policyDate(record.effective_at))}</dd></div><div><dt>适用地区</dt><dd>${escapeHtml((record.regions || []).join("、"))}</dd></div></dl><section><h2>适用范围</h2><div class="policy-detail__chips">${(record.applies_to || []).map(value => `<span>${escapeHtml(value)}</span>`).join("")}</div></section><section><h2>核心要点</h2><ol class="policy-highlights">${(record.highlights || []).map(value => `<li>${escapeHtml(value)}</li>`).join("")}</ol></section><section class="policy-detail__notice"><h2>效力与核验说明</h2><p>${escapeHtml(record.status_note || "请以发文机关最新公开文本为准。")}</p><p>本资料于 ${escapeHtml(record.verified_at || "未标注")} 核对公开来源，仅用于信息检索，不替代法律意见或项目专项审查。</p></section><section><h2>相关文件</h2>${relatedPolicyLinks(record)}</section><footer class="policy-detail__actions">${record.guide ? `<a class="button button--primary" href="./policy-guide.html?id=${encodeURIComponent(record.id)}">打开文件解读 →</a>` : ""}<a class="button" href="${escapeHtml(record.source_url)}" target="_blank" rel="noopener">打开官方原文 ↗</a><a class="button" href="#policy">返回检索结果</a></footer>`;
+    container.innerHTML = `<header class="policy-detail__head"><p class="eyebrow"><span></span>${escapeHtml(policyLevelLabels[record.jurisdiction_level] || "文件资料")}</p><div class="policy-detail__badges"><span>${escapeHtml(record.policy_type)}</span><span class="policy-status ${statusClass}">${escapeHtml(statusLabel)}</span></div><h1 id="policy-detail-title">${escapeHtml(record.title)}</h1><p class="policy-detail__number">${escapeHtml(record.document_no || "文号未标注")}</p><p class="policy-detail__summary">${escapeHtml(record.summary)}</p></header><dl class="policy-detail__facts"><div><dt>发文机关</dt><dd>${escapeHtml((record.issuer || []).join("、"))}</dd></div><div><dt>发布日期</dt><dd>${escapeHtml(policyDate(record.published_at))}</dd></div><div><dt>施行日期</dt><dd>${escapeHtml(policyDate(record.effective_at))}</dd></div><div><dt>适用地区</dt><dd>${escapeHtml((record.regions || []).join("、"))}</dd></div></dl><section><h2>适用范围</h2><div class="policy-detail__chips">${(record.applies_to || []).map(value => `<span>${escapeHtml(value)}</span>`).join("")}</div></section><section><h2>核心要点</h2><ol class="policy-highlights">${(record.highlights || []).map(value => `<li>${escapeHtml(value)}</li>`).join("")}</ol><p class="policy-detail__disclaimer"><b>免责声明</b>以上要点仅供信息检索与快速理解，不构成法律意见、行政确认或项目专项审查；请以发文机关最新公开原文及项目所在地现行规定为准。</p></section><section class="policy-detail__notice"><h2>效力与核验说明</h2><p>${escapeHtml(record.status_note || "请以发文机关最新公开文本为准。")}</p><p>本资料于 ${escapeHtml(record.verified_at || "未标注")} 核对公开来源。</p></section><section><h2>相关文件</h2>${relatedPolicyLinks(record)}</section><footer class="policy-detail__actions">${record.guide ? `<a class="button button--primary" href="./policy-guide.html?id=${encodeURIComponent(record.id)}">打开文件解读 →</a>` : ""}<a class="button" href="${escapeHtml(record.source_url)}" target="_blank" rel="noopener">打开官方原文 ↗</a><a class="button" href="#policy">返回检索结果</a></footer>`;
   } catch (error) {
     console.error("Failed to load policy record", { id, error });
     container.innerHTML = `<h1 id="policy-detail-title">${escapeHtml(item.title)}</h1><p class="policy-detail__muted">文件详情暂时无法读取。你仍可直接打开官方原文核对。</p><a class="button button--primary" href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener">打开官方原文 ↗</a>`;
