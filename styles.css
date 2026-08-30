@@ -352,3 +352,153 @@ body::before {
   .policy-detail__summary { font-size: 15px; }
   .policy-detail__actions .button { width: 100%; text-align: center; }
 }
+
+/* A brief, non-blocking signature reveal for the first view of the page. */
+.signature-intro {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 24px;
+  background: linear-gradient(145deg, rgba(59, 31, 29, .34), rgba(111, 67, 55, .16));
+  opacity: 1;
+  pointer-events: none;
+  backdrop-filter: blur(26px) saturate(155%);
+  -webkit-backdrop-filter: blur(26px) saturate(155%);
+  animation: signature-intro-lifecycle 3.9s cubic-bezier(.2, .72, .22, 1) both;
+  will-change: opacity, backdrop-filter;
+}
+.signature-intro.is-dismissed {
+  animation: none;
+  opacity: 0;
+  backdrop-filter: blur(0) saturate(100%);
+  -webkit-backdrop-filter: blur(0) saturate(100%);
+  transition: opacity .28s ease, backdrop-filter .32s ease;
+}
+.signature-intro__glass {
+  position: relative;
+  display: grid;
+  width: min(720px, calc(100vw - 48px));
+  min-height: 320px;
+  place-items: center;
+  align-content: center;
+  padding: 48px 42px 42px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .38);
+  border-radius: 40px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .07));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .44), inset 0 -1px 0 rgba(255, 255, 255, .08), 0 30px 90px rgba(33, 13, 10, .2);
+  backdrop-filter: blur(34px) saturate(170%);
+  -webkit-backdrop-filter: blur(34px) saturate(170%);
+}
+.signature-intro__glass::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 12%, rgba(255, 255, 255, .22) 37%, transparent 61%);
+  content: "";
+  opacity: 0;
+  transform: translateX(-70%);
+  animation: signature-glass-sheen 1.4s 1.55s ease-out both;
+}
+.signature-intro__label,
+.signature-intro__caption {
+  position: relative;
+  z-index: 1;
+  color: rgba(255, 249, 242, .72);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+}
+.signature-intro__label { animation: signature-detail-in .65s .2s ease-out both; }
+.signature-intro__caption {
+  margin-top: -8px;
+  color: rgba(255, 249, 242, .82);
+  font-size: 11px;
+  letter-spacing: .24em;
+  animation: signature-detail-in .7s 1.85s ease-out both;
+}
+.signature-intro__mark {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+  margin: -2px 0 -6px;
+  overflow: visible;
+}
+.signature-intro__trace,
+.signature-intro__ink {
+  font-family: "Segoe Script", "Snell Roundhand", "Brush Script MT", cursive;
+  font-size: 132px;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: .035em;
+}
+.signature-intro__trace {
+  fill: transparent;
+  stroke: rgba(255, 247, 236, .94);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 940;
+  stroke-dashoffset: 940;
+  filter: drop-shadow(0 4px 16px rgba(255, 226, 184, .22));
+  animation: signature-write 1.85s .42s cubic-bezier(.4, 0, .18, 1) forwards;
+}
+.signature-intro__ink {
+  fill: rgba(255, 249, 242, .96);
+  stroke: transparent;
+  opacity: 0;
+  filter: drop-shadow(0 6px 18px rgba(38, 12, 9, .24));
+  animation: signature-ink-in .7s 1.72s ease-out forwards;
+}
+.signature-intro__flourish {
+  fill: none;
+  stroke: rgba(250, 210, 153, .9);
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-dasharray: 640;
+  stroke-dashoffset: 640;
+  filter: drop-shadow(0 3px 9px rgba(64, 24, 17, .24));
+  animation: signature-write .85s 1.48s cubic-bezier(.35, 0, .2, 1) forwards;
+}
+.signature-intro__glow {
+  position: absolute;
+  width: min(68vw, 760px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  opacity: .32;
+  filter: blur(54px);
+}
+.signature-intro__glow--one { top: -42%; left: -18%; background: rgba(255, 206, 155, .54); animation: signature-glow-drift 4s ease-in-out both; }
+.signature-intro__glow--two { right: -25%; bottom: -52%; background: rgba(161, 91, 74, .72); animation: signature-glow-drift 4s .2s ease-in-out reverse both; }
+
+@keyframes signature-intro-lifecycle {
+  0% { opacity: 0; backdrop-filter: blur(8px) saturate(115%); -webkit-backdrop-filter: blur(8px) saturate(115%); }
+  10%, 82% { opacity: 1; backdrop-filter: blur(26px) saturate(155%); -webkit-backdrop-filter: blur(26px) saturate(155%); }
+  100% { opacity: 0; backdrop-filter: blur(0) saturate(100%); -webkit-backdrop-filter: blur(0) saturate(100%); }
+}
+@keyframes signature-write { to { stroke-dashoffset: 0; } }
+@keyframes signature-ink-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes signature-detail-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes signature-glass-sheen { 0% { opacity: 0; transform: translateX(-70%); } 35% { opacity: .75; } 100% { opacity: 0; transform: translateX(70%); } }
+@keyframes signature-glow-drift { from { transform: translate3d(-4%, -2%, 0) scale(.9); } to { transform: translate3d(7%, 6%, 0) scale(1.08); } }
+
+@media (max-width: 620px) {
+  .signature-intro { padding: 16px; backdrop-filter: blur(21px) saturate(150%); -webkit-backdrop-filter: blur(21px) saturate(150%); }
+  .signature-intro__glass { width: calc(100vw - 32px); min-height: 265px; padding: 38px 16px 34px; border-radius: 30px; }
+  .signature-intro__mark { width: 108%; }
+  .signature-intro__trace, .signature-intro__ink { font-size: 116px; letter-spacing: .02em; }
+  .signature-intro__label { font-size: 9px; }
+  .signature-intro__caption { margin-top: -16px; font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signature-intro { animation-duration: 1.45s; }
+  .signature-intro__trace, .signature-intro__flourish { stroke-dashoffset: 0; animation: none; }
+  .signature-intro__ink { opacity: 1; animation: none; }
+  .signature-intro__label, .signature-intro__caption { animation: none; }
+  .signature-intro__glass::before, .signature-intro__glow { animation: none; }
+}
