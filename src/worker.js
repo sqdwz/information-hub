@@ -5,6 +5,7 @@ const GITHUB_URBAN_RENEWAL_URL = `${GITHUB_URBAN_RENEWAL_BASE_URL}/data/latest.j
 const GITHUB_URBAN_RENEWAL_INDEX_URL = `${GITHUB_URBAN_RENEWAL_BASE_URL}/data/index.json`;
 const GITHUB_POLICY_BASE_URL = "https://raw.githubusercontent.com/sqdwz/policy-library/main";
 const MAX_JSON_BYTES = 1_000_000;
+const POLICY_RECORD_MAX_AGE_MS = 15 * 60 * 1000;
 const AIRSPACE_DATA_KEY = "airspace:latest";
 const URBAN_RENEWAL_DATA_KEY = "urban-renewal:latest";
 const URBAN_RENEWAL_INDEX_KEY = "urban-renewal:index";
@@ -165,15 +166,12 @@ async function syncPolicyRecord(env, path) {
   const key = policyRecordKey(path);
   const current = await env.INDUSTRY_BRIEF_DATA.getWithMetadata(key);
   const syncedAt = new Date().toISOString();
+  const updated = current.value !== body;
 
-  if (current.value !== body) {
-    await env.INDUSTRY_BRIEF_DATA.put(key, body, {
-      metadata: { source: "sqdwz/policy-library", path, syncedAt }
-    });
-    return { body, syncedAt, updated: true };
-  }
-
-  return { body, syncedAt: current.metadata?.syncedAt || syncedAt, updated: false };
+  await env.INDUSTRY_BRIEF_DATA.put(key, body, {
+    metadata: { source: "sqdwz/policy-library", path, syncedAt }
+  });
+  return { body, syncedAt, updated };
 }
 
 async function syncUrbanRenewalData(env) {
@@ -359,7 +357,9 @@ async function servePolicyRecord(request, env, path) {
   if (!isValidPolicyRecordPath(path)) return new Response("Invalid policy record path", { status: 400 });
   const key = policyRecordKey(path);
   const stored = await env.INDUSTRY_BRIEF_DATA.getWithMetadata(key);
-  if (stored.value) {
+  const storedAt = Date.parse(stored.metadata?.syncedAt || "");
+  const isFresh = Number.isFinite(storedAt) && Date.now() - storedAt < POLICY_RECORD_MAX_AGE_MS;
+  if (stored.value && isFresh) {
     return jsonResponse(stored.value, {
       storage: "cloudflare-kv",
       syncedAt: stored.metadata?.syncedAt,
@@ -375,7 +375,14 @@ async function servePolicyRecord(request, env, path) {
       dataset: "policy-library:record"
     });
   } catch (error) {
-    console.error("Policy record KV is empty and GitHub sync failed", { path, error: String(error) });
+    console.error("Policy record refresh failed", { path, error: String(error) });
+    if (stored.value) {
+      return jsonResponse(stored.value, {
+        storage: "cloudflare-kv-stale",
+        syncedAt: stored.metadata?.syncedAt,
+        dataset: "policy-library:record"
+      });
+    }
     const snapshotUrl = new URL(request.url);
     snapshotUrl.pathname = `/data/policy/${path.replace(/^data\//, "")}`;
     snapshotUrl.search = "";
