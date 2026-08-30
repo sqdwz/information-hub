@@ -1,0 +1,20 @@
+{
+  "id": "national-urban-physical-exam-2023",
+  "title": "住房城乡建设部关于全面开展城市体检工作的指导意见",
+  "document_no": "建科〔2023〕75号",
+  "jurisdiction_level": "national",
+  "policy_type": "指导意见",
+  "status": "current",
+  "issuer": ["住房城乡建设部"],
+  "published_at": "2023-12-07",
+  "effective_at": null,
+  "regions": ["全国"],
+  "themes": ["城市体检", "城市更新", "完整社区"],
+  "summary": "建立城市体检工作制度，以住房、小区（社区）、街区、城区等尺度发现问题，并推动体检结果转化为城市更新任务。",
+  "applies_to": ["地级及以上城市城市体检", "城市更新问题识别", "城市体检指标体系建设", "城市更新项目谋划"],
+  "highlights": ["城市体检作为统筹规划建设管理的重要抓手", "从住房到城区多尺度开展体检", "体检结果用于形成问题清单和整治建议", "推动城市体检与城市更新一体化实施"],
+  "source_url": "https://app.www.gov.cn/govdata/gov/202312/07/510026/article.html",
+  "verified_at": "2026-08-29",
+  "status_note": "中国政府网公开页面可访问，未发现废止、失效或替代依据。",
+  "related_policy_ids": ["national-urban-renewal-orderly-2023", "national-urban-renewal-15th-2026"]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "national-urban-renewal-15th-2026",
+  "title": "国务院关于印发《城市更新“十五五”规划》的通知",
+  "document_no": "国发〔2026〕12号",
+  "jurisdiction_level": "national",
+  "policy_type": "规划",
+  "status": "current",
+  "issuer": ["国务院"],
+  "published_at": "2026-05-28",
+  "effective_at": "2026-05-22",
+  "regions": ["全国"],
+  "themes": ["城市更新", "城市体检", "城中村改造", "老旧小区", "规划用地", "资金支持", "历史文化保护", "完整社区"],
+  "summary": "明确“十五五”时期城市更新总体目标、重点任务和实施保障，推动城市发展方式由增量扩张转向存量提质增效。",
+  "applies_to": ["城市更新规划与项目实施", "既有建筑和老旧小区改造", "城中村与老旧街区更新", "基础设施和公共服务设施提升"],
+  "highlights": ["到2030年城市更新行动取得重要进展", "强化城市体检与更新实施衔接", "完善规划土地和可持续投融资机制", "加强历史文化保护与城市安全韧性建设"],
+  "source_url": "https://big5.www.gov.cn/gate/big5/www.gov.cn/gongbao/2026/issue_12786/202606/content_7071614.html",
+  "verified_at": "2026-08-29",
+  "status_note": "国务院公报公开页面可访问，未发现废止、失效或替代依据。",
+  "related_policy_ids": ["national-urban-renewal-2025", "national-urban-renewal-orderly-2023"]
+}

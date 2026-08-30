@@ -33,7 +33,7 @@ async function loadPolicy(id) {
   const local = ["127.0.0.1", "localhost"].includes(location.hostname);
   const index = await firstAvailable(local ? [endpoints.snapshot, endpoints.index] : [endpoints.index, endpoints.snapshot], value => value.items?.length);
   const item = index.items.find(candidate => candidate.id === id);
-  if (!item) throw new Error("政策索引中没有这份文件");
+  if (!item) throw new Error("资料索引中没有这份文件");
   const localRecord = `${endpoints.localBase}${String(item.record_path).replace(/^data\//, "")}`;
   const workerRecord = `${endpoints.document}?path=${encodeURIComponent(item.record_path)}`;
   const remoteRecord = `${endpoints.remoteBase}${item.record_path}`;
@@ -57,35 +57,35 @@ function chapterBlock(chapter) {
 
 function renderPolicy(record) {
   const guide = record.guide;
-  if (!guide?.chapters?.length) throw new Error("这份政策尚未生成讲解内容");
+  if (!guide?.chapters?.length) throw new Error("这份文件尚未生成解读内容");
   const entryCount = guide.chapters.reduce((sum, chapter) => sum + (chapter.entries?.length || 0), 0);
   document.title = `${guide.title}｜瑞雪的小栈`;
   document.querySelector("#policy-detail-link").href = `./index.html#policy/${encodeURIComponent(record.id)}`;
   document.querySelector("#guide-app").innerHTML = `
     <header class="guide-hero">
       <div class="guide-hero__meta"><span>${escapeHtml(record.policy_type)}</span><span>${escapeHtml(record.document_no || "文号未标注")}</span><span>${escapeHtml((record.regions || []).join("、"))}</span></div>
-      <h1><small>政策讲解报告</small>${escapeHtml(guide.title)}</h1>
+      <h1><small>文件解读报告</small>${escapeHtml(guide.title)}</h1>
       <p class="guide-hero__subtitle">${escapeHtml(guide.subtitle || record.title)}</p>
       <p class="guide-hero__intro">${escapeHtml(guide.intro || record.summary)}</p>
       <div class="guide-hero__facts"><div><b>${guide.chapters.length}</b><span>讲解章节</span></div><div><b>${entryCount}</b><span>讲解条目</span></div><div><b>${escapeHtml(record.verified_at || "未标注")}</b><span>资料核验日期</span></div></div>
     </header>
     <div class="guide-shell">
-      <aside class="guide-toc"><h2>内容目录</h2><nav>${guide.chapters.map(chapter => `<a href="#${escapeHtml(chapter.id)}">${escapeHtml(chapter.title)}</a>`).join("")}<a href="#required-companions">还需配套核对</a></nav><p class="guide-source-note">${escapeHtml(guide.source_note || "讲解依据公开政策文本整理。")}</p></aside>
+      <aside class="guide-toc"><h2>内容目录</h2><nav>${guide.chapters.map(chapter => `<a href="#${escapeHtml(chapter.id)}">${escapeHtml(chapter.title)}</a>`).join("")}<a href="#required-companions">还需配套核对</a></nav><p class="guide-source-note">${escapeHtml(guide.source_note || "解读依据公开文件文本整理。")}</p></aside>
       <div class="guide-main">
         ${guide.chapters.map(chapterBlock).join("")}
-        <section class="guide-companions" id="required-companions"><h2>实际落地，还需配套核对</h2><p>国家或省级文件提供框架，具体项目通常还要叠加下列属地标准、管理办法和项目文件。</p><ol>${(guide.required_companions || []).map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ol><div class="guide-actions"><a href="${escapeHtml(record.source_url)}" target="_blank" rel="noopener">打开官方原文 ↗</a><a href="./index.html#policy/${encodeURIComponent(record.id)}">查看政策要点</a><a href="./index.html#policy">返回政策面板</a></div><p class="guide-disclaimer">本页用于培训、信息检索和政策链梳理，不替代法律意见、行政确认、评估报告或项目专项审查。请以发文机关最新公开文本及项目所在地现行规定为准。</p></section>
+        <section class="guide-companions" id="required-companions"><h2>实际落地，还需配套核对</h2><p>国家或省级文件提供框架，具体项目通常还要叠加下列属地标准、管理办法和项目文件。</p><ol>${(guide.required_companions || []).map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ol><div class="guide-actions"><a href="${escapeHtml(record.source_url)}" target="_blank" rel="noopener">打开官方原文 ↗</a><a href="./index.html#policy/${encodeURIComponent(record.id)}">查看内容要点</a><a href="./index.html#policy">返回资料库</a></div><p class="guide-disclaimer">本页用于培训、信息检索和资料链梳理，不替代法律意见、行政确认、评估报告或项目专项审查。请以发文机关最新公开文本及项目所在地现行规定为准。</p></section>
       </div>
     </div>`;
 }
 
 function renderError(error) {
-  document.querySelector("#guide-app").innerHTML = `<section class="guide-error"><h1>讲解页暂时无法读取</h1><p>${escapeHtml(error.message || "政策数据源不可用，请稍后重试。")}</p><a href="./index.html#policy">返回政策面板</a></section>`;
+  document.querySelector("#guide-app").innerHTML = `<section class="guide-error"><h1>解读页暂时无法读取</h1><p>${escapeHtml(error.message || "资料源不可用，请稍后重试。")}</p><a href="./index.html#policy">返回资料库</a></section>`;
 }
 
 async function init() {
   const id = new URLSearchParams(location.search).get("id");
   try {
-    if (!id) throw new Error("链接中缺少政策 ID");
+    if (!id) throw new Error("链接中缺少文件 ID");
     const { record } = await loadPolicy(id);
     renderPolicy(record);
   } catch (error) {

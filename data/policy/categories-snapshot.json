@@ -1,17 +1,61 @@
 {
   "updated_at": "2026-08-30T00:00:00+08:00",
   "jurisdiction_levels": [
-    { "id": "national", "label": "国家" },
-    { "id": "province", "label": "省级" },
-    { "id": "city", "label": "市县" }
+    {
+      "id": "national",
+      "label": "国家"
+    },
+    {
+      "id": "province",
+      "label": "省级"
+    },
+    {
+      "id": "city",
+      "label": "市县"
+    }
   ],
-  "regions": ["全国", "海南省", "海口市"],
-  "themes": ["城市更新", "征收补偿", "老旧小区", "规划用地", "资金支持", "新型城镇化"],
-  "policy_types": ["条例", "指导意见", "部门通知", "实施意见", "转发通知"],
+  "regions": [
+    "全国",
+    "海南省",
+    "海口市"
+  ],
+  "themes": [
+    "城市更新",
+    "征收补偿",
+    "老旧小区",
+    "规划用地",
+    "资金支持",
+    "新型城镇化",
+    "城市体检",
+    "城中村改造",
+    "历史文化保护",
+    "完整社区"
+  ],
+  "policy_types": [
+    "条例",
+    "指导意见",
+    "部门通知",
+    "实施意见",
+    "转发通知",
+    "规划",
+    "政策指引",
+    "行动计划",
+    "财政通知",
+    "政策措施"
+  ],
   "statuses": [
-    { "id": "current", "label": "持续适用" },
-    { "id": "historical", "label": "阶段性文件" },
-    { "id": "review", "label": "效力待复核" }
+    {
+      "id": "current",
+      "label": "持续适用"
+    },
+    {
+      "id": "historical",
+      "label": "阶段性文件"
+    },
+    {
+      "id": "review",
+      "label": "效力待复核"
+    }
   ],
   "coverage_gaps": [
     {
@@ -70,12 +114,12 @@
     },
     {
       "id": "collective-land-compensation",
-      "title": "集体土地征收补偿安置政策",
+      "title": "集体土地征收补偿安置文件",
       "level": "省级/市县级",
       "priority": "medium",
       "status": "待收集",
       "scope": "征地补偿、青苗附着物、村民住宅和安置保障",
-      "reason": "集体土地征收不属于590号令的直接适用范围，需要单独建立政策链。"
+      "reason": "集体土地征收不属于590号令的直接适用范围，需要单独建立资料链。"
     },
     {
       "id": "old-community-local-policies",

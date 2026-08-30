@@ -1,0 +1,20 @@
+{
+  "id": "national-urban-renewal-land-guide-2023",
+  "title": "自然资源部办公厅关于印发《支持城市更新的规划与土地政策指引（2023版）》的通知",
+  "document_no": "自然资办发〔2023〕47号",
+  "jurisdiction_level": "national",
+  "policy_type": "政策指引",
+  "status": "current",
+  "issuer": ["自然资源部办公厅"],
+  "published_at": "2023-11-23",
+  "effective_at": null,
+  "regions": ["全国"],
+  "themes": ["城市更新", "规划用地"],
+  "summary": "围绕国土空间规划、土地利用和存量空间盘活，为城市更新项目提供规划与土地政策操作指引。",
+  "applies_to": ["城市更新专项规划与详细规划", "存量土地盘活", "土地复合利用", "城市更新项目用地保障"],
+  "highlights": ["强化国土空间规划对城市更新的统筹", "支持存量空间和低效用地盘活", "提高土地混合利用和用途转换适应性", "要求各地结合实际制定配套政策指引"],
+  "source_url": "https://app.www.gov.cn/govdata/gov/202311/23/509596/article.html",
+  "verified_at": "2026-08-29",
+  "status_note": "中国政府网转载自然资源部正式文件，未发现废止、失效或替代依据。",
+  "related_policy_ids": ["national-urban-renewal-2025", "national-urban-renewal-support-2025"]
+}

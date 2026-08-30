@@ -1,0 +1,20 @@
+{
+  "id": "hainan-urban-renewal-support-2025",
+  "title": "海南省人民政府办公厅印发《关于支持实施城市更新行动若干政策措施》的通知",
+  "document_no": "琼府办〔2025〕28号",
+  "jurisdiction_level": "province",
+  "policy_type": "政策措施",
+  "status": "current",
+  "issuer": ["海南省人民政府办公厅"],
+  "published_at": "2025-05-28",
+  "effective_at": "2025-05-28",
+  "regions": ["海南省"],
+  "themes": ["城市更新", "城中村改造", "老旧小区", "规划用地", "资金支持", "历史文化保护"],
+  "summary": "从规划、土地、审批监管、投融资等方面提出20条支持措施，为海南城市更新项目组织实施提供省级政策框架。",
+  "applies_to": ["海南省城市更新项目", "城市更新专项规划和详细规划", "城中村及老旧小区改造", "城市更新土地和资金保障"],
+  "highlights": ["各市县可编制城市更新专项规划并划定更新单元", "完善土地供给和存量空间利用政策", "支持房票安置、以购代建等安置方式", "强化多渠道资金保障和全过程项目管理"],
+  "source_url": "https://zjt.hainan.gov.cn/szjt/lswhmcbh/202505/0dccc132766448f289d9f21001d07c4d.shtml",
+  "verified_at": "2026-08-29",
+  "status_note": "海南省住房和城乡建设厅官方页面公开；文件明确自公布之日起施行，有效期3年。",
+  "related_policy_ids": ["national-urban-renewal-2025", "national-urban-renewal-15th-2026"]
+}

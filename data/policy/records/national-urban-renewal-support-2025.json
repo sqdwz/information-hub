@@ -1,0 +1,20 @@
+{
+  "id": "national-urban-renewal-support-2025",
+  "title": "自然资源部 住房城乡建设部关于进一步支持城市更新行动若干措施的通知",
+  "document_no": "自然资发〔2025〕226号",
+  "jurisdiction_level": "national",
+  "policy_type": "政策措施",
+  "status": "current",
+  "issuer": ["自然资源部", "住房城乡建设部"],
+  "published_at": "2026-01-31",
+  "effective_at": "2026-01-31",
+  "regions": ["全国"],
+  "themes": ["城市更新", "规划用地"],
+  "summary": "针对城市更新中的规划调整、用途转换、存量资源组合供应、不动产登记和历史遗留问题提出进一步支持措施。",
+  "applies_to": ["城市更新详细规划优化", "存量土地与空间利用", "资源资产组合供应与运营", "不动产登记和历史遗留问题处置"],
+  "highlights": ["增强详细规划适应性", "支持更新过渡期和存量空间灵活利用", "鼓励资源资产组合供应与整体运营", "创新不动产登记服务并分类处置历史遗留问题"],
+  "source_url": "https://policy.mofcom.gov.cn/claw/clawContent.shtml?id=104574",
+  "verified_at": "2026-08-29",
+  "status_note": "商务部法规数据库标注为现行有效，信息来源为自然资源部网站。",
+  "related_policy_ids": ["national-urban-renewal-land-guide-2023", "national-urban-renewal-15th-2026"]
+}

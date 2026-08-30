@@ -1,0 +1,20 @@
+{
+  "id": "national-new-urbanization-action-2024",
+  "title": "国务院关于印发《深入实施以人为本的新型城镇化战略五年行动计划》的通知",
+  "document_no": "国发〔2024〕17号",
+  "jurisdiction_level": "national",
+  "policy_type": "行动计划",
+  "status": "current",
+  "issuer": ["国务院"],
+  "published_at": "2024-07-31",
+  "effective_at": "2024-07-28",
+  "regions": ["全国"],
+  "themes": ["新型城镇化", "城市更新", "城中村改造", "老旧小区"],
+  "summary": "部署新型城镇化五年行动，推动农业转移人口市民化、潜力地区城镇化水平提升、现代化都市圈培育和城市更新。",
+  "applies_to": ["新型城镇化建设", "农业转移人口市民化", "城镇老旧小区和城中村改造", "城市基础设施补短板"],
+  "highlights": ["以人为本提高城镇化质量", "实施潜力地区城镇化水平提升行动", "推进城镇老旧小区和城中村改造", "强化公共服务和基础设施承载能力"],
+  "source_url": "https://app.www.gov.cn/govdata/gov/202407/31/517833/article.html",
+  "verified_at": "2026-08-29",
+  "status_note": "中国政府网公开页面可访问，行动周期仍处于实施期。",
+  "related_policy_ids": ["national-urban-renewal-15th-2026"]
+}

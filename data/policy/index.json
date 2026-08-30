@@ -2,17 +2,27 @@
   "version": 1,
   "updated_at": "2026-08-30T00:00:00+08:00",
   "verified_at": "2026-08-30",
-  "summary": "首批收录城市更新、征收补偿与老旧小区改造相关核心文件；政策效力和具体适用情形仍应以发文机关最新公开文本为准。",
+  "summary": "首批收录城市更新、征收补偿与老旧小区改造相关核心文件；文件效力和具体适用情形仍应以发文机关最新公开文本为准。",
   "items": [
     {
       "id": "national-urban-renewal-2025",
       "record_path": "data/records/national-urban-renewal-2025.json",
       "title": "中共中央办公厅 国务院办公厅关于持续推进城市更新行动的意见",
       "document_no": "中办发〔2025〕34号",
-      "issuer": ["中共中央办公厅", "国务院办公厅"],
+      "issuer": [
+        "中共中央办公厅",
+        "国务院办公厅"
+      ],
       "jurisdiction_level": "national",
-      "regions": ["全国"],
-      "themes": ["城市更新", "老旧小区", "规划用地", "资金支持"],
+      "regions": [
+        "全国"
+      ],
+      "themes": [
+        "城市更新",
+        "老旧小区",
+        "规划用地",
+        "资金支持"
+      ],
       "policy_type": "指导意见",
       "status": "current",
       "published_at": "2025-05-15",
@@ -26,10 +36,17 @@
       "record_path": "data/records/national-urban-renewal-orderly-2023.json",
       "title": "住房城乡建设部关于扎实有序推进城市更新工作的通知",
       "document_no": "建科〔2023〕30号",
-      "issuer": ["住房城乡建设部"],
+      "issuer": [
+        "住房城乡建设部"
+      ],
       "jurisdiction_level": "national",
-      "regions": ["全国"],
-      "themes": ["城市更新", "规划用地"],
+      "regions": [
+        "全国"
+      ],
+      "themes": [
+        "城市更新",
+        "规划用地"
+      ],
       "policy_type": "部门通知",
       "status": "current",
       "published_at": "2023-07-05",
@@ -43,10 +60,18 @@
       "record_path": "data/records/national-old-community-2020.json",
       "title": "国务院办公厅关于全面推进城镇老旧小区改造工作的指导意见",
       "document_no": "国办发〔2020〕23号",
-      "issuer": ["国务院办公厅"],
+      "issuer": [
+        "国务院办公厅"
+      ],
       "jurisdiction_level": "national",
-      "regions": ["全国"],
-      "themes": ["老旧小区", "城市更新", "资金支持"],
+      "regions": [
+        "全国"
+      ],
+      "themes": [
+        "老旧小区",
+        "城市更新",
+        "资金支持"
+      ],
       "policy_type": "指导意见",
       "status": "current",
       "published_at": "2020-07-20",
@@ -60,10 +85,16 @@
       "record_path": "data/records/national-expropriation-590.json",
       "title": "国有土地上房屋征收与补偿条例",
       "document_no": "国务院令第590号",
-      "issuer": ["国务院"],
+      "issuer": [
+        "国务院"
+      ],
       "jurisdiction_level": "national",
-      "regions": ["全国"],
-      "themes": ["征收补偿"],
+      "regions": [
+        "全国"
+      ],
+      "themes": [
+        "征收补偿"
+      ],
       "policy_type": "条例",
       "status": "current",
       "published_at": "2011-01-21",
@@ -77,10 +108,18 @@
       "record_path": "data/records/hainan-new-urbanization-2017.json",
       "title": "海南省人民政府关于深入推进新型城镇化建设的实施意见",
       "document_no": "海南省人民政府实施意见",
-      "issuer": ["海南省人民政府"],
+      "issuer": [
+        "海南省人民政府"
+      ],
       "jurisdiction_level": "province",
-      "regions": ["海南省"],
-      "themes": ["新型城镇化", "城市更新", "老旧小区"],
+      "regions": [
+        "海南省"
+      ],
+      "themes": [
+        "新型城镇化",
+        "城市更新",
+        "老旧小区"
+      ],
       "policy_type": "实施意见",
       "status": "review",
       "published_at": "2017-03-30",
@@ -94,16 +133,232 @@
       "record_path": "data/records/hainan-urban-renewal-demo-2024.json",
       "title": "海南省财政厅 海南省住房和城乡建设厅转发关于开展城市更新示范工作的通知",
       "document_no": "琼财建〔2024〕257号",
-      "issuer": ["海南省财政厅", "海南省住房和城乡建设厅"],
+      "issuer": [
+        "海南省财政厅",
+        "海南省住房和城乡建设厅"
+      ],
       "jurisdiction_level": "province",
-      "regions": ["海南省"],
-      "themes": ["城市更新", "资金支持"],
+      "regions": [
+        "海南省"
+      ],
+      "themes": [
+        "城市更新",
+        "资金支持"
+      ],
       "policy_type": "转发通知",
       "status": "historical",
       "published_at": "2024-05-13",
       "effective_at": "2024-05-11",
       "summary": "转发国家城市更新示范申报要求，明确海南省内申报城市和报送安排，适合作为阶段性申报文件留档。",
       "source_url": "https://mof.hainan.gov.cn/sczt/0503/202406/47509032598d4012a3c37f350d7f6034.shtml",
+      "verified_at": "2026-08-29"
+    },
+    {
+      "id": "national-urban-renewal-15th-2026",
+      "record_path": "data/records/national-urban-renewal-15th-2026.json",
+      "title": "国务院关于印发《城市更新“十五五”规划》的通知",
+      "document_no": "国发〔2026〕12号",
+      "issuer": [
+        "国务院"
+      ],
+      "jurisdiction_level": "national",
+      "regions": [
+        "全国"
+      ],
+      "themes": [
+        "城市更新",
+        "城市体检",
+        "城中村改造",
+        "老旧小区",
+        "规划用地",
+        "资金支持",
+        "历史文化保护",
+        "完整社区"
+      ],
+      "policy_type": "规划",
+      "status": "current",
+      "published_at": "2026-05-28",
+      "effective_at": "2026-05-22",
+      "summary": "明确“十五五”时期城市更新总体目标、重点任务和实施保障，推动城市发展方式由增量扩张转向存量提质增效。",
+      "source_url": "https://big5.www.gov.cn/gate/big5/www.gov.cn/gongbao/2026/issue_12786/202606/content_7071614.html",
+      "verified_at": "2026-08-29"
+    },
+    {
+      "id": "national-urban-physical-exam-2023",
+      "record_path": "data/records/national-urban-physical-exam-2023.json",
+      "title": "住房城乡建设部关于全面开展城市体检工作的指导意见",
+      "document_no": "建科〔2023〕75号",
+      "issuer": [
+        "住房城乡建设部"
+      ],
+      "jurisdiction_level": "national",
+      "regions": [
+        "全国"
+      ],
+      "themes": [
+        "城市体检",
+        "城市更新",
+        "完整社区"
+      ],
+      "policy_type": "指导意见",
+      "status": "current",
+      "published_at": "2023-12-07",
+      "effective_at": null,
+      "summary": "建立城市体检工作制度，以住房、小区（社区）、街区、城区等尺度发现问题，并推动体检结果转化为城市更新任务。",
+      "source_url": "https://app.www.gov.cn/govdata/gov/202312/07/510026/article.html",
+      "verified_at": "2026-08-29"
+    },
+    {
+      "id": "national-urban-renewal-land-guide-2023",
+      "record_path": "data/records/national-urban-renewal-land-guide-2023.json",
+      "title": "自然资源部办公厅关于印发《支持城市更新的规划与土地政策指引（2023版）》的通知",
+      "document_no": "自然资办发〔2023〕47号",
+      "issuer": [
+        "自然资源部办公厅"
+      ],
+      "jurisdiction_level": "national",
+      "regions": [
+        "全国"
+      ],
+      "themes": [
+        "城市更新",
+        "规划用地"
+      ],
+      "policy_type": "政策指引",
+      "status": "current",
+      "published_at": "2023-11-23",
+      "effective_at": null,
+      "summary": "围绕国土空间规划、土地利用和存量空间盘活，为城市更新项目提供规划与土地政策操作指引。",
+      "source_url": "https://app.www.gov.cn/govdata/gov/202311/23/509596/article.html",
+      "verified_at": "2026-08-29"
+    },
+    {
+      "id": "national-urban-village-planning-guide-2024",
+      "record_path": "data/records/national-urban-village-planning-guide-2024.json",
+      "title": "自然资源部办公厅关于印发《城中村改造国土空间规划政策指引》的通知",
+      "document_no": "自然资办发〔2024〕30号",
+      "issuer": [
+        "自然资源部办公厅"
+      ],
+      "jurisdiction_level": "national",
+      "regions": [
+        "全国"
+      ],
+      "themes": [
+        "城中村改造",
+        "规划用地",
+        "城市更新"
+      ],
+      "policy_type": "政策指引",
+      "status": "current",
+      "published_at": "2024-07-29",
+      "effective_at": null,
+      "summary": "明确城中村改造的国土空间规划要求，强调改造范围、规划衔接、权益保障、公共服务和历史文化保护。",
+      "source_url": "https://ghzyj.sh.gov.cn/hyxw/20240730/0d3e6fbe4eb146b6b37c33e695bd38e4.html",
+      "verified_at": "2026-08-29"
+    },
+    {
+      "id": "national-new-urbanization-action-2024",
+      "record_path": "data/records/national-new-urbanization-action-2024.json",
+      "title": "国务院关于印发《深入实施以人为本的新型城镇化战略五年行动计划》的通知",
+      "document_no": "国发〔2024〕17号",
+      "issuer": [
+        "国务院"
+      ],
+      "jurisdiction_level": "national",
+      "regions": [
+        "全国"
+      ],
+      "themes": [
+        "新型城镇化",
+        "城市更新",
+        "城中村改造",
+        "老旧小区"
+      ],
+      "policy_type": "行动计划",
+      "status": "current",
+      "published_at": "2024-07-31",
+      "effective_at": "2024-07-28",
+      "summary": "部署新型城镇化五年行动，推动农业转移人口市民化、潜力地区城镇化水平提升、现代化都市圈培育和城市更新。",
+      "source_url": "https://app.www.gov.cn/govdata/gov/202407/31/517833/article.html",
+      "verified_at": "2026-08-29"
+    },
+    {
+      "id": "national-urban-renewal-fiscal-2026",
+      "record_path": "data/records/national-urban-renewal-fiscal-2026.json",
+      "title": "关于开展2026年度中央财政支持实施城市更新行动的通知",
+      "document_no": "财办建〔2026〕14号",
+      "issuer": [
+        "财政部办公厅",
+        "住房城乡建设部办公厅"
+      ],
+      "jurisdiction_level": "national",
+      "regions": [
+        "全国"
+      ],
+      "themes": [
+        "城市更新",
+        "资金支持"
+      ],
+      "policy_type": "财政通知",
+      "status": "historical",
+      "published_at": "2026-04-16",
+      "effective_at": null,
+      "summary": "通过竞争性选拔支持部分城市实施城市更新，重点推动联片更新、基础设施改善和可持续城市更新机制建设。",
+      "source_url": "https://jjs.mof.gov.cn/tongzhigonggao/202604/t20260416_3987746.htm",
+      "verified_at": "2026-08-29"
+    },
+    {
+      "id": "hainan-urban-renewal-support-2025",
+      "record_path": "data/records/hainan-urban-renewal-support-2025.json",
+      "title": "海南省人民政府办公厅印发《关于支持实施城市更新行动若干政策措施》的通知",
+      "document_no": "琼府办〔2025〕28号",
+      "issuer": [
+        "海南省人民政府办公厅"
+      ],
+      "jurisdiction_level": "province",
+      "regions": [
+        "海南省"
+      ],
+      "themes": [
+        "城市更新",
+        "城中村改造",
+        "老旧小区",
+        "规划用地",
+        "资金支持",
+        "历史文化保护"
+      ],
+      "policy_type": "政策措施",
+      "status": "current",
+      "published_at": "2025-05-28",
+      "effective_at": "2025-05-28",
+      "summary": "从规划、土地、审批监管、投融资等方面提出20条支持措施，为海南城市更新项目组织实施提供省级政策框架。",
+      "source_url": "https://zjt.hainan.gov.cn/szjt/lswhmcbh/202505/0dccc132766448f289d9f21001d07c4d.shtml",
+      "verified_at": "2026-08-29"
+    },
+    {
+      "id": "national-urban-renewal-support-2025",
+      "record_path": "data/records/national-urban-renewal-support-2025.json",
+      "title": "自然资源部 住房城乡建设部关于进一步支持城市更新行动若干措施的通知",
+      "document_no": "自然资发〔2025〕226号",
+      "issuer": [
+        "自然资源部",
+        "住房城乡建设部"
+      ],
+      "jurisdiction_level": "national",
+      "regions": [
+        "全国"
+      ],
+      "themes": [
+        "城市更新",
+        "规划用地"
+      ],
+      "policy_type": "政策措施",
+      "status": "current",
+      "published_at": "2026-01-31",
+      "effective_at": "2026-01-31",
+      "summary": "针对城市更新中的规划调整、用途转换、存量资源组合供应、不动产登记和历史遗留问题提出进一步支持措施。",
+      "source_url": "https://policy.mofcom.gov.cn/claw/clawContent.shtml?id=104574",
       "verified_at": "2026-08-29"
     }
   ]
