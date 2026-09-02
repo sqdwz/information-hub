@@ -61,7 +61,7 @@ function initWelcomePavilion() {
     document.body.classList.remove("has-welcome");
     siteShell?.removeAttribute("inert");
     siteShell?.removeAttribute("aria-hidden");
-    if (themeColor) themeColor.content = "#8e3529";
+      if (themeColor) themeColor.content = "#2d4f9f";
     document.title = "信息聚合中心";
   };
 

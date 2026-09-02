@@ -60,3 +60,13 @@
   .brief-archive__search { min-width: 0; }
   .brief-filter { align-items: flex-start; }
 }
+
+/* Sayo panel theme for the industry archive. */
+.brief-head, .brief-item, .brief-archive, .brief-archive-card { border-color: rgba(211, 225, 255, .7); background: rgba(239, 246, 255, .84); color: #172646; box-shadow: 0 12px 30px rgba(13, 34, 94, .18); }
+.brief-head h1, .brief-item h2, .brief-archive__head h2 { color: #172646; }
+.brief-item-meta, .brief-archive__result, .brief-archive__empty, .brief-archive__loading, .brief-archive-card small { color: #506486; }
+.brief-item a, .brief-archive-card span { color: #35529f; }
+.brief-filter, .brief-archive__search input { border-color: rgba(102, 133, 229, .28); background: rgba(247, 250, 255, .82); color: #172646; }
+.brief-filter button, .brief-archive-card:hover, .brief-archive-card:focus-visible, .brief-archive-card.is-active { border-color: #6685e5; background: rgba(220, 232, 255, .9); }
+.brief-archive__search input:focus { border-color: #6685e5; outline-color: rgba(102, 133, 229, .22); }
+.brief-archive__cards { scrollbar-color: rgba(102, 133, 229, .6) transparent; }
