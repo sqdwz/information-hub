@@ -3,25 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#8e3529" />
+    <meta name="theme-color" content="#071b58" />
     <meta name="description" content="个人长期使用的信息聚合中心：空域、AI、城市更新与文件资料。" />
     <title>信息聚合中心</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260902-pavilion" />
     <link rel="stylesheet" href="./industry-brief.css" />
   </head>
   <body>
-    <div class="signature-intro" id="signature-intro" aria-hidden="true">
-      <div class="signature-intro__glow signature-intro__glow--one"></div>
-      <div class="signature-intro__glow signature-intro__glow--two"></div>
-      <div class="signature-intro__glass">
-        <span class="signature-intro__label">PERSONAL SIGNATURE</span>
-        <svg class="signature-intro__mark" viewBox="0 0 900 250" role="presentation" focusable="false">
-          <text class="signature-intro__trace" x="450" y="168" text-anchor="middle">RUIXUE</text>
-          <text class="signature-intro__ink" x="450" y="168" text-anchor="middle">RUIXUE</text>
-          <path class="signature-intro__flourish" d="M198 202 C330 221 606 219 732 190 C770 181 787 171 805 158" />
-        </svg>
-        <span class="signature-intro__caption">&#x745E;&#x96EA; &#xB7; &#x4FE1;&#x606F;&#x805A;&#x5408;&#x4E2D;&#x5FC3;</span>
-      </div>
+    <div class="welcome-pavilion" id="welcome-pavilion" aria-label="RUIXUE 欢迎引导页">
+      <div class="welcome-pavilion__background" aria-hidden="true"></div>
+      <div class="welcome-pavilion__sparkles" id="welcome-sparkles" aria-hidden="true"></div>
+      <button class="welcome-pavilion__enter" id="welcome-enter" type="button" aria-label="点击进入信息面板">
+        <span class="visually-hidden">点击进入信息面板</span>
+      </button>
+      <div class="welcome-pavilion__flash" aria-hidden="true"></div>
     </div>
     <div class="site-shell">
       <header class="topbar">
@@ -145,7 +140,7 @@
       </div>
     </dialog>
     <dialog class="detail-dialog" id="notice-dialog" aria-labelledby="dialog-title"><div class="dialog__body"><button class="dialog__close" type="button" aria-label="关闭详情" data-close-dialog>×</button><div id="dialog-content"></div></div></dialog>
-    <script src="./app.js" defer></script>
+    <script src="./app.js?v=20260902-pavilion" defer></script>
     <script src="./industry-brief.js" defer></script>
   </body>
 </html>

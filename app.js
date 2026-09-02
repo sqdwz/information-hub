@@ -47,95 +47,69 @@ let activePolicyDetailId = "";
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
 
-function initSignatureIntro() {
-  const intro = $("#signature-intro");
-  if (!intro) return;
+function initWelcomePavilion() {
+  const welcome = $("#welcome-pavilion");
+  if (!welcome) return;
 
-  let pointerStart;
-  let touchStart;
-  let dismissed = false;
-  const initialScrollY = window.scrollY;
-  let removalTimer;
+  const siteShell = $(".site-shell");
+  const enterButton = $("#welcome-enter");
+  const sparkles = $("#welcome-sparkles");
+  const themeColor = $("meta[name='theme-color']");
+  const shouldShow = !location.hash || location.hash === "#welcome";
 
-  const removeIntro = () => {
-    clearTimeout(removalTimer);
-    intro.remove();
+  const preparePanel = () => {
+    document.body.classList.remove("has-welcome");
+    siteShell?.removeAttribute("inert");
+    siteShell?.removeAttribute("aria-hidden");
+    if (themeColor) themeColor.content = "#8e3529";
+    document.title = "信息聚合中心";
   };
 
-  const cleanupListeners = () => {
-    window.removeEventListener("pointerdown", onPointerDown, true);
-    window.removeEventListener("pointermove", onPointerMove, true);
-    window.removeEventListener("pointerup", resetPointer, true);
-    window.removeEventListener("pointercancel", resetPointer, true);
-    window.removeEventListener("touchstart", onTouchStart, true);
-    window.removeEventListener("touchmove", onTouchMove, true);
-    window.removeEventListener("touchend", resetTouch, true);
-    window.removeEventListener("touchcancel", resetTouch, true);
-    window.removeEventListener("wheel", dismissIntro, true);
-    window.removeEventListener("scroll", onScroll, true);
-  };
-
-  const dismissIntro = () => {
-    if (dismissed) return;
-    dismissed = true;
-    cleanupListeners();
-    intro.classList.add("is-dismissed");
-    removalTimer = window.setTimeout(removeIntro, 420);
-  };
-
-  function onPointerDown(event) {
-    if (!event.isPrimary || event.button > 0) return;
-    pointerStart = { id: event.pointerId, x: event.clientX, y: event.clientY };
+  if (!shouldShow) {
+    preparePanel();
+    welcome.remove();
+    return;
   }
 
-  function onPointerMove(event) {
-    if (!pointerStart || event.pointerId !== pointerStart.id) return;
-    if (Math.hypot(event.clientX - pointerStart.x, event.clientY - pointerStart.y) >= 9) dismissIntro();
+  document.body.classList.add("has-welcome");
+  document.title = "RUIXUE · Welcome";
+  siteShell?.setAttribute("inert", "");
+  siteShell?.setAttribute("aria-hidden", "true");
+
+  for (let index = 0; index < 22; index += 1) {
+    const spark = document.createElement("i");
+    const useSideEdge = Math.random() < .5;
+    const left = useSideEdge
+      ? (Math.random() < .5 ? Math.random() * 18 : 82 + Math.random() * 18)
+      : 18 + Math.random() * 64;
+    const top = useSideEdge
+      ? Math.random() * 84
+      : (Math.random() < .5 ? Math.random() * 18 : 74 + Math.random() * 10);
+    spark.className = "welcome-pavilion__spark";
+    spark.style.left = `${left}%`;
+    spark.style.top = `${top}%`;
+    spark.style.setProperty("--duration", `${3 + Math.random() * 4}s`);
+    spark.style.setProperty("--delay", `${-Math.random() * 4}s`);
+    sparkles?.appendChild(spark);
   }
 
-  function resetPointer(event) {
-    if (!pointerStart || event.pointerId === pointerStart.id) pointerStart = undefined;
-  }
+  let leaving = false;
+  enterButton?.addEventListener("click", () => {
+    if (leaving) return;
+    leaving = true;
+    enterButton.disabled = true;
+    welcome.classList.add("is-leaving");
 
-  function onTouchStart(event) {
-    const touch = event.touches[0];
-    if (touch) touchStart = { x: touch.clientX, y: touch.clientY };
-  }
-
-  function onTouchMove(event) {
-    const touch = event.touches[0];
-    if (!touch || !touchStart) return;
-    if (Math.hypot(touch.clientX - touchStart.x, touch.clientY - touchStart.y) >= 9) dismissIntro();
-  }
-
-  function resetTouch() {
-    touchStart = undefined;
-  }
-
-  function onScroll() {
-    if (Math.abs(window.scrollY - initialScrollY) >= 4) dismissIntro();
-  }
-
-  window.addEventListener("pointerdown", onPointerDown, true);
-  window.addEventListener("pointermove", onPointerMove, true);
-  window.addEventListener("pointerup", resetPointer, true);
-  window.addEventListener("pointercancel", resetPointer, true);
-  window.addEventListener("touchstart", onTouchStart, { capture: true, passive: true });
-  window.addEventListener("touchmove", onTouchMove, { capture: true, passive: true });
-  window.addEventListener("touchend", resetTouch, true);
-  window.addEventListener("touchcancel", resetTouch, true);
-  window.addEventListener("wheel", dismissIntro, { capture: true, passive: true });
-  window.addEventListener("scroll", onScroll, { capture: true, passive: true });
-
-  intro.addEventListener("animationend", event => {
-    if (event.target !== intro || event.animationName !== "signature-intro-lifecycle") return;
-    cleanupListeners();
-    removeIntro();
+    const delay = matchMedia("(prefers-reduced-motion: reduce)").matches ? 140 : 900;
+    window.setTimeout(() => {
+      preparePanel();
+      welcome.remove();
+      location.hash = "home";
+      const homeTitle = $("#home-title");
+      homeTitle?.setAttribute("tabindex", "-1");
+      homeTitle?.focus({ preventScroll: true });
+    }, delay);
   });
-  removalTimer = window.setTimeout(() => {
-    cleanupListeners();
-    removeIntro();
-  }, 5200);
 }
 
 const avatarUnlock = $("#avatar-unlock");
@@ -912,8 +886,8 @@ document.querySelectorAll("[data-go]").forEach(button => button.addEventListener
 document.addEventListener("click", event => { const button = event.target.closest("[data-detail]"); if (button) openDetail(button.dataset.detail); if (event.target.matches("[data-close-dialog]")) $("#notice-dialog").close(); });
 $("#notice-dialog").addEventListener("click", event => { if (event.target === event.currentTarget) event.currentTarget.close(); });
 window.addEventListener("hashchange", route);
+initWelcomePavilion();
 route();
-initSignatureIntro();
 initData();
 initUrbanData();
 initUrbanHistory();
