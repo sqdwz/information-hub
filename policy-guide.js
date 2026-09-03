@@ -2,8 +2,7 @@ const endpoints = {
   index: "/data/policy/index.json",
   snapshot: "/data/policy/snapshot.json",
   document: "/data/policy/document",
-  localBase: "/data/policy/",
-  remoteBase: "https://raw.githubusercontent.com/sqdwz/policy-library/main/"
+  localBase: "/data/policy/"
 };
 
 const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
@@ -36,8 +35,7 @@ async function loadPolicy(id) {
   if (!item) throw new Error("资料索引中没有这份文件");
   const localRecord = `${endpoints.localBase}${String(item.record_path).replace(/^data\//, "")}`;
   const workerRecord = `${endpoints.document}?path=${encodeURIComponent(item.record_path)}`;
-  const remoteRecord = `${endpoints.remoteBase}${item.record_path}`;
-  const record = await firstAvailable(local ? [localRecord, workerRecord, remoteRecord] : [workerRecord, localRecord, remoteRecord], value => value.id === id && value.guide?.chapters?.length);
+  const record = await firstAvailable(local ? [localRecord, workerRecord] : [workerRecord, localRecord], value => value.id === id && value.guide?.chapters?.length);
   return { item, record };
 }
 

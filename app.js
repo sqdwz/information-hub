@@ -1,18 +1,14 @@
 const DATA_ENDPOINTS = {
   airspace: "/data/airspace.json",
-  airspaceFallback: "https://raw.githubusercontent.com/sqdwz/hainan-airspace/main/data/latest.json",
   urban: "/data/urban-renewal/latest.json",
   urbanIndex: "/data/urban-renewal/index.json",
   urbanHistory: "/data/urban-renewal/history",
-  urbanFallback: "https://raw.githubusercontent.com/sqdwz/urban-renewal/main/data/latest.json",
-  urbanFallbackBase: "https://raw.githubusercontent.com/sqdwz/urban-renewal/main/",
   policyIndex: "/data/policy/index.json",
   policyCategories: "/data/policy/categories.json",
   policyCategoriesSnapshot: "/data/policy/categories-snapshot.json",
   policyDocument: "/data/policy/document",
   policySnapshot: "/data/policy/snapshot.json",
-  policyLocalBase: "/data/policy/",
-  policyFallbackBase: "https://raw.githubusercontent.com/sqdwz/policy-library/main/"
+  policyLocalBase: "/data/policy/"
 };
 const statusMeta = { active: ["正在生效", "pill--active"], upcoming: ["即将生效", "pill--upcoming"], ended: ["已结束", "pill--ended"], new: ["本轮新增", "pill--upcoming"] };
 const policyStatusMeta = {
@@ -594,29 +590,16 @@ function setUrbanView(view) {
 }
 
 async function fetchUrbanHistoryDocument(path) {
-  try {
-    const response = await fetch(`${DATA_ENDPOINTS.urbanHistory}?path=${encodeURIComponent(path)}&v=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Cloudflare HTTP ${response.status}`);
-    return response.json();
-  } catch (endpointError) {
-    const response = await fetch(`${DATA_ENDPOINTS.urbanFallbackBase}${path}?v=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) throw endpointError;
-    return response.json();
-  }
+  const response = await fetch(`${DATA_ENDPOINTS.urbanHistory}?path=${encodeURIComponent(path)}&v=${Date.now()}`, { cache: "no-store" });
+  if (!response.ok) throw new Error(`Cloudflare HTTP ${response.status}`);
+  return response.json();
 }
 
 async function initUrbanHistory() {
   try {
-    let index;
-    try {
-      const response = await fetch(`${DATA_ENDPOINTS.urbanIndex}?v=${Date.now()}`, { cache: "no-store" });
-      if (!response.ok) throw new Error(`Cloudflare HTTP ${response.status}`);
-      index = await response.json();
-    } catch (endpointError) {
-      const response = await fetch(`${DATA_ENDPOINTS.urbanFallbackBase}data/index.json?v=${Date.now()}`, { cache: "no-store" });
-      if (!response.ok) throw endpointError;
-      index = await response.json();
-    }
+    const response = await fetch(`${DATA_ENDPOINTS.urbanIndex}?v=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Cloudflare HTTP ${response.status}`);
+    const index = await response.json();
     const historyIndex = await fetchUrbanHistoryDocument(index.history?.index_path || "data/history/index.json");
     const documents = await Promise.all((historyIndex.datasets || []).map((dataset) => fetchUrbanHistoryDocument(dataset.path)));
     renderUrbanHistory(historyIndex, documents);
@@ -630,7 +613,7 @@ async function initUrbanHistory() {
 function renderUrbanError() {
   $("#urban-updated").textContent = "城市更新数据暂时无法读取";
   renderUrbanSummary("数据暂未载入，请稍后重试。");
-  $("#urban-active-list").innerHTML = '<div class="empty-card">无法读取 Cloudflare 数据备份及 GitHub 公开数据源。</div>';
+  $("#urban-active-list").innerHTML = '<div class="empty-card">无法读取城市更新数据备份，请稍后重试。</div>';
   $("#urban-source-list").innerHTML = "";
   $("#home-urban-metric").textContent = "数据暂未载入";
 }
@@ -641,16 +624,8 @@ async function initUrbanData() {
     if (!response.ok) throw new Error(`Cloudflare HTTP ${response.status}`);
     renderUrban(await response.json());
   } catch (error) {
-    try {
-      const response = await fetch(`${DATA_ENDPOINTS.urbanFallback}?v=${Date.now()}`, { cache: "no-store" });
-      if (!response.ok) throw new Error(`Fallback HTTP ${response.status}`);
-      renderUrban(await response.json());
-      $("#urban-updated").textContent = `${$("#urban-updated").textContent} · Cloudflare 备份暂不可用，已直连 GitHub`;
-      console.warn("Cloudflare urban renewal data unavailable; using GitHub fallback", error);
-    } catch (fallbackError) {
-      console.error("Failed to load urban renewal data", fallbackError);
-      renderUrbanError();
-    }
+    console.error("Failed to load urban renewal data", error);
+    renderUrbanError();
   }
 }
 
@@ -805,9 +780,8 @@ async function fetchPolicyRecord(item) {
   if (policyRecordCache.has(item.id)) return policyRecordCache.get(item.id);
   const endpoint = `${DATA_ENDPOINTS.policyDocument}?path=${encodeURIComponent(item.record_path)}`;
   const local = localPolicyRecordUrl(item.record_path);
-  const remote = `${DATA_ENDPOINTS.policyFallbackBase}${item.record_path}`;
   const localDevelopment = ["127.0.0.1", "localhost"].includes(location.hostname);
-  const candidates = localDevelopment ? [local, endpoint, remote] : [endpoint, local, remote];
+  const candidates = localDevelopment ? [local, endpoint] : [endpoint, local];
   let lastError;
   for (const url of candidates) {
     try {
@@ -865,20 +839,11 @@ async function initData() {
     airspaceData = normalizeAirspaceData(await response.json());
     renderAirspace(airspaceData);
   } catch (error) {
-    try {
-      const fallback = await fetch(`${DATA_ENDPOINTS.airspaceFallback}?v=${Date.now()}`, { cache: "no-store" });
-      if (!fallback.ok) throw new Error(`Fallback HTTP ${fallback.status}`);
-      airspaceData = normalizeAirspaceData(await fallback.json());
-      renderAirspace(airspaceData);
-      $("#airspace-updated").textContent = `${$("#airspace-updated").textContent} · Cloudflare 备份暂不可用，已直连 GitHub`;
-      console.warn("Cloudflare airspace data unavailable; using GitHub fallback", error);
-    } catch (fallbackError) {
-      $("#airspace-updated").textContent = "空域数据暂时无法读取";
-      $("[data-summary-message]").textContent = "数据暂未载入，请稍后重试。";
-      $("#active-list").innerHTML = '<div class="empty-card">无法读取 Cloudflare 备份及 GitHub 信息源。</div>';
-      $("#home-airspace-metric").textContent = "数据暂未载入";
-      console.error("Failed to load airspace data", fallbackError);
-    }
+    $("#airspace-updated").textContent = "空域数据暂时无法读取";
+    $("[data-summary-message]").textContent = "数据暂未载入，请稍后重试。";
+    $("#active-list").innerHTML = '<div class="empty-card">无法读取空域数据备份，请稍后重试。</div>';
+    $("#home-airspace-metric").textContent = "数据暂未载入";
+    console.error("Failed to load airspace data", error);
   }
 }
 

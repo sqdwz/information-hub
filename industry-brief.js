@@ -1,9 +1,7 @@
 (() => {
 const BRIEF_ENDPOINT = "/data/brief/latest.json";
-const BRIEF_FALLBACK_URL = "https://raw.githubusercontent.com/sqdwz/industry-brief/main/data/latest.json";
 const BRIEF_INDEX_ENDPOINT = "/data/brief/index.json";
 const BRIEF_ARCHIVE_ENDPOINT = "/data/brief/archive";
-const GITHUB_BRIEF_BASE_URL = "https://raw.githubusercontent.com/sqdwz/industry-brief/main";
 let archiveReports = [];
 let selectedArchivePath = null;
 
@@ -32,7 +30,7 @@ function briefHighlights(summary) {
   return `<div class="brief-highlights" aria-label="本期重点"><span>本期重点</span><ul>${parts.map((part) => `<li>${escapeHtml(part.replace(/^本次日报聚焦\d+条当天动态[：:]?/, ""))}</li>`).join("")}</ul></div>`;
 }
 
-function renderIndustryBrief(data, source = "cloudflare") {
+function renderIndustryBrief(data) {
   const section = document.querySelector("#ai");
   if (!section || !Array.isArray(data.items)) return;
 
@@ -60,7 +58,6 @@ function renderIndustryBrief(data, source = "cloudflare") {
     <div class="page-head brief-head panel">
       <div><p class="eyebrow">行业日报与周汇总</p><h2>${escapeHtml(data.title || `${reportType}｜${data.date || ""}`)}</h2>${briefHighlights(data.summary)}<p class="brief-collection">本期已收录：<strong>${dailyCount} 条日报</strong><span>·</span><strong>${weeklyCount} 条周报</strong></p></div>
     </div>
-    <div class="brief-notice">数据来自 <a href="https://github.com/sqdwz/industry-brief" target="_blank" rel="noreferrer">sqdwz/industry-brief</a>，${source === "fallback" ? "已使用 GitHub 直连数据" : "由 Cloudflare 自动同步"}。</div>
     <p class="brief-coverage">${escapeHtml(data.coverage_note || "")}</p>
     <div class="brief-filter" aria-label="按标签筛选本期动态">
       <span class="brief-filter__label">标签筛选</span>
@@ -163,7 +160,7 @@ function renderArchiveExplorer() {
     const report = archiveReports.find((item) => item.entry.path === button.dataset.briefArchivePath);
     if (!report) return;
     selectedArchivePath = report.entry.path;
-    renderIndustryBrief(report.data, "cloudflare");
+    renderIndustryBrief(report.data);
     renderArchiveExplorer();
     document.querySelector("#ai")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }));
@@ -182,27 +179,20 @@ function renderArchiveExplorer() {
   });
 }
 
-async function fetchBriefJson(endpoint, fallbackUrl) {
-  try {
-    const response = await fetch(endpoint, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Brief endpoint returned ${response.status}`);
-    return await response.json();
-  } catch (error) {
-    if (!fallbackUrl) throw error;
-    const response = await fetch(fallbackUrl, { cache: "no-store" });
-    if (!response.ok) throw error;
-    return response.json();
-  }
+async function fetchBriefJson(endpoint) {
+  const response = await fetch(endpoint, { cache: "no-store" });
+  if (!response.ok) throw new Error(`Brief endpoint returned ${response.status}`);
+  return response.json();
 }
 
 async function hydrateArchiveReports() {
   const host = document.querySelector("[data-brief-archive]");
   try {
-    const index = await fetchBriefJson(BRIEF_INDEX_ENDPOINT, `${GITHUB_BRIEF_BASE_URL}/data/index.json`);
+    const index = await fetchBriefJson(BRIEF_INDEX_ENDPOINT);
     const entries = (index.recent || []).filter((entry) => isArchivePath(entry.path));
     archiveReports = await Promise.all(entries.map(async (entry) => ({
       entry,
-      data: await fetchBriefJson(`${BRIEF_ARCHIVE_ENDPOINT}?path=${encodeURIComponent(entry.path)}`, `${GITHUB_BRIEF_BASE_URL}/${entry.path}`)
+      data: await fetchBriefJson(`${BRIEF_ARCHIVE_ENDPOINT}?path=${encodeURIComponent(entry.path)}`)
     })));
     selectedArchivePath = index.latest_daily || index.latest_weekly || archiveReports[0]?.entry.path || null;
     renderArchiveExplorer();
@@ -215,25 +205,18 @@ async function hydrateArchiveReports() {
 function renderBriefError() {
   const section = document.querySelector("#ai");
   if (!section) return;
-  section.innerHTML = `<div class="empty-state brief-error"><p>行业数据暂时无法加载。</p><a href="https://github.com/sqdwz/industry-brief" target="_blank" rel="noreferrer">查看数据仓库 ↗</a></div>`;
+  section.innerHTML = `<div class="empty-state brief-error"><p>行业数据暂时无法加载，请稍后重试。</p></div>`;
 }
 
 async function loadIndustryBrief() {
   try {
     const response = await fetch(BRIEF_ENDPOINT, { cache: "no-store" });
     if (!response.ok) throw new Error(`Industry brief endpoint returned ${response.status}`);
-    renderIndustryBrief(await response.json(), "cloudflare");
+    renderIndustryBrief(await response.json());
     await hydrateArchiveReports();
   } catch (endpointError) {
-    try {
-      const response = await fetch(BRIEF_FALLBACK_URL, { cache: "no-store" });
-      if (!response.ok) throw endpointError;
-      renderIndustryBrief(await response.json(), "fallback");
-      await hydrateArchiveReports();
-    } catch {
-      console.error("Industry brief load failed", endpointError);
-      renderBriefError();
-    }
+    console.error("Industry brief load failed", endpointError);
+    renderBriefError();
   }
 }
 
