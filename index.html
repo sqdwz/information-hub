@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#071b58" />
     <meta name="description" content="个人长期使用的信息聚合中心：空域、AI、城市更新与文件资料。" />
     <title>信息聚合中心</title>
-    <link rel="stylesheet" href="./styles.css?v=20260904-home-carousel" />
+    <link rel="stylesheet" href="./styles.css?v=20260903-sayo-theme" />
     <link rel="stylesheet" href="./industry-brief.css?v=20260904-page-head-template" />
   </head>
   <body>
@@ -43,23 +43,12 @@
             <p class="hero__copy">聚合空域、AI、城市更新与文件资料。重要信息先看结论，原始来源保持可追溯，历史信息逐步形成可检索资料库。</p>
             <p class="hero__note">当前已接入：<strong>空域信息、城市更新每日巡检、文件资料库</strong><span aria-hidden="true">·</span>其余板块将按数据源逐步接入</p>
           </div>
-          <section class="portal-carousel" aria-label="信息板块入口">
-            <div class="portal-carousel__inner" style="--quantity: 4">
-              <button class="portal-carousel__card" type="button" data-go="airspace" style="--index: 0; --accent: 109, 148, 255" aria-label="进入空域信息">
-                <div class="portal-carousel__surface"><span class="status status--active">已接入</span><h2>空域信息</h2><p>海南省禁飞、临时空域管制与无人机作业相关公告巡检。</p><span class="portal-carousel__metric" id="home-airspace-metric">加载巡检信息中…</span><span class="portal-carousel__arrow">进入 <b>→</b></span></div>
-              </button>
-              <button class="portal-carousel__card" type="button" data-go="ai" style="--index: 1; --accent: 179, 137, 255" aria-label="进入行业日报与周汇总">
-                <div class="portal-carousel__surface"><span class="status">行业动态</span><h2>行业日报与周汇总</h2><p>行业日报、周报、模型发布与 AI 工具动态。</p><span class="portal-carousel__metric">日报 / 周报 / 归档</span><span class="portal-carousel__arrow">查看 <b>→</b></span></div>
-              </button>
-              <button class="portal-carousel__card" type="button" data-go="urban" style="--index: 2; --accent: 103, 195, 207" aria-label="进入城市更新">
-                <div class="portal-carousel__surface"><span class="status status--active">已接入</span><h2>城市更新</h2><p>海南省城市更新领域招投标信息每日巡检报告。</p><span class="portal-carousel__metric" id="home-urban-metric">加载巡检信息中…</span><span class="portal-carousel__arrow">查看巡检 <b>→</b></span></div>
-              </button>
-              <button class="portal-carousel__card" type="button" data-go="policy" style="--index: 3; --accent: 230, 190, 113" aria-label="进入资料库">
-                <div class="portal-carousel__surface"><span class="status status--active">已接入</span><h2>资料库</h2><p>城市更新、征收补偿和实施意见等文件资料。</p><span class="portal-carousel__metric" id="home-policy-metric">加载资料索引中…</span><span class="portal-carousel__arrow">检索资料 <b>→</b></span></div>
-              </button>
-            </div>
-            <p class="portal-carousel__hint">旋转浏览入口，悬停或触摸卡片即可暂停。</p>
-          </section>
+          <div class="portal-grid" aria-label="信息板块入口">
+            <button class="portal portal--air" data-go="airspace"><span class="status status--active">已接入</span><h2>空域信息</h2><p>海南省禁飞、临时空域管制与无人机作业相关公告巡检。</p><span class="portal__metric" id="home-airspace-metric">加载巡检信息中…</span><span class="portal__arrow">进入 <b>→</b></span></button>
+            <button class="portal" data-go="ai"><span class="status">待接入</span><h2>行业日报与周汇总</h2><p>行业日报、周报、模型发布与 AI 工具动态。</p><span class="portal__metric">日报 / 周报 / 归档</span><span class="portal__arrow">查看 <b>→</b></span></button>
+            <button class="portal" data-go="urban"><span class="status status--active">已接入</span><h2>城市更新</h2><p>海南省城市更新领域招投标信息每日巡检报告。</p><span class="portal__metric" id="home-urban-metric">加载巡检信息中…</span><span class="portal__arrow">查看巡检 <b>→</b></span></button>
+            <button class="portal" data-go="policy"><span class="status status--active">已接入</span><h2>资料库</h2><p>城市更新、征收补偿和实施意见等文件资料。</p><span class="portal__metric" id="home-policy-metric">加载资料索引中…</span><span class="portal__arrow">检索资料 <b>→</b></span></button>
+          </div>
         </section>
 
         <section class="page" id="airspace" data-page="airspace" aria-labelledby="airspace-title">
