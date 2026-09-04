@@ -72,7 +72,7 @@ function initWelcomePavilion() {
   siteShell?.setAttribute("inert", "");
   siteShell?.setAttribute("aria-hidden", "true");
 
-  for (let index = 0; index < 22; index += 1) {
+  for (let index = 0; index < 46; index += 1) {
     const spark = document.createElement("i");
     const useSideEdge = Math.random() < .5;
     const left = useSideEdge
@@ -84,6 +84,9 @@ function initWelcomePavilion() {
     spark.className = "welcome-pavilion__spark";
     spark.style.left = `${left}%`;
     spark.style.top = `${top}%`;
+    spark.style.setProperty("--size", `${1.5 + Math.random() * 3.5}px`);
+    spark.style.setProperty("--drift-x", `${-16 + Math.random() * 32}px`);
+    spark.style.setProperty("--drift-y", `${-22 + Math.random() * 18}px`);
     spark.style.setProperty("--duration", `${3 + Math.random() * 4}s`);
     spark.style.setProperty("--delay", `${-Math.random() * 4}s`);
     sparkles?.appendChild(spark);
