@@ -433,7 +433,7 @@ body.has-welcome { overflow: hidden; }
 .welcome-pavilion__enter {
   position: absolute;
   z-index: 20;
-  top: 77%;
+  top: 65%;
   left: 50%;
   width: clamp(260px, 32vw, 360px);
   height: clamp(230px, 22vw, 260px);
@@ -448,7 +448,7 @@ body.has-welcome { overflow: hidden; }
   --active: 0;
   --transition: .3s ease-in-out;
   position: absolute;
-  top: 68%;
+  top: 50%;
   left: 50%;
   display: inline-flex;
   align-items: center;
@@ -549,7 +549,7 @@ body.has-welcome { overflow: hidden; }
   50% { transform: scale(1.23); }
 }
 @media (max-width: 900px) {
-  .welcome-pavilion__enter { top: 77%; width: min(72vw, 300px); height: 250px; }
+  .welcome-pavilion__enter { top: 65%; width: min(72vw, 300px); height: 250px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
