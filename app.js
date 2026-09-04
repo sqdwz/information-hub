@@ -97,9 +97,6 @@ function initWelcomePavilion() {
     if (leaving) return;
     leaving = true;
     enterButton.disabled = true;
-    welcome.classList.add("is-leaving");
-
-    const delay = matchMedia("(prefers-reduced-motion: reduce)").matches ? 140 : 900;
     window.setTimeout(() => {
       preparePanel();
       welcome.remove();
@@ -107,7 +104,7 @@ function initWelcomePavilion() {
       const homeTitle = $("#home-title");
       homeTitle?.setAttribute("tabindex", "-1");
       homeTitle?.focus({ preventScroll: true });
-    }, delay);
+    }, 0);
   });
 }
 
