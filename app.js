@@ -72,7 +72,7 @@ function initWelcomePavilion() {
   siteShell?.setAttribute("inert", "");
   siteShell?.setAttribute("aria-hidden", "true");
 
-  for (let index = 0; index < 46; index += 1) {
+  for (let index = 0; index < 92; index += 1) {
     const spark = document.createElement("i");
     const useSideEdge = Math.random() < .5;
     const left = useSideEdge
