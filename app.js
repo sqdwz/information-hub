@@ -854,6 +854,19 @@ function initHomePortalCarousel() {
   if (!carousel || cards.length < 2) return;
 
   carousel.classList.add("portal-carousel");
+  const navigation = document.createElement("div");
+  navigation.className = "portal-carousel__nav";
+  navigation.setAttribute("aria-label", "切换首页信息板块");
+  const navButtons = cards.map((card, index) => {
+    const button = document.createElement("button");
+    const title = card.querySelector("h2")?.textContent?.trim() || `第 ${index + 1} 张卡片`;
+    button.type = "button";
+    button.setAttribute("aria-label", `显示${title}`);
+    button.addEventListener("click", () => setActive(index, { scrollIntoView: compactViewport.matches }));
+    navigation.appendChild(button);
+    return button;
+  });
+  carousel.appendChild(navigation);
   let activeIndex = 0;
   let autoplay = null;
   let paused = false;
@@ -880,6 +893,8 @@ function initHomePortalCarousel() {
       card.dataset.carouselPosition = position;
       card.classList.toggle("is-carousel-active", position === "current");
       card.setAttribute("aria-current", position === "current" ? "true" : "false");
+      navButtons[index].classList.toggle("is-active", position === "current");
+      navButtons[index].setAttribute("aria-current", position === "current" ? "true" : "false");
     });
 
     if (compactViewport.matches && scrollIntoView) {
