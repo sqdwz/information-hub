@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#071b58" />
     <meta name="description" content="个人长期使用的信息聚合中心：空域、AI、城市更新与文件资料。" />
     <title>信息聚合中心</title>
-<link rel="stylesheet" href="./styles.css?v=20260905-home-portal-glass" />
+<link rel="stylesheet" href="./styles.css?v=20260905-home-portal-summaries" />
     <link rel="stylesheet" href="./industry-brief.css?v=20260903-sayo-theme-v3" />
   </head>
   <body>
@@ -51,10 +51,10 @@
             <p class="hero__note">当前已接入：<strong>空域信息、城市更新每日巡检、文件资料库</strong><span aria-hidden="true">·</span>其余板块将按数据源逐步接入</p>
           </div>
           <div class="portal-grid" aria-label="信息板块入口">
-            <button class="portal portal--air" data-go="airspace" style="--portal-accent:#6f9ce1;--portal-tint:rgba(122, 166, 235, .33)"><span class="portal__topline"><span class="portal__code">AIRSPACE</span><span class="status status--active">已接入</span></span><h2>空域信息</h2><p>海南省禁飞、临时空域管制与无人机作业相关公告巡检。</p><span class="portal__metric" id="home-airspace-metric">加载巡检信息中…</span><span class="portal__arrow">进入 <b>→</b></span></button>
-            <button class="portal" data-go="ai" style="--portal-accent:#9d83bc;--portal-tint:rgba(177, 139, 210, .3)"><span class="portal__topline"><span class="portal__code">INDUSTRY BRIEF</span><span class="status">待接入</span></span><h2>行业日报与周汇总</h2><p>行业日报、周报、模型发布与 AI 工具动态。</p><span class="portal__metric">日报 / 周报 / 归档</span><span class="portal__arrow">查看 <b>→</b></span></button>
-            <button class="portal" data-go="urban" style="--portal-accent:#d2a36d;--portal-tint:rgba(237, 186, 116, .3)"><span class="portal__topline"><span class="portal__code">URBAN RENEWAL</span><span class="status status--active">已接入</span></span><h2>城市更新</h2><p>海南省城市更新领域招投标信息每日巡检报告。</p><span class="portal__metric" id="home-urban-metric">加载巡检信息中…</span><span class="portal__arrow">查看巡检 <b>→</b></span></button>
-            <button class="portal" data-go="policy" style="--portal-accent:#62a8a5;--portal-tint:rgba(105, 184, 179, .3)"><span class="portal__topline"><span class="portal__code">POLICY LIBRARY</span><span class="status status--active">已接入</span></span><h2>资料库</h2><p>城市更新、征收补偿和实施意见等文件资料。</p><span class="portal__metric" id="home-policy-metric">加载资料索引中…</span><span class="portal__arrow">检索资料 <b>→</b></span></button>
+            <button class="portal portal--air" data-go="airspace" style="--portal-accent:#6f9ce1;--portal-tint:rgba(122, 166, 235, .33)"><span class="portal__topline"><span class="portal__code">AIRSPACE</span><span class="status">每日巡检</span></span><h2>空域信息</h2><p>聚合海南禁飞、临时管制与无人机作业公告，优先呈现当前生效和即将生效事项。</p><span class="portal__metric" id="home-airspace-metric">加载巡检信息中…</span><span class="portal__arrow">进入 <b>→</b></span></button>
+            <button class="portal" data-go="ai" style="--portal-accent:#9d83bc;--portal-tint:rgba(177, 139, 210, .3)"><span class="portal__topline"><span class="portal__code">INDUSTRY BRIEF</span><span class="status">日报 · 周报</span></span><h2>行业日报与周汇总</h2><p>汇集 AI、GIS、测绘与无人机动态；按日速览，按周沉淀，并支持回看历史内容。</p><span class="portal__metric">日报 / 周报 / 归档</span><span class="portal__arrow">查看 <b>→</b></span></button>
+            <button class="portal" data-go="urban" style="--portal-accent:#d2a36d;--portal-tint:rgba(237, 186, 116, .3)"><span class="portal__topline"><span class="portal__code">URBAN RENEWAL</span><span class="status">项目巡检</span></span><h2>城市更新</h2><p>跟踪海南城市更新相关招标、征收、测绘与实施信息，聚焦新发布和当前有效项目。</p><span class="portal__metric" id="home-urban-metric">加载巡检信息中…</span><span class="portal__arrow">查看巡检 <b>→</b></span></button>
+            <button class="portal" data-go="policy" style="--portal-accent:#62a8a5;--portal-tint:rgba(105, 184, 179, .3)"><span class="portal__topline"><span class="portal__code">POLICY LIBRARY</span><span class="status">主题检索</span></span><h2>资料库</h2><p>整理城市更新、征收补偿与实施意见等公开文件，可按主题和效力状态快速查阅。</p><span class="portal__metric" id="home-policy-metric">加载资料索引中…</span><span class="portal__arrow">检索资料 <b>→</b></span></button>
           </div>
         </section>
 
