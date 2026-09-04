@@ -466,14 +466,14 @@ body.has-welcome { overflow: hidden; }
   height: 27%;
   overflow: hidden;
   background:
-    linear-gradient(90deg, transparent 4%, rgba(228, 240, 255, .42) 50%, transparent 96%) center bottom / 58% 100% no-repeat,
-    repeating-linear-gradient(0deg, transparent 0 13px, rgba(197, 221, 255, .16) 14px 15px),
+    linear-gradient(90deg, transparent 4%, rgba(238, 246, 255, .72) 50%, transparent 96%) center bottom / 58% 100% no-repeat,
+    repeating-linear-gradient(0deg, transparent 0 15px, rgba(197, 221, 255, .22) 16px 17px),
     linear-gradient(180deg, transparent, rgba(108, 162, 255, .1));
   background-size: 58% 100%, 100% 52px, 100% 100%;
   mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .88) 28%, #000 100%);
   -webkit-mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .88) 28%, #000 100%);
   mix-blend-mode: screen;
-  opacity: .42;
+  opacity: .58;
   pointer-events: none;
   animation: welcome-water-shimmer 5.5s linear infinite;
 }
@@ -490,40 +490,31 @@ body.has-welcome { overflow: hidden; }
   transform: translateX(-50%) scaleX(.55);
   animation: welcome-water-reflection 4.8s ease-in-out infinite;
 }
-.welcome-pavilion__copy {
+.welcome-pavilion__core {
   position: absolute;
   z-index: 4;
-  top: 27.3%;
-  right: 0;
-  left: 0;
-  display: grid;
-  justify-items: center;
+  top: 50.2%;
+  left: 50%;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, .98) 0 3%, rgba(208, 230, 255, .74) 5%, transparent 38%);
+  box-shadow: 0 0 22px rgba(182, 214, 255, .86);
   pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: welcome-core-glimmer 3.6s ease-in-out infinite;
 }
-.welcome-pavilion__word {
-  display: block;
-  color: transparent;
-  font-family: Georgia, "Times New Roman", serif;
-  font-weight: 500;
-  line-height: 1;
-  text-shadow: 0 0 20px rgba(191, 214, 255, .34);
-  background: linear-gradient(100deg, rgba(219, 230, 255, .25) 10%, rgba(255, 255, 255, .98) 46%, rgba(203, 220, 255, .35) 62%, rgba(255, 255, 255, .82) 78%);
-  background-size: 220% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation: welcome-word-breathe 5.2s ease-in-out infinite, welcome-word-sheen 8s linear infinite;
+.welcome-pavilion__core::before,
+.welcome-pavilion__core::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: linear-gradient(90deg, transparent, rgba(242, 250, 255, .9), transparent);
+  content: "";
+  transform: translate(-50%, -50%);
 }
-.welcome-pavilion__word--welcome {
-  font-size: clamp(28px, 6vw, 39px);
-  letter-spacing: .35em;
-  padding-left: .35em;
-}
-.welcome-pavilion__word--ruixue {
-  margin-top: clamp(39px, 5.3vh, 56px);
-  font-size: clamp(31px, 6.5vw, 43px);
-  letter-spacing: .4em;
-  padding-left: .4em;
-  animation-delay: -.9s, -1.4s;
+.welcome-pavilion__core::before { width: 100%; height: 1px; }
+.welcome-pavilion__core::after { width: 1px; height: 100%; }
 }
 .welcome-pavilion__enter {
   position: absolute;
@@ -594,20 +585,16 @@ body.has-welcome { overflow: hidden; }
   52% { opacity: .72; transform: translate(-50%, -50%) scale(1.012); }
 }
 @keyframes welcome-water-shimmer {
-  from { background-position: 0 0, 0 0, 0 0; }
-  to { background-position: 58px 44px, 0 52px, 0 0; }
+  from { background-position: -18% 0, 0 0, 0 0; }
+  to { background-position: 118% 0, 0 52px, 0 0; }
 }
 @keyframes welcome-water-reflection {
   0%, 100% { opacity: .26; transform: translateX(-50%) scaleX(.42); }
   50% { opacity: .78; transform: translateX(-50%) scaleX(1.02); }
 }
-@keyframes welcome-word-breathe {
-  0%, 100% { opacity: .05; filter: blur(.1px); transform: translateY(1px) scale(.995); }
-  50% { opacity: .52; filter: blur(0); transform: translateY(0) scale(1); }
-}
-@keyframes welcome-word-sheen {
-  from { background-position: 180% 0; }
-  to { background-position: -60% 0; }
+@keyframes welcome-core-glimmer {
+  0%, 100% { opacity: .42; transform: translate(-50%, -50%) rotate(0deg) scale(.78); }
+  50% { opacity: 1; transform: translate(-50%, -50%) rotate(90deg) scale(1.12); }
 }
 @keyframes welcome-flash-out {
   0% { opacity: 0; }
@@ -625,7 +612,7 @@ body.has-welcome { overflow: hidden; }
   .welcome-pavilion__spark,
   .welcome-pavilion__water,
   .welcome-pavilion__water::after,
-  .welcome-pavilion__word { animation: none !important; }
+  .welcome-pavilion__core { animation: none !important; }
   .welcome-pavilion.is-leaving .welcome-pavilion__background { transition: none; }
   .welcome-pavilion.is-leaving .welcome-pavilion__flash { animation-duration: .14s; }
 }
