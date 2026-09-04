@@ -605,18 +605,22 @@ body::before { background: linear-gradient(180deg, rgba(9, 24, 76, .62), rgba(63
   .section-heading h2 { color: #f1f5ff; }
 }
 
-/* Home portal carousel, adapted from the supplied Uiverse 3D card pattern. */
-.portal-carousel { --card-w: 286px; --card-h: 252px; --translate-z: 332px; position: relative; min-height: 500px; display: flex; align-items: center; justify-content: center; margin-top: 18px; overflow: hidden; isolation: isolate; text-align: center; }
-.portal-carousel::before { position: absolute; z-index: -1; inset: 14% 20% 17%; border: 1px solid rgba(211, 225, 255, .2); border-radius: 50%; background: radial-gradient(circle, rgba(180, 203, 255, .18), transparent 67%); box-shadow: 0 0 72px rgba(120, 153, 255, .23); content: ""; filter: blur(6px); }
-.portal-carousel__inner { position: absolute; width: var(--card-w); height: var(--card-h); top: calc(50% - (var(--card-h) / 2)); left: calc(50% - (var(--card-w) / 2)); z-index: 2; transform-style: preserve-3d; animation: portal-carousel-rotating 22s linear infinite; }
-@keyframes portal-carousel-rotating {
-  from { transform: perspective(1100px) rotateX(-12deg) rotateY(0); }
-  to { transform: perspective(1100px) rotateX(-12deg) rotateY(1turn); }
+/* Home portal carousel: cards orbit as a flat ring and always face the reader. */
+.portal-carousel { --card-w: 270px; --card-h: 270px; --orbit-radius: 235px; position: relative; min-height: 760px; display: flex; align-items: center; justify-content: center; margin-top: 18px; overflow: hidden; isolation: isolate; text-align: center; }
+.portal-carousel::before { position: absolute; z-index: -1; inset: 14% 25% 17%; border: 1px solid rgba(211, 225, 255, .2); border-radius: 50%; background: radial-gradient(circle, rgba(180, 203, 255, .18), transparent 67%); box-shadow: 0 0 72px rgba(120, 153, 255, .23); content: ""; filter: blur(6px); }
+.portal-carousel__inner { position: absolute; width: 0; height: 0; top: 50%; left: 50%; z-index: 2; animation: portal-carousel-orbit 26s linear infinite; }
+@keyframes portal-carousel-orbit {
+  from { transform: rotate(0turn); }
+  to { transform: rotate(1turn); }
 }
-.portal-carousel__card { position: absolute; display: block; overflow: hidden; inset: 0; padding: 0; border: 0; border-radius: 22px; background: transparent; color: inherit; cursor: pointer; transform: rotateY(calc((360deg / var(--quantity)) * var(--index))) translateZ(var(--translate-z)); transform-style: preserve-3d; backface-visibility: hidden; }
-.portal-carousel__card:focus-visible { outline: 2px solid #f2d694; outline-offset: 6px; }
-.portal-carousel__surface { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: flex-start; padding: 24px; border: 1px solid rgba(var(--accent), .72); border-radius: inherit; background: linear-gradient(150deg, rgba(247, 251, 255, .94), rgba(217, 229, 255, .68)), radial-gradient(circle at 18% 10%, rgba(var(--accent), .36), transparent 48%), radial-gradient(circle at 86% 90%, rgba(var(--accent), .27), transparent 52%); box-shadow: inset 0 1px rgba(255, 255, 255, .8), 0 18px 42px rgba(6, 22, 77, .34); color: #172646; text-align: left; backface-visibility: hidden; transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
-.portal-carousel__card:hover .portal-carousel__surface, .portal-carousel__card:focus-visible .portal-carousel__surface { border-color: rgba(var(--accent), .98); box-shadow: inset 0 1px rgba(255, 255, 255, .9), 0 22px 52px rgba(6, 22, 77, .46); transform: translateY(-4px); }
+@keyframes portal-carousel-counter-orbit {
+  from { transform: rotate(var(--counter-angle)) rotate(0turn); }
+  to { transform: rotate(var(--counter-angle)) rotate(-1turn); }
+}
+.portal-carousel__card { --angle: calc((360deg / var(--quantity)) * var(--index)); --counter-angle: calc(-1 * var(--angle)); position: absolute; display: block; width: var(--card-w); height: var(--card-h); top: calc(var(--card-h) / -2); left: calc(var(--card-w) / -2); padding: 0; border: 0; border-radius: 22px; background: transparent; color: inherit; cursor: pointer; transform: rotate(var(--angle)) translateY(calc(-1 * var(--orbit-radius))); }
+.portal-carousel__card:focus-visible { outline: none; }
+.portal-carousel__surface { box-sizing: border-box; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: flex-start; padding: 24px; border: 1px solid rgba(var(--accent), .72); border-radius: inherit; background: linear-gradient(150deg, rgba(247, 251, 255, .94), rgba(217, 229, 255, .68)), radial-gradient(circle at 18% 10%, rgba(var(--accent), .36), transparent 48%), radial-gradient(circle at 86% 90%, rgba(var(--accent), .27), transparent 52%); box-shadow: inset 0 1px rgba(255, 255, 255, .8), 0 18px 42px rgba(6, 22, 77, .34); color: #172646; text-align: left; animation: portal-carousel-counter-orbit 26s linear infinite; transition: border-color .2s ease, box-shadow .2s ease; }
+.portal-carousel__card:hover .portal-carousel__surface, .portal-carousel__card:focus-visible .portal-carousel__surface { border-color: rgba(var(--accent), .98); box-shadow: inset 0 1px rgba(255, 255, 255, .9), 0 22px 52px rgba(6, 22, 77, .46); }
 .portal-carousel__surface .status { border-color: rgba(var(--accent), .54); background: rgba(255, 255, 255, .48); color: #35529f; }
 .portal-carousel__surface .status--active { background: rgba(var(--accent), .16); color: #29477d; }
 .portal-carousel__surface h2 { margin: 20px 0 10px; font-size: 26px; }
@@ -625,13 +629,13 @@ body::before { background: linear-gradient(180deg, rgba(9, 24, 76, .62), rgba(63
 .portal-carousel__arrow { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(var(--accent), .3); color: #506486; font-size: 13px; }
 .portal-carousel__arrow b { color: rgb(var(--accent)); font-size: 20px; line-height: .7; }
 .portal-carousel__hint { position: absolute; right: 0; bottom: 12px; left: 0; color: rgba(238, 245, 255, .82); font-size: 12px; text-shadow: 0 2px 8px rgba(8, 20, 63, .84); }
-.portal-carousel:hover .portal-carousel__inner, .portal-carousel:focus-within .portal-carousel__inner, .portal-carousel:active .portal-carousel__inner { animation-play-state: paused; }
+.portal-carousel:hover .portal-carousel__inner, .portal-carousel:focus-within .portal-carousel__inner, .portal-carousel:active .portal-carousel__inner, .portal-carousel:hover .portal-carousel__surface, .portal-carousel:focus-within .portal-carousel__surface, .portal-carousel:active .portal-carousel__surface { animation-play-state: paused; }
 
 @media (max-width: 640px) {
   .portal-carousel { min-height: 0; display: block; overflow: visible; }
   .portal-carousel::before, .portal-carousel__hint { display: none; }
   .portal-carousel__inner { position: static; width: auto; height: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; transform: none; animation: none; }
-  .portal-carousel__card { position: static; min-height: 224px; transform: none; }
+  .portal-carousel__card { position: static; width: auto; height: auto; min-height: 224px; transform: none; }
   .portal-carousel__surface { padding: 19px; }
   .portal-carousel__surface h2 { margin-top: 16px; font-size: 20px; line-height: 1.3; }
   .portal-carousel__surface p { font-size: 13px; }
@@ -641,5 +645,6 @@ body::before { background: linear-gradient(180deg, rgba(9, 24, 76, .62), rgba(63
   .portal-carousel { min-height: 0; display: block; overflow: visible; }
   .portal-carousel::before, .portal-carousel__hint { display: none; }
   .portal-carousel__inner { position: static; width: auto; height: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; transform: none; animation: none; }
-  .portal-carousel__card { position: static; min-height: 216px; transform: none; }
+  .portal-carousel__card { position: static; width: auto; height: auto; min-height: 216px; transform: none; }
+  .portal-carousel__surface { animation: none; }
 }
