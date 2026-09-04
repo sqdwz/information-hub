@@ -644,3 +644,105 @@ body::before { background: linear-gradient(180deg, rgba(9, 24, 76, .62), rgba(63
   body::before { background: linear-gradient(180deg, rgba(9, 24, 76, .58), rgba(63, 86, 166, .34)), url("./assets/sayo-panel-tall.webp") 56% top / cover no-repeat; }
   .section-heading h2 { color: #f1f5ff; }
 }
+
+/* Home portals: switch one card at a time through a shallow 3D semicircle. */
+.portal-grid.portal-carousel {
+  position: relative;
+  display: block;
+  width: min(100%, 1180px);
+  height: clamp(310px, 31vw, 366px);
+  margin: clamp(16px, 3vw, 34px) auto 0;
+  perspective: 1300px;
+  transform-style: preserve-3d;
+  touch-action: pan-y;
+  user-select: none;
+}
+.portal-carousel .portal {
+  --portal-transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  width: min(430px, 39vw);
+  height: clamp(260px, 25vw, 292px);
+  min-height: 0;
+  margin: 0;
+  transform: var(--portal-transform);
+  transform-style: preserve-3d;
+  transform-origin: center;
+  opacity: .74;
+  filter: saturate(.88) brightness(.93);
+  box-shadow: 0 12px 32px rgba(13, 34, 94, .2);
+  transition: transform 620ms cubic-bezier(.22, .72, .2, 1), opacity 620ms ease, filter 620ms ease, box-shadow 620ms ease, background 220ms ease;
+  will-change: transform, opacity;
+}
+.portal-carousel .portal:hover { transform: var(--portal-transform); }
+.portal-carousel .portal:focus-visible { transform: var(--portal-transform); outline: 2px solid #f2d694; outline-offset: 5px; }
+.portal-carousel .portal[data-carousel-position="current"] {
+  --portal-transform: translate(-50%, -50%) translateZ(84px) scale(1.04);
+  z-index: 4;
+  opacity: 1;
+  filter: none;
+  box-shadow: 0 24px 54px rgba(8, 25, 82, .42);
+}
+.portal-carousel .portal[data-carousel-position="left"] {
+  --portal-transform: translate(-50%, -50%) translateX(-64%) translateZ(-22px) rotateY(24deg) scale(.82);
+  z-index: 3;
+}
+.portal-carousel .portal[data-carousel-position="right"] {
+  --portal-transform: translate(-50%, -50%) translateX(64%) translateZ(-22px) rotateY(-24deg) scale(.82);
+  z-index: 3;
+}
+.portal-carousel .portal[data-carousel-position="rear"] {
+  --portal-transform: translate(-50%, -112%) translateZ(-120px) scale(.66);
+  z-index: 1;
+  opacity: .32;
+  filter: saturate(.66) brightness(.8);
+  pointer-events: none;
+}
+.portal-carousel .portal[data-carousel-position="current"] .portal__arrow { color: var(--wine); }
+
+@media (max-width: 820px) {
+  .portal-grid.portal-carousel {
+    display: flex;
+    width: calc(100% + 28px);
+    height: auto;
+    margin: 20px -14px 0;
+    padding: 8px 9vw 20px;
+    gap: 14px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 9vw;
+    scrollbar-width: none;
+    perspective: none;
+  }
+  .portal-grid.portal-carousel::-webkit-scrollbar { display: none; }
+  .portal-carousel .portal,
+  .portal-carousel .portal[data-carousel-position="current"],
+  .portal-carousel .portal[data-carousel-position="left"],
+  .portal-carousel .portal[data-carousel-position="right"],
+  .portal-carousel .portal[data-carousel-position="rear"] {
+    --portal-transform: none;
+    position: relative;
+    top: auto;
+    left: auto;
+    flex: 0 0 min(78vw, 360px);
+    width: min(78vw, 360px);
+    height: 270px;
+    opacity: .62;
+    filter: saturate(.82) brightness(.9);
+    pointer-events: auto;
+    scroll-snap-align: center;
+    box-shadow: 0 12px 30px rgba(13, 34, 94, .2);
+  }
+  .portal-carousel .portal[data-carousel-position="current"] {
+    opacity: 1;
+    filter: none;
+    box-shadow: 0 18px 42px rgba(8, 25, 82, .34);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-carousel .portal { transition: none; }
+}

@@ -847,6 +847,154 @@ async function initData() {
   }
 }
 
+function initHomePortalCarousel() {
+  const carousel = $(".portal-grid");
+  const cards = carousel ? [...carousel.querySelectorAll(".portal")] : [];
+  const homePage = $("[data-page='home']");
+  if (!carousel || cards.length < 2) return;
+
+  carousel.classList.add("portal-carousel");
+  let activeIndex = 0;
+  let autoplay = null;
+  let paused = false;
+  let pointerStart = null;
+  let suppressClick = false;
+  let wheelLocked = false;
+  let scrollTimer = null;
+  let resumeTimer = null;
+  let programmaticScroll = false;
+  const compactViewport = window.matchMedia("(max-width: 820px)");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  const signedOffset = (index) => {
+    let offset = index - activeIndex;
+    if (offset > cards.length / 2) offset -= cards.length;
+    if (offset < -cards.length / 2) offset += cards.length;
+    return offset;
+  };
+
+  function updateCards({ scrollIntoView = false } = {}) {
+    cards.forEach((card, index) => {
+      const offset = signedOffset(index);
+      const position = offset === 0 ? "current" : Math.abs(offset) === 2 ? "rear" : offset < 0 ? "left" : "right";
+      card.dataset.carouselPosition = position;
+      card.classList.toggle("is-carousel-active", position === "current");
+      card.setAttribute("aria-current", position === "current" ? "true" : "false");
+    });
+
+    if (compactViewport.matches && scrollIntoView) {
+      programmaticScroll = true;
+      cards[activeIndex].scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "nearest", inline: "center" });
+      window.setTimeout(() => { programmaticScroll = false; }, 700);
+    }
+  }
+
+  function setActive(nextIndex, options) {
+    activeIndex = (nextIndex + cards.length) % cards.length;
+    updateCards(options);
+  }
+
+  function advance(direction, options) {
+    setActive(activeIndex + direction, options);
+  }
+
+  function isHomeVisible() {
+    return homePage?.classList.contains("is-active") && document.visibilityState === "visible";
+  }
+
+  function startAutoplay() {
+    if (autoplay || reducedMotion.matches) return;
+    autoplay = window.setInterval(() => {
+      if (!paused && isHomeVisible()) advance(1, { scrollIntoView: compactViewport.matches });
+    }, 2800);
+  }
+
+  function pauseTemporarily() {
+    paused = true;
+    window.clearTimeout(resumeTimer);
+    resumeTimer = window.setTimeout(() => { paused = false; }, 2800);
+  }
+
+  carousel.addEventListener("mouseenter", () => {
+    paused = true;
+    window.clearTimeout(resumeTimer);
+  });
+  carousel.addEventListener("mouseleave", () => { paused = false; });
+
+  carousel.addEventListener("wheel", event => {
+    if (compactViewport.matches || wheelLocked) return;
+    const direction = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+    if (Math.abs(direction) < 8) return;
+    event.preventDefault();
+    wheelLocked = true;
+    advance(direction > 0 ? 1 : -1);
+    window.setTimeout(() => { wheelLocked = false; }, 660);
+  }, { passive: false });
+
+  carousel.addEventListener("pointerdown", event => {
+    if (compactViewport.matches || event.button > 0) return;
+    pointerStart = { x: event.clientX, y: event.clientY, pointerId: event.pointerId };
+    paused = true;
+    carousel.setPointerCapture?.(event.pointerId);
+  });
+  carousel.addEventListener("pointerup", event => {
+    if (!pointerStart || pointerStart.pointerId !== event.pointerId) return;
+    const distance = event.clientX - pointerStart.x;
+    if (Math.abs(distance) > 42) {
+      suppressClick = true;
+      advance(distance < 0 ? 1 : -1);
+    }
+    pointerStart = null;
+    paused = false;
+    carousel.releasePointerCapture?.(event.pointerId);
+  });
+  carousel.addEventListener("pointercancel", () => {
+    pointerStart = null;
+    paused = false;
+  });
+
+  cards.forEach((card, index) => card.addEventListener("click", event => {
+    if (suppressClick) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      suppressClick = false;
+      return;
+    }
+    if (index !== activeIndex) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      setActive(index, { scrollIntoView: compactViewport.matches });
+    }
+  }));
+
+  carousel.addEventListener("scroll", () => {
+    if (!compactViewport.matches || programmaticScroll) return;
+    window.clearTimeout(scrollTimer);
+    scrollTimer = window.setTimeout(() => {
+      const midpoint = carousel.getBoundingClientRect().left + carousel.clientWidth / 2;
+      const closestIndex = cards.reduce((bestIndex, card, index) => {
+        const best = cards[bestIndex].getBoundingClientRect();
+        const current = card.getBoundingClientRect();
+        return Math.abs(current.left + current.width / 2 - midpoint) < Math.abs(best.left + best.width / 2 - midpoint) ? index : bestIndex;
+      }, 0);
+      if (closestIndex !== activeIndex) setActive(closestIndex);
+      pauseTemporarily();
+    }, 100);
+  }, { passive: true });
+
+  compactViewport.addEventListener("change", () => updateCards());
+  reducedMotion.addEventListener("change", () => {
+    window.clearInterval(autoplay);
+    autoplay = null;
+    startAutoplay();
+  });
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState !== "visible") paused = true; else paused = false; });
+
+  updateCards();
+  startAutoplay();
+}
+
+initHomePortalCarousel();
 document.querySelectorAll("[data-go]").forEach(button => button.addEventListener("click", () => { location.hash = button.dataset.go; }));
 document.addEventListener("click", event => { const button = event.target.closest("[data-detail]"); if (button) openDetail(button.dataset.detail); if (event.target.matches("[data-close-dialog]")) $("#notice-dialog").close(); });
 $("#notice-dialog").addEventListener("click", event => { if (event.target === event.currentTarget) event.currentTarget.close(); });
