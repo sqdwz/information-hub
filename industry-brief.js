@@ -105,7 +105,7 @@ function renderIndustryBrief(data) {
   if (portal) {
     const status = portal.querySelector(".status");
     if (status) {
-      status.textContent = "已接入";
+      status.textContent = "日报 · 周报";
       status.classList.add("status--active");
     }
     const metric = portal.querySelector(".portal__metric");
