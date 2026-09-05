@@ -721,7 +721,6 @@ function applyPolicyFilters() {
     const selected = button.dataset.policyTopic === theme;
     button.classList.toggle("is-active", selected);
     button.setAttribute("aria-pressed", String(selected));
-    button.setAttribute("aria-pressed", String(selected));
   });
   document.querySelectorAll("[data-policy-stat]").forEach(button => {
     const filter = button.dataset.policyStat;
@@ -730,6 +729,7 @@ function applyPolicyFilters() {
       || (filter === "province" && level === "province" && !status)
       || (filter === "all" && !level && !status && !theme && !query);
     button.classList.toggle("is-active", selected);
+    button.setAttribute("aria-pressed", String(selected));
   });
   $("#policy-filter-status").textContent = `找到 ${filtered.length} 份资料${query ? `，关键词“${$("#policy-search").value.trim()}”` : ""}`;
   $("#policy-list").innerHTML = filtered.length ? filtered.map(policyCard).join("") : '<div class="empty-card">没有符合当前条件的资料。可以清除筛选后重新检索。</div>';
