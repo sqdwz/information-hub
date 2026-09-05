@@ -318,7 +318,7 @@ function renderAirspace(data) {
   $("#airspace-title-date").textContent = reportDate;
   $("[data-summary-message]").textContent = data.message || "暂未生成巡检结论。";
   $("#new-date").textContent = data.generated_at ? `巡检时间 · ${data.generated_at.slice(0, 10)}` : "";
-  $("#airspace-stats").innerHTML = [["new", "本次巡检新增", summary.new || 0], ["active", "当前生效", summary.active || 0], ["upcoming", "即将生效", summary.upcoming || 0]].map(([key, label, value]) => `<button class="filter-panel__button" type="button" data-airspace-filter="${key}" aria-pressed="false">${label}<span>${value} 条</span></button>`).join("");
+  $("#airspace-stats").innerHTML = [["new", "本次巡检新增", summary.new || 0], ["active", "当前生效", summary.active || 0], ["upcoming", "即将生效", summary.upcoming || 0]].map(([key, label, value]) => `<button class="filter-panel__button" type="button" data-airspace-filter="${key}" aria-pressed="false">${label} ${value} 条</button>`).join("");
   document.querySelectorAll("[data-airspace-filter]").forEach((button) => button.addEventListener("click", () => applyAirspaceFilter(button.dataset.airspaceFilter)));
   const isNew = notice => notice.is_new_scan || notice.status === "new";
   renderGroup("#new-list", notices.filter(isNew), "本轮巡检未发现新增公告；后续新增内容会优先显示在这里。");
@@ -400,11 +400,11 @@ function applyUrbanCurrentFilter(nextFilter) {
   urbanCurrentFilter = urbanCurrentFilter === nextFilter ? null : nextFilter;
   document.querySelectorAll("[data-urban-filter]").forEach((button) => {
     const selected = button.dataset.urbanFilter === urbanCurrentFilter;
-    button.classList.toggle("metric--selected", selected);
+    button.classList.toggle("is-active", selected);
     button.setAttribute("aria-pressed", String(selected));
   });
   const status = $("#urban-filter-status");
-  if (status) status.textContent = urbanCurrentFilter ? `正在显示“${urbanCurrentFilterLabels[urbanCurrentFilter]}”相关项目；再次点击该统计可取消筛选。` : "";
+  if (status) status.textContent = urbanCurrentFilter ? `正在显示“${urbanCurrentFilterLabels[urbanCurrentFilter]}”相关项目；再次点击即可取消。` : "点击按钮筛选，再次点击即可取消。";
   renderUrbanCurrentItems();
 }
 
@@ -431,6 +431,17 @@ function renderUrbanSummary(note) {
   container.innerHTML = `<h2>${escapeHtml(lead)}</h2>${details.length ? `<ul>${details.map(value => `<li><span>${urbanSummaryLabel(value)}</span><p>${escapeHtml(value)}</p></li>`).join("")}</ul>` : ""}`;
 }
 
+function prepareUrbanFilterPanel() {
+  const summary = $("#urban .urban-summary");
+  if (!summary) return;
+  const panel = document.createElement("div");
+  panel.className = "filter-panel urban-filter-panel";
+  panel.setAttribute("aria-label", "城市更新项目筛选");
+  panel.innerHTML = '<span class="filter-panel__label">项目筛选</span><div class="filter-panel__controls" id="urban-stats"></div><p class="filter-panel__hint" id="urban-filter-status" aria-live="polite">点击按钮筛选，再次点击即可取消。</p><div data-urban-message hidden></div>';
+  summary.replaceWith(panel);
+  $("#urban .filter-status")?.remove();
+}
+
 function renderUrban(data) {
   const summary = data.summary || {};
   const active = urbanCurrentItems(data);
@@ -441,7 +452,7 @@ function renderUrban(data) {
   $("#urban-title-date").textContent = urbanDateOnly(data.generated_at || data.date) || "暂无日期";
   renderUrbanSummary(summary.note);
   $("#urban-current-count").textContent = active.length;
-  $("#urban-stats").innerHTML = [["new", "今日新增", summary.new_today ?? newToday.length], ["tender", "正在招标", active.length], ["deadline", "即将截止", deadlines.length], ["expanded", "扩展候选", expanded.length]].map(([key, label, value]) => `<button class="metric metric--filter" type="button" data-urban-filter="${key}" aria-pressed="false"><span>${label}</span><b>${escapeHtml(value)}<em>条</em></b></button>`).join("");
+  $("#urban-stats").innerHTML = [["new", "今日新增", summary.new_today ?? newToday.length], ["tender", "正在招标", active.length], ["deadline", "即将截止", deadlines.length], ["expanded", "扩展候选", expanded.length]].map(([key, label, value]) => `<button class="filter-panel__button" type="button" data-urban-filter="${key}" aria-pressed="false">${label} ${escapeHtml(value)} 条</button>`).join("");
   document.querySelectorAll("[data-urban-filter]").forEach((button) => button.addEventListener("click", () => applyUrbanCurrentFilter(button.dataset.urbanFilter)));
   urbanCurrentFilter = null;
   applyUrbanCurrentFilter(null);
@@ -620,6 +631,7 @@ function renderUrbanError() {
 }
 
 async function initUrbanData() {
+  prepareUrbanFilterPanel();
   try {
     const response = await fetch(`${DATA_ENDPOINTS.urban}?v=${Date.now()}`, { cache: "no-store" });
     if (!response.ok) throw new Error(`Cloudflare HTTP ${response.status}`);
@@ -658,7 +670,7 @@ function renderPolicyOverview() {
     ["海南文件", hainan, "province"],
     ["阶段性文件", historical, "historical"]
   ];
-  $("#policy-stats").innerHTML = stats.map(([label, value, filter]) => `<button class="filter-panel__button policy-stat" type="button" data-policy-stat="${filter}" aria-pressed="false">${label}<span>${value} 份</span></button>`).join("");
+  $("#policy-stats").innerHTML = stats.map(([label, value, filter]) => `<button class="filter-panel__button policy-stat" type="button" data-policy-stat="${filter}" aria-pressed="false">${label} ${value} 份</button>`).join("");
   $("#policy-overview-note").textContent = policyData.summary || "文件摘要用于快速定位，具体适用情形仍应核对发文机关原文。";
   $("#home-policy-metric").textContent = `${policyItems.length} 份文件 · ${policyItems.filter(item => item.themes?.includes("城市更新")).length} 份城市更新相关`;
   document.querySelectorAll("[data-policy-stat]").forEach(button => button.addEventListener("click", () => {
