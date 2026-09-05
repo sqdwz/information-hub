@@ -315,7 +315,6 @@ function renderAirspace(data) {
   const ended = data.ended_recent || [];
   const summary = data.summary || {};
   const reportDate = data.generated_at ? String(data.generated_at).slice(0, 10) : "暂无日期";
-  $("#airspace-updated").textContent = `最近更新 · ${data.generated_at || "暂无时间"}`;
   $("#airspace-title-date").textContent = reportDate;
   $("[data-summary-message]").textContent = data.message || "暂未生成巡检结论。";
   $("#new-date").textContent = data.generated_at ? `巡检时间 · ${data.generated_at.slice(0, 10)}` : "";
@@ -841,7 +840,6 @@ async function initData() {
     airspaceData = normalizeAirspaceData(await response.json());
     renderAirspace(airspaceData);
   } catch (error) {
-    $("#airspace-updated").textContent = "空域数据暂时无法读取";
     $("[data-summary-message]").textContent = "数据暂未载入，请稍后重试。";
     $("#active-list").innerHTML = '<div class="empty-card">无法读取空域数据备份，请稍后重试。</div>';
     $("#home-airspace-metric").textContent = "数据暂未载入";
