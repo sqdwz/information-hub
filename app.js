@@ -658,13 +658,21 @@ function renderPolicyOverview() {
     ["海南文件", hainan, "province"],
     ["阶段性文件", historical, "historical"]
   ];
-  $("#policy-stats").innerHTML = stats.map(([label, value, filter]) => `<button class="policy-stat" type="button" data-policy-stat="${filter}"><span>${label}</span><b>${value}</b></button>`).join("");
+  $("#policy-stats").innerHTML = stats.map(([label, value, filter]) => `<button class="filter-panel__button policy-stat" type="button" data-policy-stat="${filter}" aria-pressed="false">${label}<span>${value} 份</span></button>`).join("");
   $("#policy-overview-note").textContent = policyData.summary || "文件摘要用于快速定位，具体适用情形仍应核对发文机关原文。";
   $("#home-policy-metric").textContent = `${policyItems.length} 份文件 · ${policyItems.filter(item => item.themes?.includes("城市更新")).length} 份城市更新相关`;
   document.querySelectorAll("[data-policy-stat]").forEach(button => button.addEventListener("click", () => {
     const filter = button.dataset.policyStat;
-    $("#policy-level").value = filter === "province" ? "province" : "";
-    $("#policy-status").value = ["current", "historical"].includes(filter) ? filter : "";
+    const selected = button.getAttribute("aria-pressed") === "true";
+    if (filter === "all") {
+      $("#policy-search").value = "";
+      $("#policy-level").value = "";
+      $("#policy-theme").value = "";
+      $("#policy-status").value = "";
+    } else {
+      $("#policy-level").value = selected ? "" : filter === "province" ? "province" : "";
+      $("#policy-status").value = selected ? "" : ["current", "historical"].includes(filter) ? filter : "";
+    }
     applyPolicyFilters();
     $("#policy-search").focus({ preventScroll: true });
   }));
@@ -712,6 +720,7 @@ function applyPolicyFilters() {
   document.querySelectorAll("[data-policy-topic]").forEach(button => {
     const selected = button.dataset.policyTopic === theme;
     button.classList.toggle("is-active", selected);
+    button.setAttribute("aria-pressed", String(selected));
     button.setAttribute("aria-pressed", String(selected));
   });
   document.querySelectorAll("[data-policy-stat]").forEach(button => {

@@ -292,7 +292,8 @@ body::before {
 .policy-overview { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(440px, .85fr); align-items: stretch; gap: 28px; margin-top: 18px; padding: 30px 32px; background: rgba(255, 250, 245, .78); }
 .policy-overview__lead h2 { margin: 10px 0 9px; }
 .policy-overview__lead > p:last-child { max-width: 640px; color: var(--muted); line-height: 1.75; }
-.policy-overview__stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: rgba(255, 253, 249, .66); }
+.policy-overview__stats { align-content: center; margin: 0; }
+.policy-overview__stats .filter-panel__button { flex: 1 1 8.2rem; }
 .policy-gaps { margin-top: 18px; padding: 26px 30px; background: rgba(255, 249, 240, .88); }
 .policy-gaps__head { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
 .policy-gaps__head h2 { margin-top: 8px; }
@@ -307,11 +308,6 @@ body::before {
 .policy-gap h3 { margin: 10px 0 7px; font-size: 15px; line-height: 1.45; }
 .policy-gap p { color: var(--muted); font-size: 12px; line-height: 1.6; }
 .policy-gap small { display: block; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); color: #8c6d61; font-size: 11px; line-height: 1.55; }
-.policy-stat { min-width: 0; display: grid; align-content: center; gap: 6px; padding: 17px 12px; border: 0; border-left: 1px solid var(--line); color: var(--ink); background: transparent; cursor: pointer; font: inherit; text-align: center; transition: background .18s ease, box-shadow .18s ease; }
-.policy-stat:first-child { border-left: 0; }
-.policy-stat:hover, .policy-stat:focus-visible, .policy-stat.is-active { background: rgba(154, 54, 43, .1); box-shadow: inset 0 0 0 2px rgba(154, 54, 43, .38); outline: 0; }
-.policy-stat span { color: var(--muted); font-size: 12px; }
-.policy-stat b { color: var(--wine); font-family: "Songti SC", "STSong", serif; font-size: 32px; }
 .policy-workbench { margin-top: 46px; }
 .policy-topic-filter { margin-bottom: 14px; }
 .policy-topic-filter .policy-topics { display: flex; flex: 1 1 12rem; flex-wrap: wrap; gap: 9px; margin: 0; }
@@ -383,15 +379,11 @@ body::before {
 
 @media (max-width: 820px) {
   .policy-overview { gap: 20px; padding: 24px 20px; }
-  .policy-overview__stats { grid-template-columns: repeat(2, 1fr); }
   .policy-gaps { padding: 22px 18px; }
   .policy-gaps__head { align-items: start; flex-direction: column; gap: 8px; }
   .policy-gaps__summary { align-items: flex-start; flex-direction: column; gap: 4px; }
   .policy-gaps__summary b { white-space: normal; }
   .policy-gaps__list { grid-template-columns: 1fr; }
-  .policy-stat { border-top: 1px solid var(--line); }
-  .policy-stat:nth-child(odd) { border-left: 0; }
-  .policy-stat:nth-child(-n + 2) { border-top: 0; }
   .policy-workbench { margin-top: 32px; }
   .policy-topics { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
   .policy-topics button { flex: 0 0 auto; }
@@ -637,13 +629,11 @@ body::before { background: linear-gradient(180deg, rgba(9, 24, 76, .62), rgba(63
 .button--primary:hover { background: var(--wine); color: #fff; }
 .dialog__body { background: #eef4ff; }
 .dialog__body h3, .dialog-sources a, .policy-related span { color: var(--wine); }
-.policy-overview__stats { background: rgba(249, 251, 255, .66); }
 .policy-gaps__summary { border-left-color: var(--gold); background: rgba(255, 247, 218, .76); }
 .policy-gaps__summary b { color: #745b1f; }
 .policy-gap { background: rgba(249, 251, 255, .84); }
 .policy-gap--high { border-top-color: #7c91df; }
 .policy-gap > div span, .policy-card__meta > span:first-child, .policy-detail__badges > span { color: #40557d; background: #e3ebfb; }
-.policy-stat:hover, .policy-stat:focus-visible, .policy-stat.is-active { background: rgba(102, 133, 229, .12); box-shadow: inset 0 0 0 2px rgba(102, 133, 229, .4); }
 .policy-card { border-top-color: #7189de; }
 .policy-detail__back { color: #f2f6ff; background: rgba(18, 40, 108, .58); }
 .policy-detail__facts dt { color: var(--wine); background: rgba(211, 225, 255, .52); }

@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#071b58" />
     <meta name="description" content="个人长期使用的信息聚合中心：空域、AI、城市更新与文件资料。" />
     <title>信息聚合中心</title>
-<link rel="stylesheet" href="./styles.css?v=20260905-filter-template" />
+<link rel="stylesheet" href="./styles.css?v=20260905-policy-overview-filter" />
     <link rel="stylesheet" href="./industry-brief.css?v=20260905-filter-template" />
   </head>
   <body>
@@ -79,7 +79,7 @@
           </div>
           <section class="policy-overview panel" aria-labelledby="policy-overview-title">
             <div class="policy-overview__lead"><p class="eyebrow"><span></span>资料概览</p><h2 id="policy-overview-title">从文件名称，快速定位适用依据</h2><p id="policy-overview-note">正在整理文件层级、主题和效力状态…</p></div>
-            <div class="policy-overview__stats" id="policy-stats" aria-label="文件资料统计"></div>
+            <div class="filter-panel policy-overview__stats" aria-label="文件资料快捷筛选"><span class="filter-panel__label">快捷筛选</span><div class="filter-panel__controls" id="policy-stats"></div><p class="filter-panel__hint">点击按钮筛选资料，再次点击即可取消。</p></div>
           </section>
           <section class="policy-gaps panel" aria-labelledby="policy-gaps-title">
             <div class="policy-gaps__head"><div><p class="eyebrow"><span></span>待补齐资料</p><h2 id="policy-gaps-title">国家依据已接入，属地标准仍需收集</h2></div><p>缺口清单与资料库一起更新</p></div>
@@ -144,7 +144,7 @@
       </div>
     </dialog>
     <dialog class="detail-dialog" id="notice-dialog" aria-labelledby="dialog-title"><div class="dialog__body"><button class="dialog__close" type="button" aria-label="关闭详情" data-close-dialog>×</button><div id="dialog-content"></div></div></dialog>
-<script src="./app.js?v=20260905-filter-template" defer></script>
+<script src="./app.js?v=20260905-policy-overview-filter" defer></script>
 <script src="./industry-brief.js?v=20260905-filter-template" defer></script>
   </body>
 </html>
