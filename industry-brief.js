@@ -39,11 +39,13 @@ function renderIndustryBrief(data) {
   const dailyCount = data.type === "weekly" ? 0 : itemCount;
   const weeklyCount = data.type === "weekly" ? itemCount : 0;
   const filterLabels = [...new Set(data.items.map((item) => filterLabel(item.category)))];
-  const sections = (data.sections || []).map((item) => `
-    <article class="brief-section-card">
+  const sections = (data.sections || []).map((item) => {
+    const summary = String(item.summary || "").trim() || `本期已收录 ${itemCount} 条${reportType}，下滑即可查看完整动态。`;
+    return `<article class="brief-section-card">
       <h3>${escapeHtml(item.name)}</h3>
-      <p>${escapeHtml(item.summary)}</p>
-    </article>`).join("");
+      <p>${escapeHtml(summary)}</p>
+    </article>`;
+  }).join("");
   const items = data.items.map((item) => `
     <article class="brief-item-card" data-brief-filter-item="${escapeHtml(filterLabel(item.category))}">
       <div class="brief-item-meta"><span class="brief-category">${escapeHtml(item.category)}</span><time>${escapeHtml(item.publish_date)}</time></div>
@@ -59,10 +61,10 @@ function renderIndustryBrief(data) {
       <div><p class="eyebrow">行业日报与周汇总</p><h2>${escapeHtml(data.title || `${reportType}｜${data.date || ""}`)}</h2>${briefHighlights(data.summary)}<p class="brief-collection">本期已收录：<strong>${dailyCount} 条日报</strong><span>·</span><strong>${weeklyCount} 条周报</strong></p></div>
     </div>
     <p class="brief-coverage">${escapeHtml(data.coverage_note || "")}</p>
-    <div class="brief-filter" aria-label="按标签筛选本期动态">
-      <span class="brief-filter__label">标签筛选</span>
-      <div class="brief-filter__tags">${filterLabels.map((label) => `<button class="brief-filter__tag" type="button" data-brief-filter="${escapeHtml(label)}" aria-pressed="false">${escapeHtml(label)}</button>`).join("")}</div>
-      <p class="brief-filter__hint" aria-live="polite">点击标签筛选，再次点击即可取消。</p>
+    <div class="brief-filter filter-panel" aria-label="按标签筛选本期动态">
+      <span class="brief-filter__label filter-panel__label">标签筛选</span>
+      <div class="brief-filter__tags filter-panel__controls">${filterLabels.map((label) => `<button class="brief-filter__tag" type="button" data-brief-filter="${escapeHtml(label)}" aria-pressed="false">${escapeHtml(label)}</button>`).join("")}</div>
+      <p class="brief-filter__hint filter-panel__hint" aria-live="polite">点击标签筛选，再次点击即可取消。</p>
     </div>
     ${sections ? `<div class="brief-section-grid" data-brief-overview>${sections}</div>` : ""}
     ${tool ? `<div data-brief-overview>${tool}</div>` : ""}

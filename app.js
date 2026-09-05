@@ -438,7 +438,7 @@ function renderUrban(data) {
   const newToday = urbanCurrentItems(data, "new");
   const deadlines = urbanCurrentItems(data, "deadline");
   urbanData = data;
-  $("#urban-updated").textContent = `最近更新 · ${formatUrbanDate(data.generated_at || data.date)}`;
+  $("#urban-title-date").textContent = urbanDateOnly(data.generated_at || data.date) || "暂无日期";
   renderUrbanSummary(summary.note);
   $("#urban-current-count").textContent = active.length;
   $("#urban-stats").innerHTML = [["new", "今日新增", summary.new_today ?? newToday.length], ["tender", "正在招标", active.length], ["deadline", "即将截止", deadlines.length], ["expanded", "扩展候选", expanded.length]].map(([key, label, value]) => `<button class="metric metric--filter" type="button" data-urban-filter="${key}" aria-pressed="false"><span>${label}</span><b>${escapeHtml(value)}<em>条</em></b></button>`).join("");
@@ -612,7 +612,7 @@ async function initUrbanHistory() {
 }
 
 function renderUrbanError() {
-  $("#urban-updated").textContent = "城市更新数据暂时无法读取";
+  $("#urban-title-date").textContent = "暂无日期";
   renderUrbanSummary("数据暂未载入，请稍后重试。");
   $("#urban-active-list").innerHTML = '<div class="empty-card">无法读取城市更新数据备份，请稍后重试。</div>';
   $("#urban-source-list").innerHTML = "";

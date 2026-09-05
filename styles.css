@@ -100,6 +100,8 @@ h2 { font-family: "Songti SC", "STSong", serif; font-size: clamp(24px, 3vw, 31px
 .urban-history-stats b { color: var(--wine); }
 .urban-history-more { display: block; margin: 18px auto 0; }
 .urban-page-head-actions { display: grid; justify-items: end; gap: 12px; }
+.filter-panel.urban-view-filter { justify-content: flex-end; margin: 0; }
+.urban-view-filter .filter-panel__label { flex: 0 0 auto; }
 .urban-view-switch { display: inline-flex; padding: 4px; gap: 4px; border: 1px solid rgba(255, 248, 240, .46); border-radius: 999px; background: rgba(70, 25, 15, .2); }
 .urban-view-button { border: 0; border-radius: 999px; padding: 8px 13px; color: rgba(255, 248, 240, .92); background: transparent; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: background .18s ease, color .18s ease; }
 .urban-view-button span { display: inline-grid; min-width: 19px; height: 19px; place-items: center; margin-left: 3px; border-radius: 99px; color: var(--wine); background: #fff8f0; font-size: 11px; }
@@ -203,11 +205,15 @@ footer { padding: 0 0 29px; color: rgba(255, 248, 240, .88); text-align: center;
 .page-head__split-title { display: inline-flex; align-items: baseline; justify-content: center; gap: .18em; white-space: nowrap; }
 .page-head__title-separator { color: rgba(242, 214, 148, .92); font-weight: 400; }
 .page-head__split-title time { font: inherit; }
+.filter-panel { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; margin: 1.35rem 0 .95rem; padding: 16px 20px; border: 1px solid rgba(211, 225, 255, .62); border-radius: 22px; background: rgba(220, 232, 255, .48); box-shadow: 0 8px 26px rgba(13, 34, 94, .16), inset 0 1px rgba(255, 255, 255, .65); backdrop-filter: blur(14px); }
+.filter-panel__label { color: #eef4ff; font-size: .83rem; font-weight: 800; text-shadow: 0 1px 7px rgba(10, 26, 80, .78); white-space: nowrap; }
+.filter-panel__controls { display: flex; flex: 1 1 12rem; flex-wrap: wrap; gap: .45rem; }
+.filter-panel__hint { width: 100%; margin: 0; color: #eef4ff; font-size: .78rem; line-height: 1.55; text-shadow: 0 1px 7px rgba(10, 26, 80, .78); }
 .airspace-head__summary { width: min(100%, 760px); margin-top: clamp(20px, 3vw, 34px); color: rgba(239, 245, 255, .96); text-align: left; text-shadow: 0 2px 10px rgba(8, 20, 63, .82); }
 .airspace-head__summary .eyebrow { justify-content: flex-start; }
 .airspace-head__summary h2 { margin: 8px 0 8px; color: #f4f7ff; font-size: clamp(24px, 3.1vw, 34px); line-height: 1.38; text-shadow: 0 4px 22px rgba(8, 20, 63, .78); }
 .airspace-head__summary > p:last-of-type { margin: 0; color: rgba(239, 245, 255, .9); font-size: 14px; line-height: 1.75; }
-.airspace-filter-bar { grid-template-columns: repeat(3, 1fr); margin-top: 12px; overflow: hidden; border: 1px solid rgba(211, 225, 255, .62); border-radius: 22px; background: rgba(220, 232, 255, .48); box-shadow: 0 8px 26px rgba(13, 34, 94, .16), inset 0 1px rgba(255, 255, 255, .65); backdrop-filter: blur(14px); }
+.airspace-filter-bar { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 12px; overflow: hidden; }
 .airspace-filter-bar .metric { padding: 12px 16px; border-color: rgba(102, 133, 229, .22); color: #172646; }
 .airspace-filter-bar .metric span { color: #506486; }
 .airspace-filter-bar .metric b { color: #35529f; }
@@ -308,7 +314,8 @@ body::before {
 .policy-stat span { color: var(--muted); font-size: 12px; }
 .policy-stat b { color: var(--wine); font-family: "Songti SC", "STSong", serif; font-size: 32px; }
 .policy-workbench { margin-top: 46px; }
-.policy-topics { display: flex; flex-wrap: wrap; gap: 9px; margin: -2px 0 14px; }
+.policy-topic-filter { margin-bottom: 14px; }
+.policy-topic-filter .policy-topics { display: flex; flex: 1 1 12rem; flex-wrap: wrap; gap: 9px; margin: 0; }
 .policy-topics button { padding: 8px 13px; border: 1px solid rgba(142, 53, 41, .24); border-radius: 99px; color: var(--wine); background: rgba(255, 251, 246, .72); cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; transition: background .18s ease, color .18s ease, transform .18s ease; }
 .policy-topics button:hover, .policy-topics button:focus-visible, .policy-topics button.is-active { color: #fffaf4; background: var(--wine); transform: translateY(-1px); outline: 0; }
 .policy-filter { display: grid; grid-template-columns: minmax(260px, 1.8fr) repeat(3, minmax(145px, 1fr)) auto; align-items: end; gap: 13px; padding: 20px 22px; background: rgba(255, 250, 245, .82); }
