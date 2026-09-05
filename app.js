@@ -303,11 +303,11 @@ function applyAirspaceFilter(nextFilter) {
   });
   document.querySelectorAll("[data-airspace-filter]").forEach((button) => {
     const selected = button.dataset.airspaceFilter === airspaceFilter;
-    button.classList.toggle("metric--selected", selected);
+    button.classList.toggle("is-active", selected);
     button.setAttribute("aria-pressed", String(selected));
   });
   const status = $("#airspace-filter-status");
-  if (status) status.textContent = airspaceFilter ? `正在显示“${airspaceFilterLabels[airspaceFilter]}”相关公告；再次点击该统计可取消筛选。` : "";
+  if (status) status.textContent = airspaceFilter ? `正在显示“${airspaceFilterLabels[airspaceFilter]}”相关公告；再次点击即可取消。` : "点击按钮筛选，再次点击即可取消。";
 }
 
 function renderAirspace(data) {
@@ -318,7 +318,7 @@ function renderAirspace(data) {
   $("#airspace-title-date").textContent = reportDate;
   $("[data-summary-message]").textContent = data.message || "暂未生成巡检结论。";
   $("#new-date").textContent = data.generated_at ? `巡检时间 · ${data.generated_at.slice(0, 10)}` : "";
-  $("#airspace-stats").innerHTML = [["new", "本次巡检新增", summary.new || 0], ["active", "当前生效", summary.active || 0], ["upcoming", "即将生效", summary.upcoming || 0]].map(([key, label, value]) => `<button class="metric metric--filter" type="button" data-airspace-filter="${key}" aria-pressed="false"><span>${label}</span><b>${value}<em>条</em></b></button>`).join("");
+  $("#airspace-stats").innerHTML = [["new", "本次巡检新增", summary.new || 0], ["active", "当前生效", summary.active || 0], ["upcoming", "即将生效", summary.upcoming || 0]].map(([key, label, value]) => `<button class="filter-panel__button" type="button" data-airspace-filter="${key}" aria-pressed="false">${label}<span>${value} 条</span></button>`).join("");
   document.querySelectorAll("[data-airspace-filter]").forEach((button) => button.addEventListener("click", () => applyAirspaceFilter(button.dataset.airspaceFilter)));
   const isNew = notice => notice.is_new_scan || notice.status === "new";
   renderGroup("#new-list", notices.filter(isNew), "本轮巡检未发现新增公告；后续新增内容会优先显示在这里。");
@@ -672,7 +672,7 @@ function renderPolicyOverview() {
 
 function renderPolicyTopics() {
   const topics = (policyCategories.themes || []).filter(theme => policyItems.some(item => item.themes?.includes(theme))).slice(0, 6);
-  $("#policy-topics").innerHTML = topics.map(theme => `<button type="button" data-policy-topic="${escapeHtml(theme)}">${escapeHtml(theme)}</button>`).join("");
+  $("#policy-topics").innerHTML = topics.map(theme => `<button class="filter-panel__button" type="button" data-policy-topic="${escapeHtml(theme)}" aria-pressed="false">${escapeHtml(theme)}</button>`).join("");
   document.querySelectorAll("[data-policy-topic]").forEach(button => button.addEventListener("click", () => {
     $("#policy-theme").value = $("#policy-theme").value === button.dataset.policyTopic ? "" : button.dataset.policyTopic;
     applyPolicyFilters();
@@ -709,7 +709,11 @@ function applyPolicyFilters() {
       && (!status || item.status === status);
   });
 
-  document.querySelectorAll("[data-policy-topic]").forEach(button => button.classList.toggle("is-active", button.dataset.policyTopic === theme));
+  document.querySelectorAll("[data-policy-topic]").forEach(button => {
+    const selected = button.dataset.policyTopic === theme;
+    button.classList.toggle("is-active", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
   document.querySelectorAll("[data-policy-stat]").forEach(button => {
     const filter = button.dataset.policyStat;
     const selected = (filter === "current" && status === "current" && !level)

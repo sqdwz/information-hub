@@ -10,12 +10,6 @@
 .brief-notice, .brief-coverage, .brief-tool { border: 1px solid rgba(255,245,236,.68); border-radius: .85rem; background: rgba(255,251,247,.8); box-shadow: 0 8px 20px rgba(45,22,14,.1); color: #52372f; line-height: 1.75; }
 .brief-notice { margin: 0 0 .45rem; font-size: .87rem; }
 .brief-coverage { margin: 0 0 1.1rem; }
-.brief-filter { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; margin: 1.35rem 0 .95rem; padding: 0 0 .8rem; border: 0; border-bottom: 1px solid rgba(123,73,53,.38); border-radius: 0; background: transparent; box-shadow: none; }
-.brief-filter__label { color: #5b3329; font-size: .83rem; font-weight: 800; white-space: nowrap; }
-.brief-filter__tags { display: flex; flex: 1 1 12rem; flex-wrap: wrap; gap: .45rem; }
-.brief-filter__tag { padding: .36rem .7rem; border: 1px solid rgba(142,53,41,.34); border-radius: 999px; background: rgba(255,250,246,.2); color: #6e2f27; cursor: pointer; font-size: .82rem; font-weight: 720; transition: background .16s, color .16s, border-color .16s; }
-.brief-filter__tag:hover, .brief-filter__tag:focus-visible, .brief-filter__tag.is-active { border-color: #9a362b; background: #9a362b; color: #fff; outline: none; }
-.brief-filter__hint { width: 100%; margin: 0; color: #684941; font-size: .78rem; line-height: 1.55; }
 .brief-section-grid, .brief-item-grid { display: grid; gap: 1rem; }
 .brief-section-grid { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin-bottom: 1.1rem; }
 .brief-section-card, .brief-item-card { border: 1px solid rgba(105,63,49,.22); border-radius: .9rem; background: rgba(255,252,248,.84); box-shadow: 0 8px 20px rgba(45,22,14,.1); padding: 1rem; }

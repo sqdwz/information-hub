@@ -63,7 +63,7 @@ function renderIndustryBrief(data) {
     <p class="brief-coverage">${escapeHtml(data.coverage_note || "")}</p>
     <div class="brief-filter filter-panel" aria-label="按标签筛选本期动态">
       <span class="brief-filter__label filter-panel__label">标签筛选</span>
-      <div class="brief-filter__tags filter-panel__controls">${filterLabels.map((label) => `<button class="brief-filter__tag" type="button" data-brief-filter="${escapeHtml(label)}" aria-pressed="false">${escapeHtml(label)}</button>`).join("")}</div>
+      <div class="brief-filter__tags filter-panel__controls">${filterLabels.map((label) => `<button class="filter-panel__button" type="button" data-brief-filter="${escapeHtml(label)}" aria-pressed="false">${escapeHtml(label)}</button>`).join("")}</div>
       <p class="brief-filter__hint filter-panel__hint" aria-live="polite">点击标签筛选，再次点击即可取消。</p>
     </div>
     ${sections ? `<div class="brief-section-grid" data-brief-overview>${sections}</div>` : ""}
