@@ -99,10 +99,10 @@ h2 { font-family: "Songti SC", "STSong", serif; font-size: clamp(24px, 3vw, 31px
 .urban-history-stats span { padding: 7px 10px; border: 1px solid var(--line); border-radius: 99px; color: var(--muted); font-size: 12px; }
 .urban-history-stats b { color: var(--wine); }
 .urban-history-more { display: block; margin: 18px auto 0; }
-.urban-page-head-actions { display: grid; justify-items: end; gap: 12px; }
+.urban-page-head-actions { margin-top: 18px; }
 .filter-panel.urban-view-filter { justify-content: flex-start; margin: 0; }
 .urban-view-filter .filter-panel__label { flex: 0 0 auto; }
-.urban-view-filter .filter-panel__controls { flex: 0 1 auto; }
+.urban-view-filter .filter-panel__controls { flex: 1 1 18rem; }
 .urban-history-filter { display: grid; grid-template-columns: minmax(210px, 1.7fr) repeat(4, minmax(135px, 1fr)) auto; align-items: end; gap: 13px; padding: 19px 22px; margin-bottom: 16px; }
 .urban-history-filter label { display: grid; gap: 6px; color: var(--wine); font-size: 12px; font-weight: 700; }
 .urban-history-filter input, .urban-history-filter select { min-width: 0; height: 37px; border: 1px solid var(--line); border-radius: 9px; padding: 0 10px; color: var(--ink); background: #fffdfb; font: inherit; font-size: 13px; }

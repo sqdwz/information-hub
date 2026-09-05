@@ -442,6 +442,13 @@ function prepareUrbanFilterPanel() {
   $("#urban .filter-status")?.remove();
 }
 
+function placeUrbanViewFilter() {
+  const actions = $("#urban .urban-page-head-actions");
+  const currentSection = $("#urban [data-urban-section=\"current\"]");
+  if (!actions || !currentSection || actions.nextElementSibling === currentSection) return;
+  currentSection.before(actions);
+}
+
 function renderUrban(data) {
   const summary = data.summary || {};
   const active = urbanCurrentItems(data);
@@ -1042,6 +1049,7 @@ window.addEventListener("hashchange", route);
 initWelcomePavilion();
 route();
 initData();
+placeUrbanViewFilter();
 initUrbanData();
 initUrbanHistory();
 initPolicyData();
