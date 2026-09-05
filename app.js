@@ -314,7 +314,9 @@ function renderAirspace(data) {
   const notices = data.notices || [];
   const ended = data.ended_recent || [];
   const summary = data.summary || {};
+  const reportDate = data.generated_at ? String(data.generated_at).slice(0, 10) : "暂无日期";
   $("#airspace-updated").textContent = `最近更新 · ${data.generated_at || "暂无时间"}`;
+  $("#airspace-title-date").textContent = reportDate;
   $("[data-summary-message]").textContent = data.message || "暂未生成巡检结论。";
   $("#new-date").textContent = data.generated_at ? `巡检时间 · ${data.generated_at.slice(0, 10)}` : "";
   $("#airspace-stats").innerHTML = [["new", "本次巡检新增", summary.new || 0], ["active", "当前生效", summary.active || 0], ["upcoming", "即将生效", summary.upcoming || 0]].map(([key, label, value]) => `<button class="metric metric--filter" type="button" data-airspace-filter="${key}" aria-pressed="false"><span>${label}</span><b>${value}<em>条</em></b></button>`).join("");
