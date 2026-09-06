@@ -3,93 +3,82 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>首页 / 功能页首屏诊断</title>
+  <title>首页视觉层诊断</title>
   <style>
     *{box-sizing:border-box}
     html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:#07163f;color:#eef4ff}
     body{display:grid;grid-template-rows:auto minmax(0,1fr)}
-    .bar{display:flex;align-items:center;gap:8px;min-height:54px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.14);background:#0b1d55;overflow-x:auto}
+    .bar{display:flex;align-items:center;gap:8px;min-height:56px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.14);background:#0b1d55;overflow-x:auto}
     .bar strong{white-space:nowrap;margin-right:4px;font-size:13px}
     .bar button{flex:0 0 auto;padding:7px 10px;border:1px solid rgba(223,233,255,.22);border-radius:999px;background:rgba(255,255,255,.06);color:#eaf1ff;cursor:pointer;font:inherit;font-size:12px}
     .bar button.is-active{background:rgba(89,122,219,.34);border-color:rgba(214,226,255,.7)}
-    .legend{margin-left:auto;display:flex;gap:10px;white-space:nowrap;font-size:11px;color:rgba(238,244,255,.72)}
-    .legend i{display:inline-block;width:10px;height:10px;margin-right:4px;border:2px solid;vertical-align:-1px}
-    .legend .c{border-color:#00d8ff}.legend .h{border-color:#40ff66}.legend .p{border-color:#ff5050}
+    .sep{width:1px;height:24px;background:rgba(255,255,255,.18);flex:0 0 auto}
     .stage{position:relative;min-height:0}
     iframe{width:100%;height:100%;border:0;background:#10235f}
-    .info{position:absolute;z-index:5;right:12px;top:12px;width:min(430px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;padding:13px 14px;border:1px solid rgba(217,229,255,.24);border-radius:14px;background:rgba(6,18,58,.9);box-shadow:0 16px 46px rgba(0,0,0,.28);backdrop-filter:blur(12px);font-size:12px;line-height:1.5}
-    .info h2{margin:0 0 8px;font-size:14px}.info table{width:100%;border-collapse:collapse}.info th,.info td{padding:4px 6px;border-top:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top;word-break:break-all}.info th{width:115px;color:#9fb8ff;font-weight:600}.info .note{margin-top:8px;color:#ffd88a}
-    @media(max-width:760px){.legend{display:none}.info{top:auto;bottom:8px;right:8px;width:calc(100% - 16px);max-height:38%}}
+    .info{position:absolute;z-index:5;right:12px;top:12px;width:min(455px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;padding:13px 14px;border:1px solid rgba(217,229,255,.24);border-radius:14px;background:rgba(6,18,58,.9);box-shadow:0 16px 46px rgba(0,0,0,.28);backdrop-filter:blur(12px);font-size:12px;line-height:1.5}
+    .info h2{margin:0 0 8px;font-size:14px}.info table{width:100%;border-collapse:collapse}.info th,.info td{padding:4px 6px;border-top:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top;word-break:break-all}.info th{width:130px;color:#9fb8ff;font-weight:600}.info .note{margin-top:8px;color:#ffd88a}
+    @media(max-width:760px){.info{top:auto;bottom:8px;right:8px;width:calc(100% - 16px);max-height:42%}}
   </style>
 </head>
 <body>
   <div class="bar">
-    <strong>首屏真实边界诊断</strong>
+    <strong>视觉来源诊断</strong>
     <button data-route="home" class="is-active">首页</button>
     <button data-route="airspace">空域信息</button>
-    <button data-route="ai">行业日报</button>
-    <button data-route="urban">城市更新</button>
-    <button data-route="policy">资料库</button>
-    <div class="legend"><span><i class="c"></i>container</span><span><i class="h"></i>home hero</span><span><i class="p"></i>feature page-head</span></div>
+    <div class="sep"></div>
+    <button data-layer="normal" class="is-active">原始效果</button>
+    <button data-layer="no-image">隐藏背景图片</button>
+    <button data-layer="no-page-gradient">隐藏页面渐变</button>
+    <button data-layer="flat">仅纯色底</button>
+    <div class="sep"></div>
+    <button data-outline="1">显示 DOM 边界</button>
   </div>
   <div class="stage">
-    <iframe id="frame" src="./#home" title="站点首屏诊断"></iframe>
+    <iframe id="frame" src="./#home" title="视觉来源诊断"></iframe>
     <aside class="info" id="info"><h2>正在读取实际计算样式…</h2></aside>
   </div>
 <script>
 const frame=document.getElementById('frame');
 const info=document.getElementById('info');
-const buttons=[...document.querySelectorAll('[data-route]')];
-let route='home';
+const routeButtons=[...document.querySelectorAll('[data-route]')];
+const layerButtons=[...document.querySelectorAll('[data-layer]')];
+const outlineButton=document.querySelector('[data-outline]');
+let route='home',layer='normal',outline=false;
 
 function inject(){
   const doc=frame.contentDocument;if(!doc)return;
-  let s=doc.querySelector('style[data-hero-diagnostic]');
-  if(!s){s=doc.createElement('style');s.dataset.heroDiagnostic='1';doc.head.appendChild(s)}
-  s.textContent=`
-    .welcome-pavilion{display:none!important}
-    body{overflow-y:auto!important}
-    main.container{outline:2px solid #00d8ff!important;outline-offset:-2px!important}
-    #home .hero{outline:3px solid #40ff66!important;outline-offset:-3px!important}
-    #airspace .page-head,#ai .page-head,#urban .page-head,#policy .page-head{outline:3px solid #ff5050!important;outline-offset:-3px!important}
-  `;
+  let s=doc.querySelector('style[data-layer-diagnostic]');
+  if(!s){s=doc.createElement('style');s.dataset.layerDiagnostic='1';doc.head.appendChild(s)}
+  let css=`.welcome-pavilion{display:none!important} body{overflow-y:auto!important}`;
+  if(layer==='no-image') css+=` body::before{background-image:linear-gradient(180deg,rgba(9,24,76,.62),rgba(63,86,166,.36))!important}`;
+  if(layer==='no-page-gradient') css+=` .page.is-active::before{background:none!important}`;
+  if(layer==='flat') css+=` body::before{background:#17306f!important}.site-shell{background:transparent!important}.page.is-active::before{background:none!important}`;
+  if(outline) css+=` main.container{outline:2px solid #00d8ff!important;outline-offset:-2px!important} #home .hero{outline:3px solid #40ff66!important;outline-offset:-3px!important} #airspace .page-head{outline:3px solid #ff5050!important;outline-offset:-3px!important}`;
+  s.textContent=css;
 }
-function px(n){return Number.isFinite(n)?`${n.toFixed(1)}px`:'-'}
 function row(k,v){return `<tr><th>${k}</th><td>${String(v).replace(/</g,'&lt;')}</td></tr>`}
 function inspect(){
-  const doc=frame.contentDocument;if(!doc)return;
-  inject();
-  const container=doc.querySelector('main.container');
-  const target=route==='home'?doc.querySelector('#home .hero'):doc.querySelector(`#${route} .page-head`);
+  const doc=frame.contentDocument;if(!doc)return;inject();
   const page=doc.querySelector(`#${route}`);
-  if(!container||!target||!page)return;
-  const cr=container.getBoundingClientRect(),tr=target.getBoundingClientRect();
-  const cs=getComputedStyle(target), ps=getComputedStyle(page,'::before');
-  const html=`<h2>${route==='home'?'首页 .hero.panel':`#${route} .page-head.panel`} 实际计算结果</h2><table>`+
-    row('container 左/宽',`${px(cr.left)} / ${px(cr.width)}`)+
-    row('目标 左/宽',`${px(tr.left)} / ${px(tr.width)}`)+
-    row('目标 高度',px(tr.height))+
-    row('display',cs.display)+
-    row('background',cs.background)+
-    row('border',`${cs.borderTopWidth} ${cs.borderTopStyle} ${cs.borderTopColor}`)+
-    row('border-radius',cs.borderRadius)+
-    row('box-shadow',cs.boxShadow)+
-    row('backdrop-filter',cs.backdropFilter||cs.webkitBackdropFilter||'none')+
-    row('padding',cs.padding)+
-    row('page::before 宽',ps.width)+
-    row('page::before left',ps.left)+
-    row('page::before transform',ps.transform)+
-    row('page::before 背景',ps.backgroundImage)+
-    `</table><div class="note">蓝线 = .container；绿线 = 首页真实 Hero；红线 = 功能页真实 page-head。先只看线的位置，不做任何样式修复。</div>`;
-  info.innerHTML=html;
+  const target=route==='home'?doc.querySelector('#home .hero'):doc.querySelector('#airspace .page-head');
+  const bodyBefore=getComputedStyle(doc.body,'::before');
+  const pageBefore=page?getComputedStyle(page,'::before'):null;
+  const targetStyle=target?getComputedStyle(target):null;
+  info.innerHTML=`<h2>${route==='home'?'首页':'空域信息'} · ${layer}</h2><table>`+
+    row('body::before 背景',bodyBefore.backgroundImage)+
+    row('body::before 尺寸',`${bodyBefore.width} × ${bodyBefore.height}`)+
+    row('page::before 背景',pageBefore?pageBefore.backgroundImage:'-')+
+    row('目标 background',targetStyle?targetStyle.background:'-')+
+    row('目标 box-shadow',targetStyle?targetStyle.boxShadow:'-')+
+    row('目标 backdrop',targetStyle?(targetStyle.backdropFilter||targetStyle.webkitBackdropFilter||'none'):'-')+
+    `</table><div class="note">关键测试：在首页点击“隐藏背景图片”。如果你箭头指的那块淡淡矩形一起消失，它就在 sayo-panel-wide.webp 图片本身；如果仍然存在，再点“隐藏页面渐变”。</div>`;
 }
-function setRoute(next){
-  route=next;buttons.forEach(b=>b.classList.toggle('is-active',b.dataset.route===next));
-  try{inject();frame.contentWindow.location.hash=next;frame.contentWindow.scrollTo(0,0);setTimeout(inspect,80);setTimeout(inspect,400)}catch(e){frame.src=`./#${next}`}
-}
-frame.addEventListener('load',()=>{inject();setTimeout(inspect,100);setTimeout(inspect,500)});
-buttons.forEach(b=>b.addEventListener('click',()=>setRoute(b.dataset.route)));
-window.addEventListener('resize',()=>setTimeout(inspect,50));
+function apply(){inject();setTimeout(inspect,60);setTimeout(inspect,300)}
+function setRoute(next){route=next;routeButtons.forEach(b=>b.classList.toggle('is-active',b.dataset.route===next));try{frame.contentWindow.location.hash=next;frame.contentWindow.scrollTo(0,0);apply()}catch(e){frame.src=`./#${next}`}}
+routeButtons.forEach(b=>b.addEventListener('click',()=>setRoute(b.dataset.route)));
+layerButtons.forEach(b=>b.addEventListener('click',()=>{layer=b.dataset.layer;layerButtons.forEach(x=>x.classList.toggle('is-active',x===b));apply()}));
+outlineButton.addEventListener('click',()=>{outline=!outline;outlineButton.classList.toggle('is-active',outline);apply()});
+frame.addEventListener('load',()=>{apply()});
 </script>
 </body>
 </html>
