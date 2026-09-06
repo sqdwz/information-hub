@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>功能页样式覆盖链路验证</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:#07163f;color:#eef4ff}body{display:grid;grid-template-rows:58px minmax(0,1fr)}.bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#0b1d55;border-bottom:1px solid rgba(255,255,255,.14);overflow-x:auto}.bar strong{font-size:13px;white-space:nowrap;margin-right:6px}.bar button{flex:0 0 auto;padding:8px 11px;border:1px solid rgba(220,232,255,.24);border-radius:999px;background:rgba(255,255,255,.06);color:#eef4ff;cursor:pointer;font:inherit;font-size:12px}.bar button.is-active{background:rgba(84,121,229,.36);border-color:rgba(225,235,255,.75)}.bar span{margin-left:auto;font-size:11px;color:rgba(235,242,255,.7);white-space:nowrap}.stage{position:relative;min-height:0}iframe{width:100%;height:100%;border:0}.readout{position:absolute;z-index:10;right:12px;bottom:12px;width:min(460px,calc(100% - 24px));padding:11px 13px;border:1px solid rgba(220,232,255,.25);border-radius:12px;background:rgba(5,16,54,.9);font-size:11px;line-height:1.55;backdrop-filter:blur(10px);white-space:pre-wrap;pointer-events:none}@media(max-width:760px){.bar span{display:none}.readout{right:8px;bottom:8px;width:calc(100% - 16px);max-height:34%;overflow:auto}}
+</style>
+</head>
+<body>
+<div class="bar">
+<strong>样式覆盖链路验证</strong>
+<button data-mode="raw">① 原始空域页</button>
+<button data-mode="proof">② 强制红框验证</button>
+<button data-mode="copy" class="is-active">③ 复制首页真实样式</button>
+<span>正式 index.html 未修改</span>
+</div>
+<div class="stage">
+<iframe id="frame" src="./#airspace" title="功能页样式验证"></iframe>
+<div class="readout" id="readout">加载中…</div>
+</div>
+<script>
+const frame=document.getElementById('frame');
+const readout=document.getElementById('readout');
+const buttons=[...document.querySelectorAll('[data-mode]')];
+let mode='copy';
+const props=['border-top-width','border-top-style','border-top-color','border-right-width','border-right-style','border-right-color','border-bottom-width','border-bottom-style','border-bottom-color','border-left-width','border-left-style','border-left-color','border-radius','background','box-shadow','backdrop-filter','-webkit-backdrop-filter','overflow'];
+function ensureBase(doc){
+ let s=doc.querySelector('style[data-proof-base]');
+ if(!s){s=doc.createElement('style');s.dataset.proofBase='1';doc.head.appendChild(s)}
+ s.textContent='.welcome-pavilion{display:none!important}body{overflow-y:auto!important}';
+}
+function resetTarget(target){
+ props.forEach(p=>target.style.removeProperty(p));
+ target.style.removeProperty('outline');target.style.removeProperty('outline-offset');
+}
+function apply(){
+ const doc=frame.contentDocument;if(!doc)return;
+ ensureBase(doc);
+ const home=doc.querySelector('#home .hero');
+ const target=doc.querySelector('#airspace .page-head');
+ if(!home||!target){readout.textContent='未找到 #home .hero 或 #airspace .page-head';return}
+ resetTarget(target);
+ const hs=getComputedStyle(home);
+ if(mode==='proof'){
+   target.style.setProperty('outline','6px solid #ff1744','important');
+   target.style.setProperty('outline-offset','-6px','important');
+   target.style.setProperty('background','rgba(255,23,68,.16)','important');
+   readout.textContent='如果这里能看到粗红框和淡红底，说明测试覆盖链路有效。\n目标：#airspace .page-head';
+ }else if(mode==='copy'){
+   props.forEach(p=>{
+     const v=hs.getPropertyValue(p);
+     if(v) target.style.setProperty(p,v,'important');
+   });
+   const ts=getComputedStyle(target);
+   readout.textContent='已从首页 #home .hero 读取并原样写入功能页 #airspace .page-head\n\n首页 box-shadow: '+hs.boxShadow+'\n功能页 box-shadow: '+ts.boxShadow+'\n首页 radius: '+hs.borderRadius+'\n功能页 radius: '+ts.borderRadius+'\n首页 background: '+hs.background+'\n功能页 background: '+ts.background+'\n首页 backdrop: '+(hs.backdropFilter||hs.webkitBackdropFilter||'none')+'\n功能页 backdrop: '+(ts.backdropFilter||ts.webkitBackdropFilter||'none');
+ }else{
+   readout.textContent='原始空域页，不注入视觉覆盖。';
+ }
+}
+function setMode(next){mode=next;buttons.forEach(b=>b.classList.toggle('is-active',b.dataset.mode===next));apply();setTimeout(apply,120)}
+buttons.forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+frame.addEventListener('load',()=>{try{frame.contentWindow.location.hash='airspace';frame.contentWindow.scrollTo(0,0)}catch(e){}setTimeout(apply,80);setTimeout(apply,350)});
+</script>
+</body>
+</html>
