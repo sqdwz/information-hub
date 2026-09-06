@@ -1,36 +1,48 @@
-/* Feature-page frame test V3
-   Exact target: reproduce the HOME hero's effective container frame.
-   Do not invent a new glass layer.
+/* Feature-page visual test V4
+   Target identified from the homepage screenshot:
+   the faint bounded surface is .portal-grid.portal-carousel, NOT .hero.
 
-   Diagnosis:
-   - #home .hero keeps background: transparent, border: 0, backdrop-filter: none.
-   - The later Sayo .panel rule re-applies box-shadow: var(--shadow).
-   - Feature routes currently force box-shadow: none and border-radius: 0 with ID-scoped rules,
-     so their headers visually spread into the background.
-
-   This test changes ONLY those two effective differences.
-   #home remains untouched.
+   This file is preview-only and does not modify #home.
+   It copies the homepage carousel's actual surface recipe onto feature .page-head:
+   border + radius + translucent gradients + inset highlight + backdrop blur.
 */
 
 #airspace .page-head,
 #ai .page-head,
 #urban .page-head,
 #policy .page-head {
-  /* same effective frame as #home .hero.panel */
-  border: 0;
-  border-radius: var(--radius);
-  background: transparent;
-  box-shadow: var(--shadow);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(235, 243, 255, .5);
+  border-radius: 34px;
+  background: linear-gradient(180deg, rgba(231, 240, 255, .2), rgba(222, 233, 255, .08));
+  box-shadow: inset 0 1px rgba(255, 255, 255, .52);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 
-/* Remove the V1/V2 invented pseudo glass/border layer entirely. */
+/* Exact decorative surface used by the homepage 3D carousel stage. */
 #airspace .page-head::before,
 #ai .page-head::before,
 #urban .page-head::before,
 #policy .page-head::before {
-  content: none;
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 72%, rgba(142, 168, 248, .24), transparent 34%),
+    linear-gradient(180deg, transparent 58%, rgba(218, 229, 255, .13));
+  content: "";
+  pointer-events: none;
+}
+
+#airspace .page-head > *,
+#ai .page-head > *,
+#urban .page-head > *,
+#policy .page-head > * {
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 820px) {
@@ -38,6 +50,6 @@
   #ai .page-head,
   #urban .page-head,
   #policy .page-head {
-    border-radius: var(--radius);
+    border-radius: 26px;
   }
 }
