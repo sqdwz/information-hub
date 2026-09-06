@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>功能页样式 V1 预览</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; background: #081845; }
+    body { display: grid; grid-template-rows: 52px minmax(0, 1fr); }
+    .preview-bar { display: flex; align-items: center; gap: 8px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.12); background: rgba(8, 22, 63, .96); color: #eef4ff; }
+    .preview-bar strong { margin-right: 8px; font-size: 13px; white-space: nowrap; }
+    .preview-bar button { min-height: 32px; padding: 0 11px; border: 1px solid rgba(216,229,255,.18); border-radius: 999px; background: rgba(255,255,255,.06); color: #dce8ff; cursor: pointer; font: inherit; font-size: 12px; }
+    .preview-bar button:hover, .preview-bar button.is-active { border-color: rgba(216,229,255,.5); background: rgba(121,151,230,.24); color: #fff; }
+    .preview-bar span { margin-left: auto; color: rgba(225,235,255,.68); font-size: 11px; white-space: nowrap; }
+    iframe { width: 100%; height: 100%; border: 0; background: #081845; }
+    @media (max-width: 720px) {
+      .preview-bar { overflow-x: auto; }
+      .preview-bar strong, .preview-bar span { display: none; }
+      .preview-bar button { flex: 0 0 auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-bar" aria-label="预览路由切换">
+    <strong>功能页样式 V1</strong>
+    <button type="button" data-route="home">首页模板</button>
+    <button type="button" data-route="airspace" class="is-active">空域信息</button>
+    <button type="button" data-route="ai">行业日报</button>
+    <button type="button" data-route="urban">城市更新</button>
+    <button type="button" data-route="policy">资料库</button>
+    <span>仅注入功能页视觉层，不修改首页</span>
+  </div>
+  <iframe id="site-preview" src="./#airspace" title="信息聚合中心功能页样式预览"></iframe>
+
+  <script>
+    const frame = document.getElementById('site-preview');
+    const buttons = [...document.querySelectorAll('[data-route]')];
+
+    function injectPreviewLayer() {
+      const doc = frame.contentDocument;
+      if (!doc) return;
+
+      if (!doc.querySelector('link[data-feature-preview]')) {
+        const link = doc.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = './feature-page-v1.css?v=20260906-v1';
+        link.dataset.featurePreview = 'true';
+        doc.head.appendChild(link);
+      }
+
+      if (!doc.querySelector('style[data-feature-preview-helper]')) {
+        const style = doc.createElement('style');
+        style.dataset.featurePreviewHelper = 'true';
+        style.textContent = `
+          .welcome-pavilion { display: none !important; }
+          body { overflow-y: auto !important; }
+        `;
+        doc.head.appendChild(style);
+      }
+    }
+
+    frame.addEventListener('load', () => {
+      injectPreviewLayer();
+      setTimeout(injectPreviewLayer, 150);
+    });
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const route = button.dataset.route;
+        buttons.forEach((item) => item.classList.toggle('is-active', item === button));
+        try {
+          injectPreviewLayer();
+          frame.contentWindow.location.hash = route;
+          setTimeout(injectPreviewLayer, 80);
+        } catch (error) {
+          frame.src = `./#${route}`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
