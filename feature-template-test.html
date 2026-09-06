@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#071b58" />
+  <title>功能页复用首页 Hero 模板测试</title>
+  <link rel="stylesheet" href="./styles.css?v=20260906-feature-template-test" />
+  <style>
+    /* Test page only: the production index.html is not modified. */
+    .template-test-note {
+      position: fixed;
+      z-index: 30;
+      right: 18px;
+      bottom: 18px;
+      max-width: min(360px, calc(100vw - 36px));
+      padding: 10px 13px;
+      border: 1px solid rgba(220, 230, 255, .28);
+      border-radius: 12px;
+      background: rgba(15, 34, 96, .76);
+      color: rgba(242, 246, 255, .92);
+      box-shadow: 0 10px 28px rgba(8, 20, 63, .28);
+      backdrop-filter: blur(10px);
+      font-size: 12px;
+      line-height: 1.6;
+      pointer-events: none;
+    }
+    .template-test-subcontent { margin-top: 18px; }
+    .template-test-subcontent[hidden] { display: none; }
+    @media (max-width: 820px) {
+      .template-test-note { right: 12px; bottom: 12px; left: 12px; max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <div class="topbar__inner">
+        <div class="brand">
+          <span class="brand__avatar-button" aria-hidden="true"><img class="brand__avatar" src="./assets/avatar-klee.png" alt="" /></span>
+          <a class="brand__home" href="#home">瑞雪的小栈</a>
+        </div>
+        <nav class="nav" aria-label="模板测试导航">
+          <a href="#home" data-test-route="home">首页模板</a>
+          <a href="#airspace" data-test-route="airspace">空域信息</a>
+          <a href="#ai" data-test-route="ai">行业日报与周汇总</a>
+          <a href="#urban" data-test-route="urban">城市更新</a>
+          <a href="#policy" data-test-route="policy">资料库</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="page" id="home" data-test-page="home">
+        <div class="hero panel">
+          <p class="eyebrow"><span></span>个人信息聚合中心</p>
+          <h1>把分散的信息，整理成每天能用的内容。</h1>
+          <p class="hero__copy">收集、整理并沉淀日常信息，让重要内容先呈现结论，来源可追溯，历史可检索。</p>
+        </div>
+      </section>
+
+      <section class="page" id="airspace" data-test-page="airspace">
+        <div class="hero panel">
+          <p class="eyebrow"><span></span>海南 · 空域巡检</p>
+          <h1>空域信息｜2026-09-06</h1>
+          <p class="hero__copy">聚合海南省禁飞、临时空域管制及无人机作业相关信息；先看巡检结论，再核查原始来源。</p>
+        </div>
+        <section class="summary panel template-test-subcontent">
+          <div class="summary__message">
+            <p class="eyebrow"><span></span>巡检摘要</p>
+            <h2>巡检摘要放到 Hero 之后，不再改变首屏模板。</h2>
+            <p>实际页面的数据、筛选与来源信息继续保留在首屏之后。</p>
+          </div>
+          <div class="summary__stats"><div class="metric"><span>当前生效</span><b>3</b></div><div class="metric"><span>即将生效</span><b>1</b></div><div class="metric"><span>本轮新增</span><b>2</b></div></div>
+        </section>
+      </section>
+
+      <section class="page" id="ai" data-test-page="ai">
+        <div class="hero panel">
+          <p class="eyebrow"><span></span>行业动态</p>
+          <h1>行业日报与周汇总</h1>
+          <p class="hero__copy">汇集 AI、GIS、测绘与无人机动态；按日速览，按周沉淀，并支持回看历史内容。</p>
+        </div>
+        <div class="empty-state panel template-test-subcontent"><span>AI</span><h2>业务内容从这里开始</h2><p>Hero 本身只承担与首页一致的首屏视觉。</p></div>
+      </section>
+
+      <section class="page" id="urban" data-test-page="urban">
+        <div class="hero panel">
+          <p class="eyebrow"><span></span>海南 · 每日巡检</p>
+          <h1>城市更新｜2026-09-06</h1>
+          <p class="hero__copy">海南省城市更新领域招投标信息每日巡检报告。</p>
+        </div>
+        <div class="filter-panel template-test-subcontent" aria-label="城市更新测试筛选">
+          <span class="filter-panel__label">内容视图</span>
+          <div class="filter-panel__controls"><button class="filter-panel__button is-active" type="button">正在招标 <span>5</span></button><button class="filter-panel__button" type="button">近三年历史库 <span>86</span></button></div>
+          <p class="filter-panel__hint">切换器放到 Hero 之后，因此不会改变首页模板的尺寸和视觉。</p>
+        </div>
+      </section>
+
+      <section class="page" id="policy" data-test-page="policy">
+        <div class="hero panel">
+          <p class="eyebrow"><span></span>城市更新 · 资料索引</p>
+          <h1>资料库</h1>
+          <p class="hero__copy">整理城市更新、征收补偿与实施意见等公开文件，可按主题和效力状态快速查阅。</p>
+        </div>
+        <section class="content-section panel source-panel template-test-subcontent" style="padding:28px 30px">
+          <div class="section-heading"><div><p class="eyebrow"><span></span>资料检索</p><h2>业务组件从首屏之后开始</h2></div></div>
+          <p style="color:var(--muted);line-height:1.8">这里仅用于验证：四个功能页的第一屏直接使用与首页完全相同的 <code>.hero.panel</code>，而不是再做一套 <code>.page-head</code> 仿制样式。</p>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="template-test-note">测试页：正式 <code>index.html</code> 未修改。五个页面的第一屏都使用同一个 <code>.hero.panel</code> 模板，仅替换文字。</div>
+
+  <script>
+    const routes = ['home', 'airspace', 'ai', 'urban', 'policy'];
+    function activateRoute() {
+      const route = routes.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'home';
+      document.querySelectorAll('[data-test-page]').forEach((page) => page.classList.toggle('is-active', page.dataset.testPage === route));
+      document.querySelectorAll('[data-test-route]').forEach((link) => link.setAttribute('aria-current', link.dataset.testRoute === route ? 'page' : 'false'));
+      if (!location.hash) history.replaceState(null, '', '#home');
+      window.scrollTo(0, 0);
+    }
+    addEventListener('hashchange', activateRoute);
+    activateRoute();
+  </script>
+</body>
+</html>
