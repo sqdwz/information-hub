@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>功能页样式 V2 预览</title>
+  <title>功能页样式 V3 预览</title>
   <style>
     * { box-sizing: border-box; }
     html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; background: #081845; }
@@ -23,13 +23,13 @@
 </head>
 <body>
   <div class="preview-bar" aria-label="预览路由切换">
-    <strong>功能页样式 V2</strong>
+    <strong>功能页样式 V3</strong>
     <button type="button" data-route="home">首页模板</button>
     <button type="button" data-route="airspace" class="is-active">空域信息</button>
     <button type="button" data-route="ai">行业日报</button>
     <button type="button" data-route="urban">城市更新</button>
     <button type="button" data-route="policy">资料库</button>
-    <span>边框版：不填充、不整面模糊、不修改首页</span>
+    <span>只复用首页 hero 的实际框效果：同一 box-shadow + border-radius</span>
   </div>
   <iframe id="site-preview" src="./#airspace" title="信息聚合中心功能页样式预览"></iframe>
 
@@ -48,7 +48,7 @@
         link.dataset.featurePreview = 'true';
         doc.head.appendChild(link);
       }
-      link.href = './feature-page-v1.css?v=20260906-v2';
+      link.href = './feature-page-v1.css?v=20260906-v3-exact-home-frame';
 
       if (!doc.querySelector('style[data-feature-preview-helper]')) {
         const style = doc.createElement('style');
