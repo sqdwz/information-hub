@@ -1,64 +1,43 @@
-/* Feature-page visual isolation V2
-   Scope: #airspace / #ai / #urban / #policy only.
-   Home #home is intentionally untouched.
+/* Feature-page frame test V3
+   Exact target: reproduce the HOME hero's effective container frame.
+   Do not invent a new glass layer.
 
-   Goal:
-   - Do NOT create a translucent full-surface panel.
-   - Do NOT blur/fill the whole feature hero.
-   - Only reproduce the very faint framed boundary seen on the home template.
+   Diagnosis:
+   - #home .hero keeps background: transparent, border: 0, backdrop-filter: none.
+   - The later Sayo .panel rule re-applies box-shadow: var(--shadow).
+   - Feature routes currently force box-shadow: none and border-radius: 0 with ID-scoped rules,
+     so their headers visually spread into the background.
+
+   This test changes ONLY those two effective differences.
+   #home remains untouched.
 */
 
-:where(#airspace, #ai, #urban, #policy) .page-head {
-  position: relative;
-  isolation: isolate;
-  overflow: visible;
-  width: 100%;
-  min-height: calc(100vh - 66px);
-  margin: 0 auto;
+#airspace .page-head,
+#ai .page-head,
+#urban .page-head,
+#policy .page-head {
+  /* same effective frame as #home .hero.panel */
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius);
   background: transparent;
-  box-shadow: none;
+  box-shadow: var(--shadow);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
 
-/* Border only: no filled glass plane. */
-:where(#airspace, #ai, #urban, #policy) .page-head::before {
-  position: absolute;
-  z-index: 0;
-  top: 10px;
-  right: 0;
-  bottom: 10px;
-  left: 0;
-  border-top: 1px solid rgba(224, 233, 255, .055);
-  border-right: 1px solid rgba(224, 233, 255, .13);
-  border-bottom: 1px solid rgba(224, 233, 255, .045);
-  border-left: 1px solid rgba(224, 233, 255, .13);
-  background: none;
-  box-shadow:
-    inset 1px 0 rgba(255, 255, 255, .018),
-    inset -1px 0 rgba(255, 255, 255, .018);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  content: "";
-  pointer-events: none;
-}
-
-:where(#airspace, #ai, #urban, #policy) .page-head > * {
-  position: relative;
-  z-index: 1;
+/* Remove the V1/V2 invented pseudo glass/border layer entirely. */
+#airspace .page-head::before,
+#ai .page-head::before,
+#urban .page-head::before,
+#policy .page-head::before {
+  content: none;
 }
 
 @media (max-width: 820px) {
-  :where(#airspace, #ai, #urban, #policy) .page-head {
-    min-height: calc(100vh - 105px);
-  }
-
-  :where(#airspace, #ai, #urban, #policy) .page-head::before {
-    top: 8px;
-    bottom: 8px;
-    border-right-color: rgba(224, 233, 255, .09);
-    border-left-color: rgba(224, 233, 255, .09);
+  #airspace .page-head,
+  #ai .page-head,
+  #urban .page-head,
+  #policy .page-head {
+    border-radius: var(--radius);
   }
 }
