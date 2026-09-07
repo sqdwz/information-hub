@@ -624,6 +624,7 @@ body::before { background: linear-gradient(180deg, rgba(9, 24, 76, .62), rgba(63
 .eyebrow { color: var(--wine); }
 .hero__note strong { color: #f2d694; }
 .metric b, .portal__metric, .portal__arrow b { color: var(--wine); }
+
 .showcase-tabs { border-color: rgba(102, 133, 229, .36); background: rgba(225, 235, 255, .52); }
 .showcase-tab { border-left-color: rgba(102, 133, 229, .22); color: var(--muted); }
 .showcase-tab:hover, .showcase-tab.is-active { background: rgba(102, 133, 229, .16); color: var(--wine); }
@@ -819,4 +820,14 @@ body::before { background: linear-gradient(180deg, rgba(9, 24, 76, .62), rgba(63
 
 @media (prefers-reduced-motion: reduce) {
   .portal-carousel .portal, .portal-carousel__nav button { transition: none; }
+}
+
+/* Airspace-only header treatment: retain the immersive layout without affecting other routes. */
+#airspace .page-head {
+  background: rgba(117, 156, 235, 0.14);
+  border: 1px solid rgba(180, 205, 255, 0.16);
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
