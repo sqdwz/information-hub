@@ -58,7 +58,7 @@ function renderIndustryBrief(data) {
 
   section.innerHTML = `
     <div class="page-head panel">
-      <div><p class="eyebrow">行业日报与周汇总</p><h2>${escapeHtml(data.title || `${reportType}｜${data.date || ""}`)}</h2>${briefHighlights(data.summary)}<p class="brief-collection">本期已收录：<strong>${dailyCount} 条日报</strong><span>·</span><strong>${weeklyCount} 条周报</strong></p></div>
+      <div><p class="eyebrow">行业简报</p><h2>${escapeHtml(data.title || `${reportType}｜${data.date || ""}`)}</h2>${briefHighlights(data.summary)}<p class="brief-collection">本期已收录：<strong>${dailyCount} 条日报</strong><span>·</span><strong>${weeklyCount} 条周报</strong></p></div>
     </div>
     <p class="brief-coverage">${escapeHtml(data.coverage_note || "")}</p>
     <div class="brief-filter filter-panel" aria-label="按标签筛选本期动态">
