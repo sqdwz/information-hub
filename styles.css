@@ -822,8 +822,11 @@ body::before { background: linear-gradient(180deg, rgba(9, 24, 76, .62), rgba(63
   .portal-carousel .portal, .portal-carousel__nav button { transition: none; }
 }
 
-/* Airspace-only header treatment: retain the immersive layout without affecting other routes. */
-#airspace .page-head {
+/* Shared functional-page header treatment; the home hero remains independent. */
+#airspace .page-head,
+#ai .page-head,
+#urban .page-head,
+#policy .page-head {
   background: rgba(117, 156, 235, 0.09);
   border: 1px solid rgba(180, 205, 255, 0.13);
   border-radius: 26px;
