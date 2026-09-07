@@ -199,16 +199,21 @@ avatarUnlock?.addEventListener("pointermove", event => {
 avatarUnlock?.addEventListener("pointerup", finishAvatarDrag);
 avatarUnlock?.addEventListener("pointercancel", finishAvatarDrag);
 avatarUnlock?.addEventListener("dragstart", event => event.preventDefault());
+const shareDialog = $("#share-dialog");
+const openShareDialog = () => shareDialog?.showModal();
+
 avatarUnlock?.addEventListener("click", event => {
   if (avatarClickSuppressed) {
     event.preventDefault();
     avatarClickSuppressed = false;
     return;
   }
-  $("#share-dialog")?.showModal();
+  openShareDialog();
 });
 
-$("#share-dialog")?.addEventListener("click", event => {
+$("#topbar-share")?.addEventListener("click", openShareDialog);
+
+shareDialog?.addEventListener("click", event => {
   if (event.target === event.currentTarget || event.target.closest("[data-close-share]")) event.currentTarget.close();
 });
 
