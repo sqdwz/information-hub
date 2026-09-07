@@ -113,7 +113,8 @@ function renderIndustryBrief(data) {
     const metric = portal.querySelector(".portal__metric");
     if (metric) metric.textContent = `${reportType} · ${itemCount} 条 · ${data.date || "最新"}`;
   }
-  window.registerFooterUpdate?.("brief", { title: `${reportType} · 行业简报`, date: data.date, href: "#ai" });
+  const footerReportType = data.type === "weekly" ? "周报" : "日报";
+  window.registerFooterUpdate?.("brief", { title: `行业简报 · ${footerReportType}`, date: data.date, href: "#ai" });
 }
 
 function isArchivePath(path) {
