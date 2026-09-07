@@ -238,7 +238,10 @@ function route() {
   const page = policyDetailMatch ? "policy-detail" : (document.querySelector(`[data-page="${id}"]`) ? id : "home");
   document.querySelectorAll("[data-page]").forEach(node => node.classList.toggle("is-active", node.dataset.page === page));
   const activeRoute = page === "policy-detail" ? "policy" : page;
-  document.querySelectorAll("[data-route]").forEach(node => node.toggleAttribute("aria-current", node.dataset.route === activeRoute));
+  document.querySelectorAll("[data-route]").forEach(node => {
+    if (node.dataset.route === activeRoute) node.setAttribute("aria-current", "page");
+    else node.removeAttribute("aria-current");
+  });
   if (matchMedia("(max-width: 820px)").matches) {
     const nav = $(".nav");
     const activeLink = document.querySelector(`[data-route="${activeRoute}"]`);
