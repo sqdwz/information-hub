@@ -1,55 +1,39 @@
-/* Feature-page visual test V4
-   Target identified from the homepage screenshot:
-   the faint bounded surface is .portal-grid.portal-carousel, NOT .hero.
-
-   This file is preview-only and does not modify #home.
-   It copies the homepage carousel's actual surface recipe onto feature .page-head:
-   border + radius + translucent gradients + inset highlight + backdrop blur.
+/* Feature-page visual test V5
+   Only #airspace is modified.
+   Goal: turn the DevTools-like pale blue element highlight into a real page-header surface.
+   #home and all other feature pages remain untouched.
 */
 
-#airspace .page-head,
-#ai .page-head,
-#urban .page-head,
-#policy .page-head {
+#airspace .page-head {
   position: relative;
-  isolation: isolate;
+  min-height: calc(100vh - 66px);
+  margin-top: 0;
   overflow: hidden;
-  border: 1px solid rgba(235, 243, 255, .5);
-  border-radius: 34px;
-  background: linear-gradient(180deg, rgba(231, 240, 255, .2), rgba(222, 233, 255, .08));
-  box-shadow: inset 0 1px rgba(255, 255, 255, .52);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+
+  /* DevTools-style bounded highlight: a very light blue wash, not frosted glass. */
+  border: 1px solid rgba(176, 203, 255, .18);
+  border-radius: 0;
+  background: rgba(112, 153, 235, .115);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .08);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
-/* Exact decorative surface used by the homepage 3D carousel stage. */
-#airspace .page-head::before,
-#ai .page-head::before,
-#urban .page-head::before,
-#policy .page-head::before {
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  background:
-    radial-gradient(circle at 50% 72%, rgba(142, 168, 248, .24), transparent 34%),
-    linear-gradient(180deg, transparent 58%, rgba(218, 229, 255, .13));
-  content: "";
-  pointer-events: none;
-}
-
-#airspace .page-head > *,
-#ai .page-head > *,
-#urban .page-head > *,
-#policy .page-head > * {
+/* Keep content above the test surface. */
+#airspace .page-head > * {
   position: relative;
   z-index: 1;
 }
 
+/* Remove the previous decorative pseudo layer from this preview. */
+#airspace .page-head::before {
+  content: none !important;
+}
+
 @media (max-width: 820px) {
-  #airspace .page-head,
-  #ai .page-head,
-  #urban .page-head,
-  #policy .page-head {
-    border-radius: 26px;
+  #airspace .page-head {
+    min-height: calc(100vh - 105px);
+    border-radius: 0;
+    background: rgba(112, 153, 235, .10);
   }
 }
