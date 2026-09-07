@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#071b58" />
     <meta name="description" content="个人长期使用的信息聚合中心：空域、AI、城市更新与文件资料。" />
     <title>信息聚合中心</title>
-    <link rel="stylesheet" href="./styles.css?v=20260905-home-hero-alignment" />
+    <link rel="stylesheet" href="./styles.css?v=20260907-card-footer" />
     <link rel="stylesheet" href="./industry-brief.css?v=20260905-filter-template" />
   </head>
   <body>
@@ -135,6 +135,52 @@
           </div>
         </section>
       </main>
+      <footer class="site-footer" aria-label="网站页脚">
+        <div class="site-footer__glow" aria-hidden="true"></div>
+        <div class="site-footer__grid">
+          <section class="site-footer__section site-footer__brand" aria-labelledby="footer-brand-title">
+            <div class="site-footer__brandline">
+              <img src="./assets/avatar-klee.png" alt="" />
+              <div>
+                <h2 id="footer-brand-title">瑞雪的小栈</h2>
+                <p>记录 · 整理 · 分享</p>
+              </div>
+            </div>
+            <p class="site-footer__intro">聚合行业信息，记录城市变化，也记录每天的成长。</p>
+          </section>
+
+          <nav class="site-footer__section site-footer__nav" aria-label="页脚快速导航">
+            <h3>快速导航</h3>
+            <a href="#home" data-route="home">首页</a>
+            <a href="#airspace" data-route="airspace">空域信息</a>
+            <a href="#ai" data-route="ai">行业简报</a>
+            <a href="#urban" data-route="urban">城市更新</a>
+            <a href="#policy" data-route="policy">资料库</a>
+          </nav>
+
+          <section class="site-footer__section site-footer__links" aria-labelledby="footer-links-title">
+            <h3 id="footer-links-title">常用链接</h3>
+            <a href="https://github.com/sqdwz/information-hub" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.7a9.5 9.5 0 0 0-3 18.5c.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.2-3.4-1.2-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 0 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.7.4-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-4.7 0-1 .4-1.9 1-2.6-.1-.3-.4-1.3.1-2.6 0 0 .8-.3 2.6 1a9 9 0 0 1 4.8 0c1.8-1.3 2.6-1 2.6-1 .5 1.3.2 2.3.1 2.6.7.7 1 1.6 1 2.6 0 3.7-2.3 4.5-4.6 4.7.4.3.7.9.7 1.8v2.7c0 .4.2.6.7.5A9.5 9.5 0 0 0 12 2.7Z"/></svg><span>GitHub</span></a>
+            <button id="footer-share" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.5-4.4M8.2 13.2l7.5 4.4"/></svg><span>分享网站</span></button>
+            <a href="https://github.com/sqdwz/information-hub/issues/new" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15a4 4 0 0 1-4 4H9l-5 3v-7a4 4 0 0 1-1-2.6V7a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4Z"/><path d="M7 8h9M7 12h6"/></svg><span>意见反馈</span></a>
+          </section>
+
+          <section class="site-footer__section site-footer__updates" aria-labelledby="footer-updates-title">
+            <h3 id="footer-updates-title">最新更新</h3>
+            <ol id="footer-updates" aria-live="polite">
+              <li><a href="#ai"><span>行业简报 · 最新一期</span><time datetime="2026-09-06">09/06</time></a></li>
+              <li><a href="#urban"><span>城市更新招投标巡检</span><time datetime="2026-09-05">09/05</time></a></li>
+              <li><a href="#policy"><span>资料库政策索引更新</span><time datetime="2026-08-30">08/30</time></a></li>
+            </ol>
+          </section>
+
+          <section class="site-footer__section site-footer__aside" aria-label="页脚寄语">
+            <p>行而不辍，<br />未来可期。</p>
+            <button class="site-footer__top" id="footer-to-top" type="button"><span aria-hidden="true">↑</span> 返回顶部</button>
+          </section>
+        </div>
+        <p class="site-footer__copyright">© 2024–2026 瑞雪的小栈 · 公开信息仅供学习交流使用</p>
+      </footer>
     </div>
     <dialog class="share-dialog" id="share-dialog" aria-label="本站分享二维码">
       <div class="share-dialog__body">
@@ -143,7 +189,7 @@
       </div>
     </dialog>
     <dialog class="detail-dialog" id="notice-dialog" aria-labelledby="dialog-title"><div class="dialog__body"><button class="dialog__close" type="button" aria-label="关闭详情" data-close-dialog>×</button><div id="dialog-content"></div></div></dialog>
-    <script src="./app.js?v=20260905-urban-view-controls" defer></script>
+    <script src="./app.js?v=20260907-card-footer" defer></script>
 <script src="./industry-brief.js?v=20260905-filter-template" defer></script>
   </body>
 </html>

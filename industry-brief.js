@@ -113,6 +113,7 @@ function renderIndustryBrief(data) {
     const metric = portal.querySelector(".portal__metric");
     if (metric) metric.textContent = `${reportType} · ${itemCount} 条 · ${data.date || "最新"}`;
   }
+  window.registerFooterUpdate?.("brief", { title: `${reportType} · 行业简报`, date: data.date, href: "#ai" });
 }
 
 function isArchivePath(path) {

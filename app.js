@@ -202,6 +202,41 @@ avatarUnlock?.addEventListener("dragstart", event => event.preventDefault());
 const shareDialog = $("#share-dialog");
 const openShareDialog = () => shareDialog?.showModal();
 
+const footerUpdates = new Map([
+  ["brief", { title: "行业简报 · 最新一期", date: "2026-09-06", href: "#ai" }],
+  ["urban", { title: "城市更新招投标巡检", date: "2026-09-05", href: "#urban" }],
+  ["policy", { title: "资料库政策索引更新", date: "2026-08-30", href: "#policy" }],
+  ["airspace", { title: "空域动态与飞行通告", date: "2026-08-26", href: "#airspace" }]
+]);
+
+function footerDateOnly(value) {
+  const match = String(value || "").match(/\d{4}-\d{2}-\d{2}/);
+  return match?.[0] || "";
+}
+
+function renderFooterUpdates() {
+  const list = $("#footer-updates");
+  if (!list) return;
+  const updates = [...footerUpdates.values()]
+    .filter(item => footerDateOnly(item.date))
+    .sort((a, b) => footerDateOnly(b.date).localeCompare(footerDateOnly(a.date)))
+    .slice(0, 3);
+  list.innerHTML = updates.map(item => {
+    const date = footerDateOnly(item.date);
+    return `<li><a href="${escapeHtml(item.href)}"><span>${escapeHtml(item.title)}</span><time datetime="${date}">${date.slice(5).replace("-", "/")}</time></a></li>`;
+  }).join("");
+}
+
+function registerFooterUpdate(key, item) {
+  const date = footerDateOnly(item?.date);
+  if (!key || !date || !item?.title || !item?.href) return;
+  footerUpdates.set(key, { ...item, date });
+  renderFooterUpdates();
+}
+
+window.registerFooterUpdate = registerFooterUpdate;
+renderFooterUpdates();
+
 avatarUnlock?.addEventListener("click", event => {
   if (avatarClickSuppressed) {
     event.preventDefault();
@@ -212,6 +247,11 @@ avatarUnlock?.addEventListener("click", event => {
 });
 
 $("#topbar-share")?.addEventListener("click", openShareDialog);
+$("#footer-share")?.addEventListener("click", openShareDialog);
+$("#footer-to-top")?.addEventListener("click", () => {
+  const behavior = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  window.scrollTo({ top: 0, behavior });
+});
 
 shareDialog?.addEventListener("click", event => {
   if (event.target === event.currentTarget || event.target.closest("[data-close-share]")) event.currentTarget.close();
@@ -335,6 +375,7 @@ function renderAirspace(data) {
   renderGroup("#ended-list", ended, "近期没有需要保留的结束公告。");
   $("#source-list").innerHTML = (data.sources || []).map(source => `<li>${escapeHtml(source)}</li>`).join("");
   $("#home-airspace-metric").textContent = `本轮新增 ${summary.new || 0} 条 · 当前生效 ${summary.active || 0} 条`;
+  registerFooterUpdate("airspace", { title: "空域动态与飞行通告", date: reportDate, href: "#airspace" });
   airspaceFilter = null;
   applyAirspaceFilter(null);
 }
@@ -473,6 +514,7 @@ function renderUrban(data) {
   applyUrbanCurrentFilter(null);
   renderUrbanSources(data.source_checks);
   $("#home-urban-metric").textContent = `今日新增 ${summary.new_today || 0} 条 · 当前有效 ${summary.active_core ?? active.length} 条`;
+  registerFooterUpdate("urban", { title: "城市更新招投标巡检", date: data.generated_at || data.date, href: "#urban" });
   if (urbanHistoryRecords.length) refreshUrbanHistory();
 }
 
@@ -688,6 +730,7 @@ function renderPolicyOverview() {
   $("#policy-stats").innerHTML = stats.map(([label, value, filter]) => `<button class="filter-panel__button policy-stat" type="button" data-policy-stat="${filter}" aria-pressed="false">${label} ${value} 份</button>`).join("");
   $("#policy-overview-note").textContent = policyData.summary || "文件摘要用于快速定位，具体适用情形仍应核对发文机关原文。";
   $("#home-policy-metric").textContent = `${policyItems.length} 份文件 · ${policyItems.filter(item => item.themes?.includes("城市更新")).length} 份城市更新相关`;
+  registerFooterUpdate("policy", { title: "资料库政策索引更新", date: policyData.updated_at || policyData.verified_at, href: "#policy" });
   document.querySelectorAll("[data-policy-stat]").forEach(button => button.addEventListener("click", () => {
     const filter = button.dataset.policyStat;
     const selected = button.getAttribute("aria-pressed") === "true";
