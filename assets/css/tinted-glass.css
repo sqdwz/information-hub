@@ -1,0 +1,120 @@
+/* 雾蓝紫染色玻璃 · Blue-Violet Tinted Acrylic Glass
+   Environment 18%, content 34%, reading surfaces 48%. */
+:root {
+  --glass-page: rgba(150, 170, 215, .18);
+  --glass-card: linear-gradient(135deg, rgba(175, 190, 229, .38), rgba(144, 160, 210, .34));
+  --glass-reading: rgba(220, 226, 242, .48);
+  --glass-edge: rgba(235, 241, 255, .20);
+  --glass-shadow: inset 0 1px 0 rgba(240, 245, 255, .18), 0 12px 35px rgba(30, 46, 102, .12);
+  --glass-blur: blur(20px) saturate(115%);
+  --paper: var(--glass-card);
+  --paper-soft: var(--glass-page);
+  --ink: #172947;
+  --muted: #344563;
+  --line: rgba(72, 95, 156, .24);
+}
+
+/* Remove the old opaque white fade without changing the illustration. */
+.page.is-active::before, .page.has-trace::before {
+  background: linear-gradient(180deg, transparent, var(--glass-page) 520px);
+}
+.panel, .trace-archive-surface, .portal-grid.portal-carousel {
+  border-color: var(--glass-edge);
+  background: var(--glass-page);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.hero, .page-head { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.showcase-card, .summary, .notice-card, .source-panel, .empty-card,
+.policy-gaps, .policy-filter, .policy-card, .policy-detail, .integration-card,
+.urban-history-summary, .urban-history-filter, .portal-carousel .portal,
+.brief-section-card, .brief-item-card, .brief-tool, .brief-item,
+.trace-archive-surface .notice-card, .trace-archive-surface .brief-archive-card {
+  color: var(--ink);
+  border-color: var(--glass-edge);
+  background: var(--glass-card);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.showcase-card:hover, .portal-carousel .portal:hover {
+  background: var(--glass-card);
+  border-color: rgba(224, 234, 255, .38);
+}
+.section-heading, .filter-panel, .brief-filter, .showcase-tabs {
+  background: var(--glass-page);
+  border-color: var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.notice-card h3, .policy-card h3, .policy-detail h1, .policy-detail h2,
+.brief-section-card h3, .brief-item-card h3, .brief-archive-card h4 { color: #172947; }
+.notice-summary, .urban-card-summary, .policy-card__summary,
+.brief-section-card p, .brief-item-card p, .brief-archive-card__summary,
+.brief-archive-full p { color: #263b5b; }
+
+/* Extra density is local to sustained reading, not the whole card. */
+.notice-table, .policy-detail__facts, .policy-gap, .brief-archive-full,
+.policy-detail__section, .policy-detail__notice, .policy-detail__disclaimer {
+  background: var(--glass-reading);
+  border-color: var(--line);
+  color: #344563;
+}
+.notice-table dt, .policy-detail__facts dt {
+  background: rgba(150, 166, 214, .22);
+  color: #344563;
+}
+/* Text-dense cards combine the content tint with the local reading layer. */
+.brief-section-card, .brief-item-card, .policy-card, .policy-detail {
+  background: linear-gradient(var(--glass-reading), var(--glass-reading)), var(--glass-card);
+}
+.brief-tool, .source-panel, .showcase-card { color: #172947; }
+.section-heading .eyebrow, .brief-list-title span { color: #d1def8; text-shadow: none; }
+.brief-filter button, .filter-panel__button { background: rgba(192, 206, 238, .48); color: #172947; }
+.brief-filter button.is-active, .filter-panel__button.is-active { background: rgba(105, 127, 196, .52); color: #f4f7ff; }
+.policy-detail__chips span, .policy-related a, .urban-summary__content li,
+.urban-history-filter input, .urban-history-filter select,
+.policy-filter input, .policy-filter select, .trace-archive-surface .brief-archive__search input {
+  background: var(--glass-reading);
+  border-color: var(--line);
+  color: #172947;
+}
+input::placeholder { color: #52617c; opacity: 1; }
+select option { background: #c4cfe9; color: #172947; }
+.policy-gaps__summary { background: rgba(176, 169, 215, .30); }
+.policy-gaps__summary b, .policy-detail__disclaimer b { color: #344563; }
+.policy-gap > div span, .policy-card__meta > span:first-child, .policy-detail__badges > span {
+  background: rgba(153, 172, 223, .28); color: #263b5b;
+}
+.policy-card__number, .policy-card__foot p, .brief-item-meta,
+.brief-archive-card__meta time { color: #344563; }
+.brief-archive-full { padding: 18px; border-radius: 12px; }
+.dialog__body { background: rgba(174, 190, 227, .70); color: #172947; backdrop-filter: var(--glass-blur); }
+.detail-dialog::backdrop { background: rgba(21, 32, 76, .42); backdrop-filter: blur(6px); }
+
+/* Navigation floats above the scene; only its interactive state gains a tint. */
+.topbar__inner, .site-footer {
+  background: linear-gradient(135deg, rgba(98, 122, 183, .28), rgba(123, 117, 179, .22));
+  border-color: var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+.trace-rail::before {
+  border-radius: 24px;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transition: background 220ms ease;
+}
+.trace-rail:hover::before, .trace-rail:focus-within::before { background: rgba(145, 163, 214, .20); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+.trace-launcher { background: rgba(53, 75, 140, .42); border-color: var(--glass-edge); backdrop-filter: var(--glass-blur); text-shadow: 0 1px 5px rgba(15, 29, 79, .7); }
+.trace-dialog { background: linear-gradient(135deg, rgba(73, 92, 151, .68), rgba(87, 82, 147, .66)); border-color: var(--glass-edge); box-shadow: var(--glass-shadow); backdrop-filter: var(--glass-blur); }
+.trace-dialog .trace-rail::before { display: none; }
+@media (prefers-reduced-motion: reduce) { .trace-rail::before { transition: none; } }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root { --glass-card: #a7b7dc; --glass-reading: #c8d2e9; }
+  .trace-dialog, .dialog__body { background: #7387b4; }
+}
