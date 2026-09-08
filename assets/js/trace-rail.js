@@ -114,6 +114,18 @@
       }, options);
       window.addEventListener("app:route", () => this.activate(), options);
       window.addEventListener("resize", () => this.scheduleObserve(), options);
+      window.addEventListener("scroll", () => {
+        if (this.root.hidden) return;
+        cancelAnimationFrame(this.endFrame);
+        this.endFrame = requestAnimationFrame(() => {
+          const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
+          if (atEnd) {
+            const last = this.sections.findLast(({ element }) => !element.closest("[hidden]") && element.getBoundingClientRect().top < innerHeight);
+            if (last) { this.activeSection = last.element.id; this.updateState(); }
+          } else if (this.atEnd) this.scheduleObserve();
+          this.atEnd = atEnd;
+        });
+      }, { ...options, passive: true });
       this.resizeObserver = new ResizeObserver(() => this.scheduleObserve());
       this.resizeObserver.observe(page);
       const topbar = document.querySelector(".topbar");
@@ -204,7 +216,9 @@
     updateState() {
       const expanded = !!this.archive && (this.activeSection === this.archive.id || this.dialog.open);
       const current = this.sections.find(({ element }) => element.id === this.activeSection) || this.sections[0];
-      const label = current?.label || this.page.querySelector("h1, h2")?.textContent || "页面导航";
+      const inArchive = current?.element === this.archive;
+      const label = inArchive ? (this.activeDate ? `${this.activeDate.dataset.year}·${this.activeDate.dataset.month}·${this.activeDate.dataset.date}` : "归档信息")
+        : current?.label || this.page.querySelector("h1, h2")?.textContent || "页面导航";
       this.launcher.textContent = label;
       this.rail.querySelector(".trace-heading").textContent = label;
       this.dialog.querySelector("h2").textContent = label;
@@ -213,6 +227,7 @@
       this.rail.classList.toggle("is-expanded", expanded);
       this.fold(this.branch, expanded);
       for (const { element, link } of this.sectionLinks) {
+        if (element === this.archive) link.textContent = "归档信息";
         const selected = element.id === this.activeSection;
         link.classList.toggle("is-active", selected);
         if (selected) link.setAttribute("aria-current", "true"); else link.removeAttribute("aria-current");
@@ -274,6 +289,10 @@
         if (section) this.activeSection = section.id;
         else if (!visibleDates.size) this.activeSection = (sectionElements.findLast(element => element.getBoundingClientRect().top <= line) || sectionElements[0])?.id;
         if (date) { this.activeDate = date; this.activeSection = this.archive.id; }
+        if (scrollY + innerHeight >= document.documentElement.scrollHeight - 2) {
+          const last = sectionElements.findLast(element => element.getBoundingClientRect().top < innerHeight);
+          if (last) this.activeSection = last.id;
+        }
         if (previousSection !== this.activeSection || previousDate !== this.activeDate) this.updateState();
       }, { rootMargin: `-${line}px 0px -${Math.max(0, innerHeight - line - 2)}px 0px`, threshold: 0 });
       [...sectionElements, ...this.dates].forEach((element) => this.observer.observe(element));
@@ -361,6 +380,7 @@
       cancelAnimationFrame(this.pickFrame);
       this.pickNode?.classList.remove("is-preview");
       this.pickNode = null;
+      this.launcher.classList.remove("is-pressed");
       this.gesture = null;
       this.scroller.classList.remove("is-dragging");
       this.isTraceInteracting = false;
@@ -413,20 +433,18 @@
         const inside = this.scroller.contains(event.target);
         if (!inside && !this.launcher.contains(event.target) && !this.dialog.contains(event.target)) return;
         this.interact();
+        const fromLauncher = this.launcher.contains(event.target);
         this.gesture = { id: event.pointerId, x: event.clientX, y: event.clientY,
           scroll: this.scroller.scrollTop, open: this.dialog.open, inside,
-          mouse: event.pointerType === "mouse", direction: null };
-        if (this.compact.matches && event.pointerType !== "mouse") {
+          mouse: event.pointerType === "mouse", select: fromLauncher || event.pointerType !== "mouse", direction: null };
+        if (fromLauncher) {
+          event.preventDefault();
           this.root.setPointerCapture(event.pointerId);
-          if (this.launcher.contains(event.target) && !this.dialog.open) {
-            this.holdTimer = setTimeout(() => {
-              if (!this.gesture) return;
-              this.open();
-              this.gesture.inside = true;
-              this.gesture.scroll = this.scroller.scrollTop;
-              this.suppressClickUntil = performance.now() + 500;
-            }, 240);
-          }
+          this.open();
+          this.gesture.inside = true;
+          this.gesture.scroll = this.scroller.scrollTop;
+          this.suppressClickUntil = performance.now() + 500;
+          this.launcher.classList.add("is-pressed");
         }
       }, options);
       this.root.addEventListener("pointermove", event => {
@@ -453,9 +471,9 @@
           if (this.compact.matches && !this.dialog.open) { this.open(); g.inside = true; }
           this.root.setPointerCapture(event.pointerId);
           this.scroller.classList.add("is-dragging");
-          this.scroller.scrollTop = g.scroll - dy;
+          if (!g.select) this.scroller.scrollTop = g.scroll - dy;
           this.suppressClickUntil = performance.now() + 500;
-          if (this.compact.matches && !g.mouse) {
+          if (g.select) {
             g.pickX = event.clientX; g.pickY = event.clientY;
             this.previewPick();
           }
@@ -467,8 +485,9 @@
         if (!g || g.id !== event.pointerId) return;
         clearTimeout(this.holdTimer);
         cancelAnimationFrame(this.pickFrame);
-        if (g.direction) this.suppressClickUntil = performance.now() + 500;
-        const pick = event.type === "pointerup" && g.direction === "vertical" && !g.mouse ? this.pickNode?.dataset.traceTarget : null;
+        if (g.direction || g.select) this.suppressClickUntil = performance.now() + 500;
+        this.launcher.classList.remove("is-pressed");
+        const pick = event.type === "pointerup" && g.direction === "vertical" && g.select ? this.pickNode?.dataset.traceTarget : null;
         this.pickNode?.classList.remove("is-preview");
         this.pickNode = null;
         if (g.direction === "horizontal") {
@@ -481,7 +500,7 @@
         this.scroller.classList.remove("is-dragging");
         if (this.root.hasPointerCapture(event.pointerId)) this.root.releasePointerCapture(event.pointerId);
         this.interact();
-        if (pick) this.jump(pick, { history: true, smooth: true, focus: true });
+        if (pick) this.jump(pick, { history: true, smooth: false, focus: true });
       };
       this.root.addEventListener("pointerup", finish, options);
       this.root.addEventListener("pointercancel", finish, options);
@@ -516,6 +535,7 @@
       this.resizeObserver.disconnect();
       cancelAnimationFrame(this.frame);
       cancelAnimationFrame(this.followFrame);
+      cancelAnimationFrame(this.endFrame);
       clearTimeout(this.interactionTimer);
       clearTimeout(this.holdTimer);
       cancelAnimationFrame(this.pickFrame);
