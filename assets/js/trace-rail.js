@@ -89,6 +89,10 @@
       this.dialog.addEventListener("click", (event) => { if (event.target === this.dialog) this.dialog.close(); }, options);
       this.dialog.addEventListener("close", () => {
         if (this.dialog.open) return;
+        clearTimeout(this.holdTimer);
+        cancelAnimationFrame(this.pickFrame);
+        this.pickNode?.classList.remove("is-preview");
+        this.pickNode = null;
         this.dialog.style.removeProperty("transform");
         this.dialog.classList.remove("is-swiping");
         this.root.insertBefore(this.rail, this.dialog);
@@ -353,6 +357,10 @@
 
     endInteraction() {
       clearTimeout(this.interactionTimer);
+      clearTimeout(this.holdTimer);
+      cancelAnimationFrame(this.pickFrame);
+      this.pickNode?.classList.remove("is-preview");
+      this.pickNode = null;
       this.gesture = null;
       this.scroller.classList.remove("is-dragging");
       this.isTraceInteracting = false;
@@ -408,6 +416,18 @@
         this.gesture = { id: event.pointerId, x: event.clientX, y: event.clientY,
           scroll: this.scroller.scrollTop, open: this.dialog.open, inside,
           mouse: event.pointerType === "mouse", direction: null };
+        if (this.compact.matches && event.pointerType !== "mouse") {
+          this.root.setPointerCapture(event.pointerId);
+          if (this.launcher.contains(event.target) && !this.dialog.open) {
+            this.holdTimer = setTimeout(() => {
+              if (!this.gesture) return;
+              this.open();
+              this.gesture.inside = true;
+              this.gesture.scroll = this.scroller.scrollTop;
+              this.suppressClickUntil = performance.now() + 500;
+            }, 240);
+          }
+        }
       }, options);
       this.root.addEventListener("pointermove", event => {
         const g = this.gesture;
@@ -418,6 +438,7 @@
           else g.direction = "vertical";
         }
         if (g.direction === "horizontal") {
+          clearTimeout(this.holdTimer);
           event.preventDefault();
           this.root.setPointerCapture(event.pointerId);
           if (!this.dialog.open) this.open();
@@ -426,20 +447,32 @@
           g.offset = Math.max(0, Math.min(width, (g.open ? 0 : width) + dx));
           this.dialog.style.transform = `translateY(-50%) translateX(${g.offset}px)`;
           this.suppressClickUntil = performance.now() + 500;
-        } else if (g.direction === "vertical" && g.inside && g.mouse) {
+        } else if (g.direction === "vertical" && (g.inside || this.compact.matches)) {
           event.preventDefault();
+          clearTimeout(this.holdTimer);
+          if (this.compact.matches && !this.dialog.open) { this.open(); g.inside = true; }
           this.root.setPointerCapture(event.pointerId);
           this.scroller.classList.add("is-dragging");
           this.scroller.scrollTop = g.scroll - dy;
           this.suppressClickUntil = performance.now() + 500;
+          if (this.compact.matches && !g.mouse) {
+            g.pickX = event.clientX; g.pickY = event.clientY;
+            this.previewPick();
+          }
         }
       }, { ...options, passive: false });
       const finish = event => {
         if (event.type === "lostpointercapture" && event.target !== this.root) return;
         const g = this.gesture;
         if (!g || g.id !== event.pointerId) return;
+        clearTimeout(this.holdTimer);
+        cancelAnimationFrame(this.pickFrame);
+        if (g.direction) this.suppressClickUntil = performance.now() + 500;
+        const pick = event.type === "pointerup" && g.direction === "vertical" && !g.mouse ? this.pickNode?.dataset.traceTarget : null;
+        this.pickNode?.classList.remove("is-preview");
+        this.pickNode = null;
         if (g.direction === "horizontal") {
-          const keepOpen = event.type === "pointercancel" ? g.open : g.offset < (this.dialog.offsetWidth + 8) * .65;
+          const keepOpen = event.type === "pointercancel" ? g.open : g.offset < (this.dialog.offsetWidth + 8) * (g.open ? .35 : .65);
           this.dialog.classList.remove("is-swiping");
           this.dialog.style.removeProperty("transform");
           if (!keepOpen) this.dialog.close();
@@ -448,10 +481,33 @@
         this.scroller.classList.remove("is-dragging");
         if (this.root.hasPointerCapture(event.pointerId)) this.root.releasePointerCapture(event.pointerId);
         this.interact();
+        if (pick) this.jump(pick, { history: true, smooth: true, focus: true });
       };
       this.root.addEventListener("pointerup", finish, options);
       this.root.addEventListener("pointercancel", finish, options);
       this.root.addEventListener("lostpointercapture", finish, options);
+    }
+
+    previewPick() {
+      cancelAnimationFrame(this.pickFrame);
+      const g = this.gesture;
+      if (!g || !this.dialog.open) return;
+      const viewport = this.scroller.getBoundingClientRect();
+      this.pickNode?.classList.remove("is-preview");
+      this.pickNode = null;
+      if (g.pickX < viewport.left - 32 || g.pickX > viewport.right + 32 || g.pickY < viewport.top || g.pickY > viewport.bottom) return;
+      const nodes = [...this.scroller.querySelectorAll("a[data-trace-target]")].filter(node => {
+        const box = node.getBoundingClientRect();
+        return !node.closest('[hidden], [inert]') && box.height > 0 && box.bottom > viewport.top && box.top < viewport.bottom;
+      });
+      this.pickNode = nodes.reduce((best, node) => {
+        const distance = el => Math.abs(el.getBoundingClientRect().top + el.getBoundingClientRect().height / 2 - g.pickY);
+        return !best || distance(node) < distance(best) ? node : best;
+      }, null);
+      this.pickNode?.classList.add("is-preview");
+      // Holding near an edge continues browsing without moving the page.
+      const speed = g.pickY < viewport.top + 32 ? -4 : g.pickY > viewport.bottom - 32 ? 4 : 0;
+      if (speed) this.pickFrame = requestAnimationFrame(() => { this.scroller.scrollTop += speed; this.previewPick(); });
     }
 
     destroy() {
@@ -461,6 +517,8 @@
       cancelAnimationFrame(this.frame);
       cancelAnimationFrame(this.followFrame);
       clearTimeout(this.interactionTimer);
+      clearTimeout(this.holdTimer);
+      cancelAnimationFrame(this.pickFrame);
       if (this.dialog.open) this.dialog.close();
       this.root.remove();
       this.page.classList.remove("has-trace");

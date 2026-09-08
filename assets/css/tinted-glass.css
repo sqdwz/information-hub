@@ -118,3 +118,14 @@ select option { background: #c4cfe9; color: #172947; }
   :root { --glass-card: #a7b7dc; --glass-reading: #c8d2e9; }
   .trace-dialog, .dialog__body { background: #7387b4; }
 }
+
+/* Compact mobile track: no modal surface, only legible nodes. */
+.trace-dialog { width: 126px; padding: 8px 6px; border: 0; border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; touch-action: none; }
+.trace-dialog > header { padding: 0 0 6px 12px; border: 0; }
+.trace-dialog h2 { font-size: 12px; letter-spacing: .02em; text-shadow: 0 1px 5px #15254d, 0 0 10px #15254d; }
+.trace-dialog [data-trace-close] { display: none; }
+.trace-dialog .trace-scroll { touch-action: none; }
+.trace-dialog .trace-node { text-shadow: 0 1px 4px #15254d, 0 0 9px #15254d; }
+.trace-dialog .trace-node.is-preview { background: rgba(101, 128, 204, .38); border-radius: 12px; color: white; outline: 1px solid rgba(215, 230, 255, .5); outline-offset: -1px; }
+.trace-dialog .trace-node.is-preview::before { background: #fff; box-shadow: 0 0 10px #c8dcff; }
+@media (max-width: 768px), (max-height: 600px) { .trace-launcher { touch-action: none; } }
