@@ -849,6 +849,8 @@ body::before { background: linear-gradient(180deg, rgba(9, 24, 76, .62), rgba(63
   -webkit-backdrop-filter: none;
 }
 .topbar__inner {
+  position: relative;
+  isolation: isolate;
   box-sizing: border-box;
   width: 100%;
   min-height: 62px;
@@ -936,6 +938,16 @@ body::before { background: linear-gradient(180deg, rgba(9, 24, 76, .62), rgba(63
 }
 
 /* 03 card footer: a quiet, sectioned glass surface aligned with the content. */
+.topbar__inner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border: 1px solid rgba(199, 217, 255, .32);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
 .site-shell > .container { padding-bottom: 0; }
 .site-footer {
   position: relative;
