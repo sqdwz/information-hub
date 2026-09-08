@@ -27,6 +27,10 @@ const policyGuideIds = new Set([
 ]);
 let airspaceData;
 let airspaceFilter = null;
+let airspaceTrace;
+let urbanTrace;
+let policyTrace;
+let showcaseTrace;
 let urbanData;
 let urbanHistoryRecords = [];
 let urbanHistoryVisibleRecords = [];
@@ -267,6 +271,7 @@ function setShowcaseTab(tab) {
     button.setAttribute("aria-selected", String(active));
   });
   showcasePages.forEach(page => { page.hidden = page.dataset.showcasePage !== tab; });
+  showcaseTrace?.scheduleObserve();
 }
 
 showcaseTabs.forEach(button => button.addEventListener("click", () => setShowcaseTab(button.dataset.showcaseTab)));
@@ -274,8 +279,11 @@ setShowcaseTab("share");
 
 function route() {
   const id = location.hash.slice(1) || "home";
+  const traceRoute = window.TraceArchive?.resolveRoute();
+  // Date anchors restore after asynchronous data rendering; avoid a second browser restoration.
+  history.scrollRestoration = traceRoute ? "manual" : "auto";
   const policyDetailMatch = id.match(/^policy\/([^/]+)$/);
-  const page = policyDetailMatch ? "policy-detail" : (document.querySelector(`[data-page="${id}"]`) ? id : "home");
+  const page = traceRoute?.page || (policyDetailMatch ? "policy-detail" : ([...document.querySelectorAll("[data-page]")].some(node => node.dataset.page === id) ? id : "home"));
   document.querySelectorAll("[data-page]").forEach(node => node.classList.toggle("is-active", node.dataset.page === page));
   const activeRoute = page === "policy-detail" ? "policy" : page;
   document.querySelectorAll("[data-route]").forEach(node => {
@@ -287,8 +295,9 @@ function route() {
     const activeLink = document.querySelector(`[data-route="${activeRoute}"]`);
     if (nav && activeLink) nav.scrollTo({ left: Math.max(0, activeLink.offsetLeft + activeLink.offsetWidth - nav.clientWidth), behavior: "instant" });
   }
-  window.scrollTo({ top: 0, behavior: "instant" });
-  if (policyDetailMatch) loadPolicyDetail(decodeURIComponent(policyDetailMatch[1]));
+  if (!traceRoute) window.scrollTo({ top: 0, behavior: "instant" });
+  if (policyDetailMatch && !traceRoute) loadPolicyDetail(decodeURIComponent(policyDetailMatch[1]));
+  window.dispatchEvent(new CustomEvent("app:route", { detail: { page, anchor: traceRoute?.anchor } }));
 }
 
 function preferredSources(sources = []) {
@@ -356,11 +365,12 @@ function applyAirspaceFilter(nextFilter) {
   });
   const status = $("#airspace-filter-status");
   if (status) status.textContent = airspaceFilter ? `正在显示“${airspaceFilterLabels[airspaceFilter]}”相关公告；再次点击即可取消。` : "点击按钮筛选，再次点击即可取消。";
+  airspaceTrace?.scheduleObserve();
 }
 
 function renderAirspace(data) {
   const notices = data.notices || [];
-  const ended = data.ended_recent || [];
+  const ended = [...new Map([...(data.ended_recent || []), ...notices.filter(item => item.status === "ended")].map(item => [item.id || `${item.title}-${item.published_at}`, item])).values()];
   const summary = data.summary || {};
   const reportDate = data.generated_at ? String(data.generated_at).slice(0, 10) : "暂无日期";
   $("#airspace-title-date").textContent = reportDate;
@@ -372,12 +382,26 @@ function renderAirspace(data) {
   renderGroup("#new-list", notices.filter(isNew), "本轮巡检未发现新增公告；后续新增内容会优先显示在这里。");
   renderGroup("#active-list", notices.filter(item => item.status === "active"), "当前没有仍在生效的公告。");
   renderGroup("#upcoming-list", notices.filter(item => item.status === "upcoming"), "暂未发现即将生效的公告。");
-  renderGroup("#ended-list", ended, "近期没有需要保留的结束公告。");
+  $("#ended-list").innerHTML = ended.length
+    ? window.TraceArchive.render(ended.map(item => ({ date: item.published_at, html: noticeCard(item) })), "airspace-archive")
+    : '<div class="empty-card">暂无往期内容</div>';
   $("#source-list").innerHTML = (data.sources || []).map(source => `<li>${escapeHtml(source)}</li>`).join("");
   $("#home-airspace-metric").textContent = `本轮新增 ${summary.new || 0} 条 · 当前生效 ${summary.active || 0} 条`;
   registerFooterUpdate("airspace", { title: "空域动态与飞行通告", date: reportDate, href: "#airspace" });
   airspaceFilter = null;
   applyAirspaceFilter(null);
+  if (airspaceTrace) airspaceTrace.refresh();
+  else airspaceTrace = window.initTraceRail({
+    page: $("#airspace"),
+    sections: [
+      { element: $("#airspace-overview"), label: "概览" },
+      { element: $("#airspace-filters"), label: "公告筛选" },
+      { element: $("#airspace-current"), label: "当前信息" },
+      { element: $("#airspace-archive"), label: "循迹" },
+      { element: $("#source-list"), label: "信息来源" }
+    ],
+    archiveTrigger: $("#airspace-archive")
+  });
 }
 
 function formatUrbanDate(value) {
@@ -569,22 +593,9 @@ function populateUrbanHistoryFilterOptions(records = urbanArchiveRecords()) {
   });
 }
 
-function renderUrbanHistoryTimeline(records = urbanArchiveRecords()) {
+function renderUrbanHistoryTimeline() {
   const timeline = $("#urban-history-timeline");
-  if (!timeline) return;
-  const years = new Map();
-  records.forEach((item) => {
-    const year = urbanDateOnly(item.publish_date).slice(0, 4) || "未标注";
-    years.set(year, (years.get(year) || 0) + 1);
-  });
-  const nodes = [...years.entries()].sort(([a], [b]) => String(b).localeCompare(String(a)));
-  timeline.innerHTML = `<span class="urban-history-timeline__label">时间线</span><div class="urban-history-timeline__track"><button type="button" class="urban-history-timeline__node ${urbanHistoryYear ? "" : "is-active"}" data-urban-history-year="" aria-pressed="${String(!urbanHistoryYear)}"><b>全部</b><small>${records.length} 条</small></button>${nodes.map(([year, count]) => `<button type="button" class="urban-history-timeline__node ${urbanHistoryYear === year ? "is-active" : ""}" data-urban-history-year="${escapeHtml(year)}" aria-pressed="${String(urbanHistoryYear === year)}"><b>${escapeHtml(year)}</b><small>${count} 条</small></button>`).join("")}</div>`;
-  timeline.querySelectorAll("[data-urban-history-year]").forEach((button) => button.addEventListener("click", () => {
-    const year = button.dataset.urbanHistoryYear;
-    urbanHistoryYear = urbanHistoryYear === year ? "" : year;
-    renderUrbanHistoryTimeline();
-    applyUrbanHistoryFilters();
-  }));
+  if (timeline) timeline.hidden = true;
 }
 
 function applyUrbanHistoryFilters() {
@@ -607,12 +618,13 @@ function applyUrbanHistoryFilters() {
   $("#urban-history-filter-status").textContent = `已匹配 ${urbanHistoryVisibleRecords.length} 条历史招标信息`;
   if (urbanHistoryVisibleRecords.length) renderNextUrbanHistory();
   else $("#urban-history-more").hidden = true;
+  urbanTrace?.refresh();
 }
 
 function renderNextUrbanHistory() {
   const list = $("#urban-history-list");
-  const nextRecords = urbanHistoryVisibleRecords.slice(urbanHistoryShown, urbanHistoryShown + 12);
-  list.insertAdjacentHTML("beforeend", nextRecords.map(urbanCard).join(""));
+  const nextRecords = urbanHistoryVisibleRecords.slice(urbanHistoryShown);
+  list.insertAdjacentHTML("beforeend", window.TraceArchive.render(nextRecords.map(item => ({ date: item.publish_date, html: urbanCard(item) })), "urban-archive"));
   urbanHistoryShown += nextRecords.length;
   const more = $("#urban-history-more");
   const remaining = urbanHistoryVisibleRecords.length - urbanHistoryShown;
@@ -656,6 +668,7 @@ function setUrbanView(view) {
   document.querySelectorAll("[data-urban-section]").forEach((section) => {
     section.hidden = section.dataset.urbanSection !== view;
   });
+  urbanTrace?.scheduleObserve();
 }
 
 async function fetchUrbanHistoryDocument(path) {
@@ -802,7 +815,8 @@ function applyPolicyFilters() {
     button.setAttribute("aria-pressed", String(selected));
   });
   $("#policy-filter-status").textContent = `找到 ${filtered.length} 份资料${query ? `，关键词“${$("#policy-search").value.trim()}”` : ""}`;
-  $("#policy-list").innerHTML = filtered.length ? filtered.map(policyCard).join("") : '<div class="empty-card">没有符合当前条件的资料。可以清除筛选后重新检索。</div>';
+  $("#policy-list").innerHTML = filtered.length ? window.TraceArchive.render(filtered.map(item => ({ date: item.published_at, html: policyCard(item) })), "policy-archive") : '<div class="empty-card">没有符合当前条件的资料。可以清除筛选后重新检索。</div>';
+  policyTrace?.refresh();
 }
 
 function renderPolicyIndex() {
@@ -1123,3 +1137,55 @@ $("#policy-clear")?.addEventListener("click", () => {
   applyPolicyFilters();
 });
 setUrbanView("current");
+
+// Reuse each page's existing content and filters; only the archive receives date grouping.
+function initFunctionalTraces() {
+  const section = (selector, id, label) => {
+    const element = $(selector);
+    element.id = id;
+    return { element, label };
+  };
+  const urbanArchive = $("#urban-history-list");
+  urbanArchive.classList.remove("notice-grid");
+  urbanArchive.classList.add("trace-archive-surface");
+  urbanTrace = window.initTraceRail({
+    page: $("#urban"), archiveTrigger: urbanArchive,
+    sections: [
+      section("#urban .page-head", "urban-overview", "城市更新"),
+      section("#urban .urban-page-head-actions", "urban-views", "视图切换"),
+      section("#urban .urban-filter-panel", "urban-filters", "项目筛选"),
+      section("#urban-active-list", "urban-active-list", "正在招标"),
+      section("#urban-source-list", "urban-source-list", "检索来源"),
+      section(".urban-history-filter", "urban-history-filters", "历史筛选"),
+      { element: urbanArchive, label: "循迹" }
+    ],
+    beforeJump(target) {
+      const view = target.closest("[data-urban-section]")?.dataset.urbanSection;
+      if (view) setUrbanView(view);
+    }
+  });
+  policyTrace = window.initTraceRail({
+    page: $("#policy"), archiveTrigger: $("#policy-list"),
+    sections: [
+      section("#policy .page-head", "policy-overview", "资料库"),
+      section("#policy .policy-overview", "policy-quick-filter", "快捷筛选"),
+      section("#policy .policy-gaps", "policy-coverage", "资料缺口"),
+      section("#policy .policy-topic-filter", "policy-topics-section", "主题筛选"),
+      section("#policy .policy-filter", "policy-filters", "资料筛选"),
+      section("#policy-list", "policy-list", "循迹")
+    ]
+  });
+  $("#policy-list").classList.add("trace-archive-surface");
+  showcaseTrace = window.initTraceRail({
+    page: $("#showcase"),
+    sections: [
+      { element: $("#showcase-demo-page"), label: "演示" },
+      { element: $("#showcase-share-page"), label: "分享" }
+    ],
+    beforeJump(target) {
+      const tab = target.closest("[data-showcase-page]")?.dataset.showcasePage;
+      if (tab) setShowcaseTab(tab);
+    }
+  });
+}
+initFunctionalTraces();

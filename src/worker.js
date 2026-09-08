@@ -19,7 +19,7 @@ const BRIEF_ENTRIES = {
     url: `${GITHUB_BRIEF_BASE_URL}/index.json`
   }
 };
-const BRIEF_ARCHIVE_PATH = /^data\/(daily|weekly)\/(\d{4}-\d{2}-\d{2})\.json$/;
+const BRIEF_ARCHIVE_PATH = /^data\/(?:daily\/\d{4}-\d{2}-\d{2}|weekly\/(?:\d{4}-\d{2}-\d{2}|\d{4}-W(?:0[1-9]|[1-4]\d|5[0-3])))\.json$/;
 const POLICY_ENTRIES = {
   index: {
     key: "policy-library:index",
