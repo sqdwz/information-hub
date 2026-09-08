@@ -1017,7 +1017,7 @@ function initHomePortalCarousel() {
   function startAutoplay() {
     if (autoplay || reducedMotion.matches) return;
     autoplay = window.setInterval(() => {
-      if (!paused && isHomeVisible()) advance(1, { scrollIntoView: compactViewport.matches });
+      if (!paused && !compactViewport.matches && isHomeVisible()) advance(1);
     }, 2800);
   }
 
@@ -1043,28 +1043,50 @@ function initHomePortalCarousel() {
     window.setTimeout(() => { wheelLocked = false; }, 660);
   }, { passive: false });
 
+  carousel.addEventListener("dragstart", event => event.preventDefault());
   carousel.addEventListener("pointerdown", event => {
-    if (compactViewport.matches || event.button > 0) return;
-    pointerStart = { x: event.clientX, y: event.clientY, pointerId: event.pointerId };
+    if (event.button !== 0 || !event.isPrimary || event.target.closest(".portal-carousel__nav")) return;
+    suppressClick = false;
+    pointerStart = { x: event.clientX, y: event.clientY, pointerId: event.pointerId,
+      scroll: carousel.scrollLeft, mouse: event.pointerType === "mouse", dragging: false };
     paused = true;
-    carousel.setPointerCapture?.(event.pointerId);
   });
-  carousel.addEventListener("pointerup", event => {
-    if (!pointerStart || pointerStart.pointerId !== event.pointerId) return;
-    const distance = event.clientX - pointerStart.x;
-    if (Math.abs(distance) > 42) {
-      suppressClick = true;
-      advance(distance < 0 ? 1 : -1);
+  carousel.addEventListener("pointermove", event => {
+    const g = pointerStart;
+    if (!g || g.pointerId !== event.pointerId) return;
+    const dx = event.clientX - g.x, dy = event.clientY - g.y;
+    if (!g.dragging && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy) * 1.2) g.dragging = true;
+    if (!g.dragging) return;
+    suppressClick = true;
+    // Touch remains native on the horizontal overflow container, including momentum.
+    if (compactViewport.matches && !g.mouse) return;
+    event.preventDefault();
+    carousel.setPointerCapture(event.pointerId);
+    carousel.classList.add("is-dragging");
+    if (compactViewport.matches) carousel.scrollLeft = g.scroll - dx;
+    else cards.forEach(card => { card.style.translate = `${dx * .65}px 0`; });
+  }, { passive: false });
+  const finishPortalDrag = event => {
+    const g = pointerStart;
+    if (!g || g.pointerId !== event.pointerId) return;
+    if (event.type === "pointerup" && g.dragging && !compactViewport.matches) {
+      const distance = event.clientX - g.x;
+      if (Math.abs(distance) > 42) advance(distance < 0 ? 1 : -1);
     }
+    cards.forEach(card => card.style.removeProperty("translate"));
+    carousel.classList.remove("is-dragging");
     pointerStart = null;
-    paused = false;
-    carousel.releasePointerCapture?.(event.pointerId);
-  });
-  carousel.addEventListener("pointercancel", () => {
-    pointerStart = null;
-    paused = false;
-  });
-
+    if (carousel.hasPointerCapture(event.pointerId)) carousel.releasePointerCapture(event.pointerId);
+    pauseTemporarily();
+  };
+  carousel.addEventListener("pointerup", finishPortalDrag);
+  carousel.addEventListener("pointercancel", finishPortalDrag);
+  carousel.addEventListener("lostpointercapture", finishPortalDrag);
+  carousel.addEventListener("click", event => {
+    if (suppressClick && event.detail !== 0) {
+      event.preventDefault(); event.stopImmediatePropagation(); suppressClick = false;
+    }
+  }, true);
   cards.forEach((card, index) => card.addEventListener("click", event => {
     if (suppressClick) {
       event.preventDefault();

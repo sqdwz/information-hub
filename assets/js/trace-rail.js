@@ -59,7 +59,7 @@
       this.root = document.createElement("div");
       this.root.className = "trace-root";
       this.root.dataset.tracePage = page.id;
-      this.root.innerHTML = `<button class="trace-launcher" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="trace-dialog-${page.id}">循迹</button><nav class="trace-rail" aria-label="循迹"><div class="trace-rail__sections"></div><div class="trace-rail__archive"><div class="trace-rail__tree"></div></div><time class="trace-rail__current" aria-hidden="true"></time></nav><dialog class="trace-dialog" id="trace-dialog-${page.id}" aria-labelledby="trace-title-${page.id}"><header><h2 id="trace-title-${page.id}">循迹</h2><button type="button" data-trace-close aria-label="关闭循迹">关闭</button></header><div class="trace-dialog__body"></div></dialog>`;
+      this.root.innerHTML = `<button class="trace-launcher" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="trace-dialog-${page.id}">循迹</button><nav class="trace-rail" aria-label="循迹"><div class="trace-heading" aria-hidden="true"></div><div class="trace-scroll" tabindex="0" aria-label="滚动浏览页面与日期"><div class="trace-rail__sections"></div><div class="trace-rail__archive"><div class="trace-rail__tree"></div></div></div><time class="trace-rail__current" aria-hidden="true"></time></nav><dialog class="trace-dialog" id="trace-dialog-${page.id}" aria-labelledby="trace-title-${page.id}"><header><h2 id="trace-title-${page.id}">循迹</h2><button type="button" data-trace-close aria-label="关闭循迹">关闭</button></header><div class="trace-dialog__body"></div></dialog>`;
       document.body.append(this.root);
       page.classList.add("has-trace");
       this.rail = this.root.querySelector(".trace-rail");
@@ -67,6 +67,8 @@
       this.branch = this.root.querySelector(".trace-rail__archive");
       this.dialog = this.root.querySelector("dialog");
       this.launcher = this.root.querySelector(".trace-launcher");
+      this.scroller = this.root.querySelector(".trace-scroll");
+      this.compact = matchMedia("(max-width: 768px), (max-height: 600px)");
       this.sectionLinks = sections.map(({ element, label }) => {
         const link = this.link(element.id, label, "trace-node trace-node--section");
         if (element === this.archive) link.classList.add("trace-node--entry");
@@ -74,6 +76,7 @@
         return { element, link };
       });
       const options = { signal: this.abort.signal };
+      this.installGestures(options);
       this.root.addEventListener("click", (event) => {
         const link = event.target.closest("a[data-trace-target]");
         if (link && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey && event.button === 0) {
@@ -81,13 +84,29 @@
           this.jump(link.dataset.traceTarget, { history: true, smooth: true, focus: true });
         }
       }, options);
-      this.launcher.addEventListener("click", () => this.open(), options);
+      this.launcher.addEventListener("click", () => this.dialog.open ? this.dialog.close() : this.open(), options);
       this.root.querySelector("[data-trace-close]").addEventListener("click", () => this.dialog.close(), options);
       this.dialog.addEventListener("click", (event) => { if (event.target === this.dialog) this.dialog.close(); }, options);
       this.dialog.addEventListener("close", () => {
+        if (this.dialog.open) return;
+        this.dialog.style.removeProperty("transform");
+        this.dialog.classList.remove("is-swiping");
         this.root.insertBefore(this.rail, this.dialog);
         this.launcher.setAttribute("aria-expanded", "false");
         this.updateState();
+      }, options);
+      document.addEventListener("pointerdown", event => {
+        if (this.dialog.open && !this.root.contains(event.target)) this.dialog.close();
+      }, { ...options, capture: true });
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && this.dialog.open) {
+          this.dialog.close();
+          this.launcher.focus({ preventScroll: true });
+        }
+      }, options);
+      this.compact.addEventListener("change", () => {
+        if (this.dialog.open) this.dialog.close();
+        this.endInteraction();
       }, options);
       window.addEventListener("app:route", () => this.activate(), options);
       window.addEventListener("resize", () => this.scheduleObserve(), options);
@@ -172,29 +191,6 @@
       this.restoreHash();
     }
 
-    // Bounded windows keep even a full month / many years usable without a second scrollbar.
-    windowItems(groups, index, size, parent, unit) {
-      const start = Math.max(0, Math.min(index - Math.floor(size / 2), groups.length - size));
-      const end = Math.min(groups.length, start + size);
-      groups.forEach((group, i) => { group.node.hidden = i < start || i >= end; });
-      for (const [direction, target] of [["newer", start > 0 ? groups[start - 1] : null], ["older", end < groups.length ? groups[end] : null]]) {
-        let link = [...parent.children].find((child) => child.dataset.pager === direction);
-        if (!link && target) {
-          link = this.link(target.link.dataset.traceTarget, "", "trace-pager");
-          link.dataset.pager = direction;
-          if (direction === "newer") parent.prepend(link); else parent.append(link);
-        }
-        if (!link) continue;
-        link.hidden = !target;
-        if (target) {
-          link.dataset.traceTarget = target.link.dataset.traceTarget;
-          link.href = target.link.href;
-          link.textContent = direction === "newer" ? "较新" : "更早";
-          link.setAttribute("aria-label", `${direction === "newer" ? "查看较新" : "查看更早"}${unit}`);
-        }
-      }
-    }
-
     fold(branch, open) {
       branch.classList.toggle("is-open", open);
       branch.inert = !open;
@@ -206,6 +202,7 @@
       const current = this.sections.find(({ element }) => element.id === this.activeSection) || this.sections[0];
       const label = current?.label || this.page.querySelector("h1, h2")?.textContent || "页面导航";
       this.launcher.textContent = label;
+      this.rail.querySelector(".trace-heading").textContent = label;
       this.dialog.querySelector("h2").textContent = label;
       this.dialog.querySelector("[data-trace-close]").setAttribute("aria-label", `关闭${label}导航`);
       this.rail.setAttribute("aria-label", `${label} · 页面导航`);
@@ -218,27 +215,15 @@
         link.hidden = !this.beforeJump && !!element.closest("[hidden]");
         if (element === this.archive) link.setAttribute("aria-expanded", String(expanded));
       }
-      const yearKey = this.activeDate?.dataset.year;
-      const monthKey = this.activeDate?.dataset.month;
-      const shortScreen = innerHeight <= 740;
-      const yearLimit = shortScreen ? 1 : 3;
-      const monthLimit = shortScreen ? 1 : 3;
-      const activeMonths = this.years.find(year => year.key === yearKey)?.months || [];
-      const sectionHeight = shortScreen ? 0 : this.dialog.open ? this.sections.length * 32 : innerWidth <= 1200 ? 36 : this.sections.length * 36;
-      const rowHeight = shortScreen ? 24 : this.dialog.open ? 32 : 28;
-      const reserved = sectionHeight + Math.min(yearLimit, this.years.length) * (shortScreen ? 24 : 34)
-        + Math.min(monthLimit, activeMonths.length) * (shortScreen ? 24 : 28) + 36
-        + (this.years.length > yearLimit ? 44 : 0) + (activeMonths.length > monthLimit ? 44 : 0) + 44;
-      const available = innerHeight - (this.dialog.open ? 128 : 196);
-      const dayLimit = Math.max(2, Math.min(9, Math.floor((available - reserved) / rowHeight)));
-      this.windowItems(this.years, Math.max(0, this.years.findIndex((year) => year.key === yearKey)), yearLimit, this.tree, "年份");
+      const visibleDate = this.isTraceInteracting ? this.browsingDate : this.activeDate;
+      const yearKey = visibleDate?.dataset.year;
+      const monthKey = visibleDate?.dataset.month;
       for (const year of this.years) {
         const activeYear = year.key === yearKey;
         year.link.classList.toggle("is-active", activeYear);
-        year.link.setAttribute("aria-expanded", String(activeYear));
+        year.link.setAttribute("aria-expanded", "true");
         if (activeYear) year.link.setAttribute("aria-current", "true"); else year.link.removeAttribute("aria-current");
-        this.fold(year.branch, activeYear);
-        if (activeYear) this.windowItems(year.months, Math.max(0, year.months.findIndex((month) => month.key === monthKey)), monthLimit, year.children, "月份");
+        this.fold(year.branch, true);
         for (const month of year.months) {
           const activeMonth = activeYear && month.key === monthKey;
           month.link.classList.toggle("is-active", activeMonth);
@@ -246,7 +231,6 @@
           if (activeMonth) month.link.setAttribute("aria-current", "true"); else month.link.removeAttribute("aria-current");
           this.fold(month.branch, activeMonth);
           if (!activeMonth) continue;
-          this.windowItems(month.days, Math.max(0, month.days.findIndex((day) => day.element === this.activeDate)), dayLimit, month.children, "日期");
         }
       }
       this.rail.querySelectorAll(".trace-node--day").forEach((link) => {
@@ -256,6 +240,8 @@
       });
       const hint = this.rail.querySelector(".trace-rail__current");
       hint.textContent = expanded && this.activeDate ? `${monthKey} · ${this.activeDate.dataset.date}` : "";
+      cancelAnimationFrame(this.followFrame);
+      this.followFrame = requestAnimationFrame(() => { this.followActive(); this.updateEdges(); });
     }
 
     scheduleObserve() {
@@ -350,9 +336,122 @@
 
     open() {
       this.dialog.querySelector(".trace-dialog__body").append(this.rail);
-      this.dialog.showModal();
+      if (!this.dialog.open) this.dialog.show();
       this.launcher.setAttribute("aria-expanded", "true");
       this.updateState();
+    }
+
+    interact() {
+      if (!this.isTraceInteracting) this.browsingDate = this.activeDate;
+      this.isTraceInteracting = true;
+      clearTimeout(this.interactionTimer);
+      this.interactionTimer = setTimeout(() => {
+        if (this.gesture) { this.interact(); return; }
+        this.endInteraction();
+      }, 1000);
+    }
+
+    endInteraction() {
+      clearTimeout(this.interactionTimer);
+      this.gesture = null;
+      this.scroller.classList.remove("is-dragging");
+      this.isTraceInteracting = false;
+      this.updateState();
+    }
+
+    updateEdges() {
+      const { scrollTop, scrollHeight, clientHeight } = this.scroller;
+      this.scroller.classList.toggle("has-above", scrollTop > 2);
+      this.scroller.classList.toggle("has-below", scrollTop + clientHeight < scrollHeight - 2);
+    }
+
+    followActive() {
+      if (this.root.hidden || this.isTraceInteracting || !this.scroller.clientHeight) return;
+      const node = this.scroller.querySelector('.trace-node--day[aria-current="true"]')
+        || this.scroller.querySelector('.trace-node--section[aria-current="true"]');
+      if (!node || !node.getClientRects().length) return;
+      const box = node.getBoundingClientRect(), viewport = this.scroller.getBoundingClientRect();
+      // Scroll only this list; scrollIntoView would also move the page.
+      if (box.top < viewport.top + 12) this.scroller.scrollTop += box.top - viewport.top - 12;
+      else if (box.bottom > viewport.bottom - 12) this.scroller.scrollTop += box.bottom - viewport.bottom + 12;
+    }
+
+    installGestures(options) {
+      this.root.addEventListener("click", event => {
+        if (performance.now() < (this.suppressClickUntil || 0) && event.detail !== 0) {
+          event.preventDefault(); event.stopImmediatePropagation();
+        }
+      }, { ...options, capture: true });
+      this.scroller.addEventListener("wheel", () => this.interact(), { ...options, passive: true });
+      this.rail.addEventListener("wheel", event => {
+        if (event.ctrlKey || this.scroller.contains(event.target) || !this.rail.classList.contains("is-expanded")) return;
+        // The fixed title forwards wheel input without introducing a second scroll area.
+        event.preventDefault();
+        this.interact();
+        const unit = event.deltaMode === 1 ? 28 : event.deltaMode === 2 ? this.scroller.clientHeight : 1;
+        this.scroller.scrollTop += event.deltaY * unit;
+      }, { ...options, passive: false });
+      this.scroller.addEventListener("scroll", () => {
+        this.updateEdges();
+        if (this.isTraceInteracting) this.interact();
+      }, { ...options, passive: true });
+      this.scroller.addEventListener("keydown", event => {
+        if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) this.interact();
+      }, options);
+      this.scroller.addEventListener("transitionend", () => this.followActive(), options);
+      this.root.addEventListener("dragstart", event => event.preventDefault(), options);
+      this.root.addEventListener("pointerdown", event => {
+        if (!event.isPrimary || event.button !== 0 || event.target.closest("[data-trace-close]")) return;
+        const inside = this.scroller.contains(event.target);
+        if (!inside && !this.launcher.contains(event.target) && !this.dialog.contains(event.target)) return;
+        this.interact();
+        this.gesture = { id: event.pointerId, x: event.clientX, y: event.clientY,
+          scroll: this.scroller.scrollTop, open: this.dialog.open, inside,
+          mouse: event.pointerType === "mouse", direction: null };
+      }, options);
+      this.root.addEventListener("pointermove", event => {
+        const g = this.gesture;
+        if (!g || g.id !== event.pointerId) return;
+        const dx = event.clientX - g.x, dy = event.clientY - g.y;
+        if (!g.direction && Math.max(Math.abs(dx), Math.abs(dy)) > 8) {
+          if (this.compact.matches && Math.abs(dx) > Math.abs(dy) * 1.2) g.direction = "horizontal";
+          else g.direction = "vertical";
+        }
+        if (g.direction === "horizontal") {
+          event.preventDefault();
+          this.root.setPointerCapture(event.pointerId);
+          if (!this.dialog.open) this.open();
+          this.dialog.classList.add("is-swiping");
+          const width = this.dialog.offsetWidth + 8;
+          g.offset = Math.max(0, Math.min(width, (g.open ? 0 : width) + dx));
+          this.dialog.style.transform = `translateY(-50%) translateX(${g.offset}px)`;
+          this.suppressClickUntil = performance.now() + 500;
+        } else if (g.direction === "vertical" && g.inside && g.mouse) {
+          event.preventDefault();
+          this.root.setPointerCapture(event.pointerId);
+          this.scroller.classList.add("is-dragging");
+          this.scroller.scrollTop = g.scroll - dy;
+          this.suppressClickUntil = performance.now() + 500;
+        }
+      }, { ...options, passive: false });
+      const finish = event => {
+        if (event.type === "lostpointercapture" && event.target !== this.root) return;
+        const g = this.gesture;
+        if (!g || g.id !== event.pointerId) return;
+        if (g.direction === "horizontal") {
+          const keepOpen = event.type === "pointercancel" ? g.open : g.offset < (this.dialog.offsetWidth + 8) * .65;
+          this.dialog.classList.remove("is-swiping");
+          this.dialog.style.removeProperty("transform");
+          if (!keepOpen) this.dialog.close();
+        }
+        this.gesture = null;
+        this.scroller.classList.remove("is-dragging");
+        if (this.root.hasPointerCapture(event.pointerId)) this.root.releasePointerCapture(event.pointerId);
+        this.interact();
+      };
+      this.root.addEventListener("pointerup", finish, options);
+      this.root.addEventListener("pointercancel", finish, options);
+      this.root.addEventListener("lostpointercapture", finish, options);
     }
 
     destroy() {
@@ -360,6 +459,8 @@
       this.observer?.disconnect();
       this.resizeObserver.disconnect();
       cancelAnimationFrame(this.frame);
+      cancelAnimationFrame(this.followFrame);
+      clearTimeout(this.interactionTimer);
       if (this.dialog.open) this.dialog.close();
       this.root.remove();
       this.page.classList.remove("has-trace");

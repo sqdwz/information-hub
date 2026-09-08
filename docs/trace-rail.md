@@ -35,9 +35,9 @@ trace.destroy();
 
 ## 导航与阅读
 
-桌面保留固定细轨；768px 以下使用右下角胶囊和原生模态抽屉。平板收简前半段导航，600px 以下高度改用抽屉以适应横屏。
+桌面保留固定细轨；768px 以下使用右侧中部竖向入口和非模态浮层。600px 以下高度同样使用浮层。入口和标题继续显示当前区域名称。
 
-仅当前年份的当前月份展开日期。归档较多或窗口较矮时，对年份、月份和日期采用有限窗口；通过“较新 / 更早”继续定位，所有节点仍可访问，不创建独立滚动条。
+年份、月份完整呈现，当前月份展开日期；不再使用“较新 / 更早”翻页。标题固定，`.trace-scroll` 独立原生纵向滚动，隐藏滚动条，边缘渐隐提示还有内容。桌面整体最高 70dvh / 720px。
 
 IntersectionObserver 观察顶部导航下方的阅读位置。ResizeObserver 仅在布局变化时重设观察区域；普通滚动不重建日期树，仅在阅读位置落入区块间隙时确认相邻区域。归档展开、收起和节点渐显在 280–420ms 内完成，并遵循 `prefers-reduced-motion`。
 
@@ -77,3 +77,11 @@ Windows 下先停止占用 `dist/` 的开发服务器再执行完整构建，以
 城市更新保留当前／历史切换和所有筛选条件，筛选后的历史记录按发布日期分组，所有日期均可直接定位。资料库按 published_at 分组，内容要点及原文入口保持不变。演示与分享只提供区域导航，不生成日期树。
 
 新增路由使用 `#urban/section/urban-archive-YYYY-MM-DD`、`#policy/section/policy-archive-YYYY-MM-DD` 和 `#showcase/section/showcase-share-page`；与既有 `#policy/<文件ID>` 详情路由分离。`archiveTrigger` 可省略；`beforeJump(target)` 用于先展开目标所在的原有标签页。
+
+## 滚动与手势
+
+- 滚轮、触控板和手机纵向滑动均交给原生 overflow。overscroll-behavior: contain 防止在列表边界带动正文。
+- 鼠标超过 8px 纵移才进入拖动，pointermove 同步 scrollTop；拖动后的 click 被抑制。Pointer capture、cancel 和失去捕获均清理状态。
+- 手动浏览期间冻结展开月份并暂停内部定位；最后一次滚动／手势结束 1000ms 后恢复，只调整列表 scrollTop，让 active 最近可见，不滚动正文。
+- 手机左拖／右拖以横纵位移比例 1.2 区分方向；横向位移实时控制浮层位置，纵向留给原生惯性滚动。浮层不阻挡正文，正文 pointerdown 会关闭它，点击日期和 Escape 同样收起。
+- 首页手机横向卡片采用原生滚动、proximity snap，80vw 卡宽及 14px 间距露出下一张；关闭手机自动轮播以免干扰触摸惯性。桌面维持原有 3D 排列，拖动时卡片同步偏移，松手换卡。
