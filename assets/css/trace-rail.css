@@ -124,6 +124,8 @@
 .trace-heading { flex: none; padding: 8px 0 10px 19px; color: #f0f5ff; font-weight: 750; }
 .trace-scroll { min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; scrollbar-width: none; touch-action: pan-y; -webkit-overflow-scrolling: touch; cursor: grab; padding-block: 12px; overflow-anchor: none; }
 .trace-scroll::-webkit-scrollbar { display: none; }
+/* Keep enlarged markers and their glow inside the scroll clipping boundary. */
+.trace-scroll { margin-inline: -12px; padding-inline: 12px; }
 .trace-rail:not(.is-expanded) .trace-scroll { overscroll-behavior-y: auto; }
 .trace-scroll a { cursor: pointer; }
 .trace-scroll.is-dragging, .trace-scroll.is-dragging * { cursor: grabbing; user-select: none; }
