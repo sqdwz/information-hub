@@ -869,7 +869,7 @@ body::before { background: linear-gradient(180deg, rgba(9, 24, 76, .62), rgba(63
   -webkit-backdrop-filter: blur(12px) saturate(120%);
 }
 .brand { justify-self: start; }
-.nav { max-width: 100%; justify-self: center; gap: 3px; }
+.nav { max-width: 100%; justify-self: center; gap: 3px; padding-block: 6px; margin-block: -6px; }
 .nav a {
   position: relative;
   display: inline-flex;
