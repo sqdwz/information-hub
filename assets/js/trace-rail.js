@@ -219,7 +219,7 @@
     }
 
     updateState() {
-      const expanded = !!this.archive && (this.activeSection === this.archive.id || this.dialog.open || this.wide.matches);
+      const expanded = !!this.archive && this.activeSection === this.archive.id;
       const current = this.sections.find(({ element }) => element.id === this.activeSection) || this.sections[0];
       const inArchive = current?.element === this.archive;
       const label = inArchive ? (this.activeDate ? `${this.activeDate.dataset.year}·${this.activeDate.dataset.month}·${this.activeDate.dataset.date}` : "归档信息")
@@ -243,11 +243,11 @@
       const yearKey = visibleDate?.dataset.year;
       const monthKey = visibleDate?.dataset.month;
       for (const year of this.years) {
-        const activeYear = year.key === yearKey;
+        const activeYear = expanded && year.key === yearKey;
         year.link.classList.toggle("is-active", activeYear);
-        year.link.setAttribute("aria-expanded", "true");
+        year.link.setAttribute("aria-expanded", String(activeYear));
         if (activeYear) year.link.setAttribute("aria-current", "true"); else year.link.removeAttribute("aria-current");
-        this.fold(year.branch, true);
+        this.fold(year.branch, activeYear);
         for (const month of year.months) {
           const activeMonth = activeYear && month.key === monthKey;
           month.link.classList.toggle("is-active", activeMonth);
@@ -458,7 +458,7 @@
         if (!g || g.id !== event.pointerId) return;
         const dx = event.clientX - g.x, dy = event.clientY - g.y;
         if (!g.direction && Math.max(Math.abs(dx), Math.abs(dy)) > 8) {
-          if (this.compact.matches && Math.abs(dx) > Math.abs(dy) * 1.2) g.direction = "horizontal";
+          if (this.compact.matches && dx > Math.abs(dy) * 1.2) g.direction = "horizontal";
           else g.direction = "vertical";
         }
         if (g.direction === "horizontal") {
