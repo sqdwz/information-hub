@@ -204,7 +204,91 @@ avatarUnlock?.addEventListener("pointerup", finishAvatarDrag);
 avatarUnlock?.addEventListener("pointercancel", finishAvatarDrag);
 avatarUnlock?.addEventListener("dragstart", event => event.preventDefault());
 const shareDialog = $("#share-dialog");
-const openShareDialog = () => shareDialog?.showModal();
+const shareUrl = $("#share-url");
+const sharePageName = $("#share-page-name");
+const shareQr = $("#share-qr");
+const shareStatus = $("#share-status");
+const nativeShareButton = $("#share-native");
+const sharePageNames = {
+  home: "首页",
+  airspace: "空域信息",
+  ai: "行业简报 · 日报周报",
+  urban: "城市更新",
+  policy: "资料库",
+  "policy-detail": "资料库 · 文件详情",
+  showcase: "演示与分享"
+};
+
+function getSharePageName() {
+  const activePage = document.querySelector("[data-page].is-active");
+  if (activePage?.dataset.page && sharePageNames[activePage.dataset.page]) return sharePageNames[activePage.dataset.page];
+  const hashId = decodeURIComponent(location.hash.slice(1) || "home").split("/")[0];
+  return sharePageNames[hashId] || "信息聚合中心";
+}
+
+function updateShareDialog() {
+  if (!shareUrl || !sharePageName || !shareQr) return;
+  const url = window.location.href;
+  const pageName = getSharePageName();
+  shareUrl.value = url;
+  sharePageName.textContent = pageName;
+  shareDialog?.setAttribute("aria-label", `分享${pageName}`);
+  shareQr.replaceChildren();
+  try {
+    const qr = qrcode(0, "H");
+    qr.addData(url);
+    qr.make();
+    const image = document.createElement("img");
+    image.src = qr.createDataURL(8, 32);
+    image.alt = `${pageName}当前页面二维码`;
+    image.width = 296;
+    image.height = 296;
+    shareQr.append(image);
+  } catch (error) {
+    console.error("Failed to generate share QR code", error);
+    shareQr.textContent = "二维码暂时无法生成，请复制链接打开。";
+  }
+  if (nativeShareButton) nativeShareButton.hidden = typeof navigator.share !== "function";
+  if (shareStatus) shareStatus.textContent = "";
+}
+
+const openShareDialog = () => {
+  updateShareDialog();
+  shareDialog?.showModal();
+};
+
+async function copyShareUrl() {
+  const url = window.location.href;
+  try {
+    if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(url);
+    else {
+      const input = document.createElement("textarea");
+      input.value = url;
+      input.setAttribute("readonly", "");
+      input.style.position = "fixed";
+      input.style.opacity = "0";
+      document.body.append(input);
+      input.select();
+      document.execCommand("copy");
+      input.remove();
+    }
+    if (shareStatus) shareStatus.textContent = "链接已复制，快把这一页分享给朋友吧。";
+  } catch (error) {
+    if (shareStatus) shareStatus.textContent = "复制失败，请长按或手动复制上方链接。";
+  }
+}
+
+shareUrl?.addEventListener("click", () => shareUrl.select());
+$("#share-copy")?.addEventListener("click", copyShareUrl);
+nativeShareButton?.addEventListener("click", async () => {
+  if (typeof navigator.share !== "function") return;
+  try {
+    await navigator.share({ title: sharePageName?.textContent || "信息聚合中心", text: "扫码打开当前页面", url: window.location.href });
+  } catch (error) {
+    if (error?.name !== "AbortError" && shareStatus) shareStatus.textContent = "系统分享暂时不可用，请复制链接分享。";
+  }
+});
+window.addEventListener("app:route", updateShareDialog);
 
 const footerUpdates = new Map([
   ["brief", { title: "行业简报 · 最新一期", date: "2026-09-06", href: "#ai" }],

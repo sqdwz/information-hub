@@ -186,13 +186,39 @@
         <p class="site-footer__copyright">© 2024–2026 瑞雪的小栈 · 公开信息仅供学习交流使用</p>
       </footer>
     </div>
-    <dialog class="share-dialog" id="share-dialog" aria-label="本站分享二维码">
+    <dialog class="share-dialog" id="share-dialog" aria-labelledby="share-dialog-title">
       <div class="share-dialog__body">
-        <button class="share-dialog__close" type="button" aria-label="关闭分享二维码" data-close-share>×</button>
-        <img class="share-dialog__image" src="./assets/site-share-qr.png" alt="信息聚合中心首页分享二维码，扫码进入 new.103535.xyz" />
+        <button class="share-dialog__close" type="button" aria-label="关闭分享卡片" data-close-share>×</button>
+        <div class="share-dialog__snow share-dialog__snow--one" aria-hidden="true">❄</div>
+        <div class="share-dialog__snow share-dialog__snow--two" aria-hidden="true">✧</div>
+        <div class="share-dialog__fan" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <p class="share-dialog__kicker">神里绫华 · 霜华礼扇</p>
+        <div class="share-dialog__heading">
+          <span class="share-dialog__rule" aria-hidden="true"></span>
+          <div>
+            <h2 id="share-dialog-title">分享当前页面</h2>
+            <p id="share-page-name">首页</p>
+          </div>
+          <span class="share-dialog__rule" aria-hidden="true"></span>
+        </div>
+        <div class="share-dialog__qr-frame">
+          <div class="share-dialog__qr" id="share-qr" aria-live="polite"></div>
+          <p>扫码打开当前页面</p>
+        </div>
+        <div class="share-dialog__linkbox">
+          <label class="visually-hidden" for="share-url">当前页面链接</label>
+          <input id="share-url" type="text" readonly />
+          <button class="share-dialog__copy" id="share-copy" type="button">复制链接</button>
+        </div>
+        <div class="share-dialog__actions">
+          <button class="share-dialog__native" id="share-native" type="button" hidden>系统分享</button>
+        </div>
+        <p class="share-dialog__status" id="share-status" role="status" aria-live="polite"></p>
+        <p class="share-dialog__footer-note">愿此刻的清风与雪，随链接抵达。</p>
       </div>
     </dialog>
     <dialog class="detail-dialog" id="notice-dialog" aria-labelledby="dialog-title"><div class="dialog__body"><button class="dialog__close" type="button" aria-label="关闭详情" data-close-dialog>×</button><div id="dialog-content"></div></div></dialog>
+    <script src="./assets/js/qrcode-generator.js" defer></script>
     <script src="./assets/js/trace-rail.js?v=20260909-week-fold" defer></script>
     <script src="./app.js?v=20260909-live-track" defer></script>
     <script src="./industry-brief.js?v=20260909-live-track" defer></script>
