@@ -144,3 +144,6 @@
 @media (max-width: 768px), (max-height: 600px) {
   .trace-launcher { top: 50%; right: 8px; bottom: auto; transform: translateY(-50%); writing-mode: vertical-rl; padding: 15px 9px; min-width: 38px; min-height: 70px; max-height: 45dvh; border-radius: 22px; touch-action: pan-y; }
 }
+
+.trace-node--week { min-height: 30px; margin-left: 6px; padding-left: 13px; font-size: 11px; }
+.trace-week .trace-node--day { margin-left: 18px; }

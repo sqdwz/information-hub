@@ -156,9 +156,19 @@
     refresh() {
       this.dates = [...(this.archive?.querySelectorAll("[data-year][data-month][data-date]") || [])].filter((element) => !element.hidden);
       this.years = [];
+      this.weekForDate = new Map();
+      const weekly = this.page.id === "ai" ? [...this.archive.querySelectorAll('[data-trace-label]')]
+        .filter(el => el.dataset.traceLabel.split(" / ").includes("周报"))
+        .sort((a, b) => a.id.localeCompare(b.id)) : [];
       this.tree.replaceChildren();
       for (const element of this.dates) {
-        const { year, month, date, traceLabel } = element.dataset;
+        const { date, traceLabel } = element.dataset;
+        const stamp = el => `${el.dataset.year}-${el.dataset.month}-${el.dataset.date}`;
+        const report = weekly.find(el => stamp(el) >= stamp(element));
+        const owner = this.page.id === "ai" ? report || this.dates[0] : element;
+        const { year, month } = owner.dataset;
+        const weekKey = report?.id || "pending";
+        if (this.page.id === "ai") this.weekForDate.set(element, { year, month, weekKey });
         let yearGroup = this.years.find((group) => group.key === year);
         if (!yearGroup) {
           const node = document.createElement("div");
@@ -187,17 +197,37 @@
           branch.append(children);
           node.append(link, branch);
           yearGroup.children.append(node);
-          monthGroup = { key: month, node, link, branch, children, days: [] };
+          monthGroup = { key: month, node, link, branch, children, days: [], weeks: [] };
           yearGroup.months.push(monthGroup);
         }
-        const link = this.link(element.id, date, "trace-node trace-node--day");
-        link.setAttribute("aria-label", `${year} 年 ${month} 月 ${date} 日${traceLabel ? ` · ${traceLabel}` : ""}`);
+        let parent = monthGroup.children;
+        if (this.page.id === "ai") {
+          let week = monthGroup.weeks.find(group => group.key === weekKey);
+          if (!week) {
+            const node = document.createElement("div");
+            node.className = "trace-week";
+            const target = report && this.dates.includes(report) ? report : element;
+            const label = report ? `周报 ${report.dataset.month}.${report.dataset.date}` : "待汇总";
+            const link = this.link(target.id, label, "trace-node trace-node--week");
+            const branch = document.createElement("div");
+            branch.className = "trace-fold";
+            const children = document.createElement("div");
+            children.className = "trace-fold__inner";
+            branch.append(children); node.append(link, branch); parent.append(node);
+            week = { key: weekKey, link, branch, children };
+            monthGroup.weeks.push(week);
+          }
+          parent = week.children;
+        }
+        const dayLabel = element.dataset.month === month ? date : `${element.dataset.month}.${date}`;
+        const link = this.link(element.id, dayLabel, "trace-node trace-node--day");
+        link.setAttribute("aria-label", `${element.dataset.year} 年 ${element.dataset.month} 月 ${date} 日${traceLabel ? ` · ${traceLabel}` : ""}`);
         if (traceLabel) {
           const small = document.createElement("small");
           small.textContent = traceLabel;
           link.append(small);
         }
-        monthGroup.children.append(link);
+        parent.append(link);
         monthGroup.days.push({ node: link, link, element });
       }
       if (!this.dates.length) {
@@ -240,8 +270,9 @@
         if (element === this.archive) link.setAttribute("aria-expanded", String(expanded));
       }
       const visibleDate = this.isTraceInteracting ? this.browsingDate : this.activeDate;
-      const yearKey = visibleDate?.dataset.year;
-      const monthKey = visibleDate?.dataset.month;
+      const weekOwner = this.weekForDate.get(visibleDate);
+      const yearKey = weekOwner?.year || visibleDate?.dataset.year;
+      const monthKey = weekOwner?.month || visibleDate?.dataset.month;
       for (const year of this.years) {
         const activeYear = expanded && year.key === yearKey;
         year.link.classList.toggle("is-active", activeYear);
@@ -254,6 +285,12 @@
           month.link.setAttribute("aria-expanded", String(activeMonth));
           if (activeMonth) month.link.setAttribute("aria-current", "true"); else month.link.removeAttribute("aria-current");
           this.fold(month.branch, activeMonth);
+          for (const week of month.weeks) {
+            const activeWeek = activeMonth && week.key === weekOwner?.weekKey;
+            week.link.classList.toggle("is-active", activeWeek);
+            week.link.setAttribute("aria-expanded", String(activeWeek));
+            this.fold(week.branch, activeWeek);
+          }
           if (!activeMonth) continue;
         }
       }
@@ -263,7 +300,7 @@
         if (selected) link.setAttribute("aria-current", "true"); else link.removeAttribute("aria-current");
       });
       const hint = this.rail.querySelector(".trace-rail__current");
-      hint.textContent = expanded && this.activeDate ? `${monthKey} · ${this.activeDate.dataset.date}` : "";
+      hint.textContent = expanded && this.activeDate ? `${this.activeDate.dataset.month} · ${this.activeDate.dataset.date}` : "";
       cancelAnimationFrame(this.followFrame);
       this.followFrame = requestAnimationFrame(() => { this.followActive(); this.updateEdges(); });
     }
