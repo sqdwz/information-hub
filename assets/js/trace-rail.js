@@ -69,6 +69,7 @@
       this.launcher = this.root.querySelector(".trace-launcher");
       this.scroller = this.root.querySelector(".trace-scroll");
       this.compact = matchMedia("(max-width: 768px), (max-height: 600px)");
+      this.wide = matchMedia("(min-width: 1201px) and (min-height: 741px)");
       this.sectionLinks = sections.map(({ element, label }) => {
         const link = this.link(element.id, label, "trace-node trace-node--section");
         if (element === this.archive) link.classList.add("trace-node--entry");
@@ -109,6 +110,10 @@
         }
       }, options);
       this.compact.addEventListener("change", () => {
+        if (this.dialog.open) this.dialog.close();
+        this.endInteraction();
+      }, options);
+      this.wide.addEventListener("change", () => {
         if (this.dialog.open) this.dialog.close();
         this.endInteraction();
       }, options);
@@ -214,7 +219,7 @@
     }
 
     updateState() {
-      const expanded = !!this.archive && (this.activeSection === this.archive.id || this.dialog.open);
+      const expanded = !!this.archive && (this.activeSection === this.archive.id || this.dialog.open || this.wide.matches);
       const current = this.sections.find(({ element }) => element.id === this.activeSection) || this.sections[0];
       const inArchive = current?.element === this.archive;
       const label = inArchive ? (this.activeDate ? `${this.activeDate.dataset.year}·${this.activeDate.dataset.month}·${this.activeDate.dataset.date}` : "归档信息")
@@ -325,12 +330,12 @@
       if (!route) this.restoredHash = null;
     }
 
-    jump(id, { history = false, smooth = false, focus = false } = {}) {
+    jump(id, { history = false, smooth = false, focus = false, keepOpen = false } = {}) {
       const target = document.getElementById(id);
       if (target && this.page.contains(target)) this.beforeJump?.(target);
       if (!target || !this.page.contains(target) || target.hidden || target.closest("[hidden]")) return false;
       this.updateOffset();
-      if (this.dialog.open) {
+      if (this.dialog.open && !keepOpen) {
         this.dialog.close();
         // Move immediately: the close event is asynchronous and focus must land in the page.
         this.root.insertBefore(this.rail, this.dialog);
@@ -436,7 +441,8 @@
         const fromLauncher = this.launcher.contains(event.target);
         this.gesture = { id: event.pointerId, x: event.clientX, y: event.clientY,
           scroll: this.scroller.scrollTop, open: this.dialog.open, inside,
-          mouse: event.pointerType === "mouse", select: fromLauncher || event.pointerType !== "mouse", direction: null };
+          fromLauncher, mouse: event.pointerType === "mouse",
+          select: fromLauncher || event.pointerType !== "mouse" || !!event.target.closest("a[data-trace-target]"), direction: null };
         if (fromLauncher) {
           event.preventDefault();
           this.root.setPointerCapture(event.pointerId);
@@ -485,7 +491,7 @@
         if (!g || g.id !== event.pointerId) return;
         clearTimeout(this.holdTimer);
         cancelAnimationFrame(this.pickFrame);
-        if (g.direction || g.select) this.suppressClickUntil = performance.now() + 500;
+        if (g.direction || g.fromLauncher) this.suppressClickUntil = performance.now() + 500;
         this.launcher.classList.remove("is-pressed");
         const pick = event.type === "pointerup" && g.direction === "vertical" && g.select ? this.pickNode?.dataset.traceTarget : null;
         this.pickNode?.classList.remove("is-preview");
@@ -510,7 +516,7 @@
     previewPick() {
       cancelAnimationFrame(this.pickFrame);
       const g = this.gesture;
-      if (!g || !this.dialog.open) return;
+      if (!g || (!this.dialog.open && !this.wide.matches)) return;
       const viewport = this.scroller.getBoundingClientRect();
       this.pickNode?.classList.remove("is-preview");
       this.pickNode = null;
@@ -524,7 +530,12 @@
         return !best || distance(node) < distance(best) ? node : best;
       }, null);
       this.pickNode?.classList.add("is-preview");
-      // Holding near an edge continues browsing without moving the page.
+      const target = this.pickNode?.dataset.traceTarget;
+      if (target && target !== g.liveTarget) {
+        g.liveTarget = target;
+        this.jump(target, { keepOpen: true });
+      }
+      // Edge scrolling reveals more candidates while the page follows the selected node.
       const speed = g.pickY < viewport.top + 32 ? -4 : g.pickY > viewport.bottom - 32 ? 4 : 0;
       if (speed) this.pickFrame = requestAnimationFrame(() => { this.scroller.scrollTop += speed; this.previewPick(); });
     }
