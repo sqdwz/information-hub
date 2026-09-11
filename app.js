@@ -419,6 +419,27 @@ function normalizeAirspaceData(data) {
   };
 }
 
+function renderAirspaceWeather(weather) {
+  const card = $("#airspace-weather-card");
+  const time = $("#airspace-weather-time");
+  if (!card) return;
+  if (time) time.textContent = weather?.source_time ? `来源时间 · ${weather.source_time}` : "来源时间未提供";
+
+  if (!weather || (!weather.affects_hainan && !["watch", "active"].includes(weather.status))) {
+    card.innerHTML = '<article class="airspace-weather-card airspace-weather-card--quiet"><div><span class="weather-level">暂无影响</span><h3>当前未发现影响海南的热带天气系统</h3></div><p>持续跟踪热带扰动、潜在热带气旋、热带低压和已编号台风。</p></article>';
+    return;
+  }
+
+  const watch = weather.status === "watch" || ["disturbance", "potential"].includes(weather.stage);
+  const level = watch ? "关注中" : (weather.impact_level === "warning" ? "预警生效" : "正在影响");
+  const hazards = (weather.hazards || []).map(item => `<span>${escapeHtml(item)}</span>`).join("");
+  const rawSources = Array.isArray(weather.sources) && weather.sources.length
+    ? weather.sources
+    : (weather.source_url ? [{ name: weather.publisher || "气象部门", url: weather.source_url }] : []);
+  const links = rawSources.filter(source => source?.url).map(source => `<a class="notice-link" href="${escapeHtml(source.url)}" target="_blank" rel="noopener">${escapeHtml(source.name || "查看气象原文")} <span aria-hidden="true">↗</span></a>`).join("");
+  card.innerHTML = `<article class="airspace-weather-card ${watch ? "airspace-weather-card--watch" : "airspace-weather-card--alert"}"><div class="airspace-weather-card__head"><div><span class="weather-level">${level}</span><span class="weather-stage">${escapeHtml(weather.system_type || "热带天气系统")}${weather.named === false ? " · 尚未编号" : ""}</span><h3>${escapeHtml(weather.headline || "热带天气系统正在或预计影响海南")}</h3></div>${weather.forecast_period ? `<time>${escapeHtml(weather.forecast_period)}</time>` : ""}</div><p>${escapeHtml(weather.summary || "暂无影响摘要。")}</p>${hazards ? `<div class="weather-hazards">${hazards}</div>` : ""}${links ? `<div class="weather-source-links">${links}</div>` : ""}<small>${escapeHtml(weather.note || "天气影响不自动等同于空域管制，飞行前仍需核对实时空域与审批要求。")}</small></article>`;
+}
+
 function noticeCard(notice) {
   const [label, className] = statusMeta[notice.status] || statusMeta.new;
   const sources = preferredSources(notice.sources);
@@ -461,6 +482,7 @@ function renderAirspace(data) {
   $("[data-summary-message]").textContent = data.message || "暂未生成巡检结论。";
   $("#new-date").textContent = data.generated_at ? `巡检时间 · ${data.generated_at.slice(0, 10)}` : "";
   $("#airspace-stats").innerHTML = [["new", "本次巡检新增", summary.new || 0], ["active", "当前生效", summary.active || 0], ["upcoming", "即将生效", summary.upcoming || 0]].map(([key, label, value]) => `<button class="filter-panel__button" type="button" data-airspace-filter="${key}" aria-pressed="false">${label} ${value} 条</button>`).join("");
+  renderAirspaceWeather(data.typhoon);
   document.querySelectorAll("[data-airspace-filter]").forEach((button) => button.addEventListener("click", () => applyAirspaceFilter(button.dataset.airspaceFilter)));
   const isNew = notice => notice.is_new_scan || notice.status === "new";
   renderGroup("#new-list", notices.filter(isNew), "本轮巡检未发现新增公告；后续新增内容会优先显示在这里。");
@@ -480,6 +502,7 @@ function renderAirspace(data) {
     sections: [
       { element: $("#airspace-overview"), label: "概览" },
       { element: $("#airspace-filters"), label: "公告筛选" },
+      { element: $("#airspace-weather"), label: "天气影响" },
       { element: $("#airspace-current"), label: "当前信息" },
       { element: $("#airspace-archive"), label: "循迹" },
       { element: $("#source-list"), label: "信息来源" }

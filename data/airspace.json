@@ -41,6 +41,28 @@
       ]
     }
   ],
+  "typhoon": {
+    "updated_at": "2026-09-11 08:00",
+    "status": "watch",
+    "impact_level": "watch",
+    "affects_hainan": true,
+    "stage": "disturbance",
+    "system_type": "热带扰动",
+    "name": null,
+    "named": false,
+    "headline": "南海热带扰动正在影响海南，未来三天需关注强降雨和海上大风",
+    "source_time": "2026-09-11 08:00",
+    "forecast_period": "2026-09-11 至 2026-09-13",
+    "summary": "中央气象台9月11日08时提示，未来三天南海有热带扰动活动，将给海南岛带来大到暴雨；12日至13日海南岛东部和南部局地可能出现暴雨或大暴雨，南海北部、北部湾等海域有6至7级风、阵风8级。该系统尚未获得台风编号，但已构成需要关注的海南天气影响。",
+    "hazards": ["大到暴雨", "海上大风", "雷暴"],
+    "source_url": "https://www.nmc.cn/publish/weatherperday/index.htm",
+    "sources": [
+      {"name": "中央气象台每日天气提示", "url": "https://www.nmc.cn/publish/weatherperday/index.htm"},
+      {"name": "中央气象台天气公报", "url": "https://www.nmc.cn/publish/weather-bulletin/index.htm"}
+    ],
+    "publisher": "中央气象台",
+    "note": "尚未编号不等于没有风险；天气影响不等同于空域管制，飞行安全仍应以 UOM、NOTAM、空管审批及属地临时管制为准。"
+  },
   "sources": [
     "中国民航局（CAAC）/ 民航海南监管公开信息",
     "海南省人民政府 / 公安 / 应急公开信息",

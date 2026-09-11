@@ -82,6 +82,25 @@ h2 { font-family: "Songti SC", "STSong", serif; font-size: clamp(24px, 3vw, 31px
 .notice-card--active { border-left-color: #e74249; }
 .notice-card--upcoming, .notice-card--new { border-left-color: var(--gold); }
 .notice-card--ended { border-left-color: #9a8b85; }
+.airspace-weather-card { padding: 25px 26px 20px; border: 1px solid rgba(255, 248, 240, .72); border-left: 6px solid #7a9a83; border-radius: 18px; background: rgba(239, 246, 255, .88); box-shadow: 0 12px 32px rgba(13, 34, 94, .2); backdrop-filter: blur(12px); }
+.airspace-weather-card--watch { border-left-color: #d99a38; background: linear-gradient(115deg, rgba(255, 244, 213, .94), rgba(239, 246, 255, .86) 58%); }
+.airspace-weather-card--alert { border-left-color: #cf545a; background: linear-gradient(115deg, rgba(255, 228, 226, .94), rgba(239, 246, 255, .86) 58%); }
+.airspace-weather-card__head { display: flex; justify-content: space-between; align-items: start; gap: 20px; }
+.airspace-weather-card__head time { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.airspace-weather-card h3 { margin: 12px 0 0; font-size: 22px; line-height: 1.5; }
+.airspace-weather-card > p { margin: 16px 0 0; color: #3e4f6f; line-height: 1.8; }
+.weather-level, .weather-stage, .weather-hazards span { display: inline-flex; padding: 5px 9px; border-radius: 99px; font-size: 12px; font-weight: 800; }
+.weather-level { color: #8c520b; background: rgba(255, 226, 164, .72); }
+.weather-stage { margin-left: 7px; color: #415a91; background: rgba(214, 226, 255, .78); }
+.weather-hazards, .weather-source-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+.weather-hazards span { color: #754d17; border: 1px solid rgba(190, 132, 41, .22); background: rgba(255, 255, 255, .6); }
+.airspace-weather-card small { display: block; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(94, 112, 153, .18); color: var(--muted); line-height: 1.65; }
+@media (max-width: 680px) {
+  .airspace-weather-card { padding: 20px 18px; }
+  .airspace-weather-card__head { display: block; }
+  .airspace-weather-card__head time { display: block; margin-top: 10px; white-space: normal; }
+  .airspace-weather-card h3 { font-size: 19px; }
+}
 .notice-card__heading { display: flex; align-items: start; justify-content: space-between; gap: 20px; padding-bottom: 14px; }
 .notice-card h3 { margin: 0; font-size: 20px; line-height: 1.55; }
 .urban-card-summary { margin: 0 0 14px; color: var(--muted); line-height: 1.75; }
