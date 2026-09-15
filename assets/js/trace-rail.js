@@ -471,6 +471,8 @@
       this.scroller.addEventListener("transitionend", () => this.followActive(), options);
       this.root.addEventListener("dragstart", event => event.preventDefault(), options);
       this.root.addEventListener("pointerdown", event => {
+        // A fresh gesture must not inherit the preceding drag's click suppression.
+        this.suppressClickUntil = 0;
         if (!event.isPrimary || event.button !== 0 || event.target.closest("[data-trace-close]")) return;
         const inside = this.scroller.contains(event.target);
         if (!inside && !this.launcher.contains(event.target) && !this.dialog.contains(event.target)) return;

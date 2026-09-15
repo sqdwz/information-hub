@@ -43,6 +43,8 @@ let policyCategories;
 let policyItems = [];
 const policyRecordCache = new Map();
 let activePolicyDetailId = "";
+let previousRoute = "";
+let policyListPosition = 0;
 
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
@@ -72,6 +74,7 @@ function initWelcomePavilion() {
   }
 
   document.body.classList.add("has-welcome");
+  welcome.querySelector(".welcome-pavilion__background").style.backgroundImage = 'url("./assets/welcome-pavilion-clean.webp")';
   document.title = "RUIXUE · Welcome";
   siteShell?.setAttribute("inert", "");
   siteShell?.setAttribute("aria-hidden", "true");
@@ -362,6 +365,7 @@ showcaseTabs.forEach(button => button.addEventListener("click", () => setShowcas
 setShowcaseTab("share");
 
 function route() {
+  const leavingScrollY = window.scrollY;
   const id = location.hash.slice(1) || "home";
   const traceRoute = window.TraceArchive?.resolveRoute();
   // Date anchors restore after asynchronous data rendering; avoid a second browser restoration.
@@ -369,6 +373,8 @@ function route() {
   const policyDetailMatch = id.match(/^policy\/([^/]+)$/);
   const page = traceRoute?.page || (policyDetailMatch ? "policy-detail" : ([...document.querySelectorAll("[data-page]")].some(node => node.dataset.page === id) ? id : "home"));
   document.querySelectorAll("[data-page]").forEach(node => node.classList.toggle("is-active", node.dataset.page === page));
+  if (previousRoute === "policy" && page === "policy-detail") policyListPosition = leavingScrollY;
+  const returningToResults = previousRoute === "policy-detail" && page === "policy" && !traceRoute;
   const activeRoute = page === "policy-detail" ? "policy" : page;
   document.querySelectorAll("[data-route]").forEach(node => {
     if (node.dataset.route === activeRoute) node.setAttribute("aria-current", "page");
@@ -379,7 +385,9 @@ function route() {
     const activeLink = document.querySelector(`[data-route="${activeRoute}"]`);
     if (nav && activeLink) nav.scrollTo({ left: Math.max(0, activeLink.offsetLeft + activeLink.offsetWidth - nav.clientWidth), behavior: "instant" });
   }
-  if (!traceRoute) window.scrollTo({ top: 0, behavior: "instant" });
+  if (!traceRoute) window.scrollTo({ top: returningToResults ? policyListPosition : 0, behavior: "instant" });
+  if (!document.body.classList.contains("has-welcome")) document.title = `${sharePageNames[page] || "信息聚合中心"}｜瑞雪的小栈`;
+  previousRoute = page;
   if (policyDetailMatch && !traceRoute) loadPolicyDetail(decodeURIComponent(policyDetailMatch[1]));
   window.dispatchEvent(new CustomEvent("app:route", { detail: { page, anchor: traceRoute?.anchor } }));
 }
@@ -517,22 +525,32 @@ function formatUrbanDate(value) {
 }
 
 function urbanVerificationLabel(item) {
-  if (item.verification_status === "verified") return "已核验";
+  if (item.verification_status === "verified") return urbanSourceUrl(item) ? "已核验" : "线索已核验 · 原文待补";
   if (item.verification_status === "expanded") return "扩展候选";
   return "待补官方原文";
 }
 
+function urbanSourceUrl(item) {
+  const url = item.source_url || window.urbanSourceCatalog?.documents?.[`${item.project_id}|${item.publish_date}`];
+  try {
+    const parsed = new URL(url);
+    return ["https:", "http:"].includes(parsed.protocol) ? parsed.href : "";
+  } catch { return ""; }
+}
+
 function urbanCard(item) {
-  const isOfficial = String(item.source_level || "").startsWith("official");
+  const isOfficial = /^(official|A_official|B_official)/.test(String(item.source_level || ""));
   const sourceLabel = isOfficial ? "官方来源" : "补充线索";
   const isAwarded = item.status === "awarded" || /中标|成交|结果/.test(String(item.notice_type || ""));
   const statusLabel = isAwarded ? "已中标" : (item.status === "active" ? "正在招标" : "历史记录");
   const projectType = item.project_type || urbanHistoryProjectType(item);
   const serviceType = Array.isArray(item.service_type) ? item.service_type.join("、") : (item.service_type || urbanHistoryServiceType(item));
   const tags = [...new Set([projectType, serviceType, ...(item.tags || [])].filter((tag) => tag && tag !== "未说明"))].slice(0, 6);
-  const source = item.source_url
-    ? `<a class="notice-link ${isOfficial ? "notice-link--official" : ""}" href="${escapeHtml(item.source_url)}" target="_blank" rel="noreferrer">查看原文 <span aria-hidden="true">↗</span></a>`
-    : "暂未提供";
+  const sourceUrl = urbanSourceUrl(item);
+  const platform = window.urbanSourceCatalog?.sources?.[item.source_id];
+  const source = sourceUrl
+    ? `<a class="notice-link ${isOfficial ? "notice-link--official" : ""}" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noreferrer">查看原文 <span aria-hidden="true">↗</span></a>`
+    : `<span>公告原文待补</span>${platform?.url ? `<a class="notice-link" href="${escapeHtml(platform.url)}" target="_blank" rel="noreferrer">前往${escapeHtml(platform.name)}检索 ↗</a>` : ""}`;
   const amount = item.award_yuan ?? item.control_price_yuan ?? item.budget_yuan ?? item.project_investment_yuan;
   const amountText = amount !== null && amount !== undefined && amount !== "" && Number.isFinite(Number(amount)) ? `${Number(amount).toLocaleString("zh-CN")} 元` : "未披露";
   const deadlineText = item.deadline
@@ -545,11 +563,16 @@ function urbanCard(item) {
 
 function renderUrbanSources(checks = []) {
   $("#urban-source-list").innerHTML = checks.length
-    ? checks.map((check) => `<li>${escapeHtml(check.source || "公开信息源")} · ${escapeHtml(check.status === "swept" ? "已巡检" : "已核查")}</li>`).join("")
+    ? checks.map((check) => {
+      const source = window.urbanSourceCatalog?.sources?.[check.source_id];
+      const label = check.source || source?.name || check.source_id || "公开信息源";
+      const state = check.coverage_status === "source_error" ? "本轮读取异常，待复核" : (check.coverage_status === "searched_no_new_core" ? "已巡检，未发现新增核心记录" : "已核查");
+      return `<li>${source?.url ? `<a href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">${escapeHtml(label)} ↗</a>` : escapeHtml(label)} · ${state}</li>`;
+    }).join("")
     : "<li>本次来源信息暂未提供。</li>";
 }
 
-const urbanCurrentFilterLabels = { new: "今日新增", tender: "正在招标", deadline: "即将截止", expanded: "扩展候选" };
+const urbanCurrentFilterLabels = { new: "今日新增", tender: "正在招标", deadline: "7天内截止", expanded: "扩展候选" };
 
 function urbanDateOnly(value) {
   return String(value || "").slice(0, 10);
@@ -560,7 +583,13 @@ function urbanCurrentItems(data, filter) {
   const expanded = Array.isArray(data?.expanded_candidates) ? data.expanded_candidates : (data?.expanded_candidates ? [data.expanded_candidates] : []);
   const reportDate = urbanDateOnly(data?.date || data?.generated_at);
   if (filter === "new") return active.filter((item) => urbanDateOnly(item.publish_date) === reportDate);
-  if (filter === "deadline") return active.filter((item) => item.deadline && new Date(item.deadline).getTime() >= Date.now());
+  if (filter === "deadline") {
+    const now = Date.now();
+    return active.filter(item => {
+      const end = new Date(item.deadline).getTime();
+      return end >= now && end <= now + 7 * 86400000;
+    }).sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+  }
   if (filter === "expanded") return expanded;
   return active;
 }
@@ -639,11 +668,11 @@ function renderUrban(data) {
   $("#urban-title-date").textContent = urbanDateOnly(data.generated_at || data.date) || "暂无日期";
   renderUrbanSummary(summary.note);
   $("#urban-current-count").textContent = active.length;
-  $("#urban-stats").innerHTML = [["new", "今日新增", summary.new_today ?? newToday.length], ["tender", "正在招标", active.length], ["deadline", "即将截止", deadlines.length], ["expanded", "扩展候选", expanded.length]].map(([key, label, value]) => `<button class="filter-panel__button" type="button" data-urban-filter="${key}" aria-pressed="false">${label} ${escapeHtml(value)} 条</button>`).join("");
+  $("#urban-stats").innerHTML = [["new", "今日新增", summary.new_today ?? newToday.length], ["tender", "正在招标", active.length], ["deadline", "7天内截止", deadlines.length], ["expanded", "扩展候选", expanded.length]].map(([key, label, value]) => `<button class="filter-panel__button" type="button" data-urban-filter="${key}" aria-pressed="false">${label} ${escapeHtml(value)} 条</button>`).join("");
   document.querySelectorAll("[data-urban-filter]").forEach((button) => button.addEventListener("click", () => applyUrbanCurrentFilter(button.dataset.urbanFilter)));
   urbanCurrentFilter = null;
   applyUrbanCurrentFilter(null);
-  renderUrbanSources(data.source_checks);
+  renderUrbanSources(data.source_checks || data.source_audit);
   $("#home-urban-metric").textContent = `今日新增 ${summary.new_today || 0} 条 · 当前有效 ${summary.active_core ?? active.length} 条`;
   registerFooterUpdate("urban", { title: "城市更新招投标巡检", date: data.generated_at || data.date, href: "#urban" });
   if (urbanHistoryRecords.length) refreshUrbanHistory();
@@ -1020,6 +1049,7 @@ async function loadPolicyDetail(id) {
   try {
     const record = await fetchPolicyRecord(item);
     if (activePolicyDetailId !== id) return;
+    if ($("#policy-detail").classList.contains("is-active")) document.title = `${record.title}｜瑞雪的小栈`;
     const [statusLabel, statusClass] = policyStatusMeta[record.status] || ["状态未标注", "policy-status--review"];
     container.innerHTML = `<header class="policy-detail__head"><p class="eyebrow"><span></span>${escapeHtml(policyLevelLabels[record.jurisdiction_level] || "文件资料")}</p><div class="policy-detail__badges"><span>${escapeHtml(record.policy_type)}</span><span class="policy-status ${statusClass}">${escapeHtml(statusLabel)}</span></div><h1 id="policy-detail-title">${escapeHtml(record.title)}</h1><p class="policy-detail__number">${escapeHtml(record.document_no || "文号未标注")}</p><p class="policy-detail__summary">${escapeHtml(record.summary)}</p></header><dl class="policy-detail__facts"><div><dt>发文机关</dt><dd>${escapeHtml((record.issuer || []).join("、"))}</dd></div><div><dt>发布日期</dt><dd>${escapeHtml(policyDate(record.published_at))}</dd></div><div><dt>施行日期</dt><dd>${escapeHtml(policyDate(record.effective_at))}</dd></div><div><dt>适用地区</dt><dd>${escapeHtml((record.regions || []).join("、"))}</dd></div></dl><section><h2>适用范围</h2><div class="policy-detail__chips">${(record.applies_to || []).map(value => `<span>${escapeHtml(value)}</span>`).join("")}</div></section><section><h2>核心要点</h2><ol class="policy-highlights">${(record.highlights || []).map(value => `<li>${escapeHtml(value)}</li>`).join("")}</ol><p class="policy-detail__disclaimer"><b>免责声明</b>以上要点仅供信息检索与快速理解，不构成法律意见、行政确认或项目专项审查；请以发文机关最新公开原文及项目所在地现行规定为准。</p></section><section class="policy-detail__notice"><h2>效力与核验说明</h2><p>${escapeHtml(record.status_note || "请以发文机关最新公开文本为准。")}</p><p>本资料于 ${escapeHtml(record.verified_at || "未标注")} 核对公开来源。</p></section><section><h2>相关文件</h2>${relatedPolicyLinks(record)}</section><footer class="policy-detail__actions">${record.guide ? `<a class="button button--primary" href="./policy-guide.html?id=${encodeURIComponent(record.id)}">打开文件解读 →</a>` : ""}<a class="button" href="${escapeHtml(record.source_url)}" target="_blank" rel="noopener">打开官方原文 ↗</a><a class="button" href="#policy">返回检索结果</a></footer>`;
   } catch (error) {

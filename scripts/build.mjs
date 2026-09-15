@@ -10,6 +10,7 @@ await mkdir(dist, { recursive: true });
 
 for (const file of [
   "index.html",
+  "favicon.ico",
   "styles.css",
   "app.js",
   "industry-brief.css",

@@ -50,7 +50,7 @@ function entryCard(entry) {
 
 function chapterBlock(chapter) {
   const entries = chapter.entries || [];
-  return `<section class="guide-chapter" id="${escapeHtml(chapter.id)}"><header class="guide-chapter__head"><h2>${escapeHtml(chapter.title)}</h2><p>${escapeHtml(chapter.summary || "")}</p></header><nav class="guide-entry-index" aria-label="${escapeHtml(chapter.title)}条目">${entries.map(entry => `<a href="#${escapeHtml(entry.id)}">${escapeHtml(entry.no || entry.title)}</a>`).join("")}</nav><div class="guide-entry-list">${entries.map(entryCard).join("")}</div></section>`;
+  return `<section class="guide-chapter" id="${escapeHtml(chapter.id)}"><header class="guide-chapter__head"><h2>${escapeHtml(chapter.title)}</h2><p>${escapeHtml(chapter.summary || "")}</p></header><nav class="guide-entry-index" aria-label="${escapeHtml(chapter.title)}条目">${entries.map(entry => `<a href="#${escapeHtml(entry.id)}">${escapeHtml(entries.filter(other => other.no === entry.no).length > 1 ? entry.title : (entry.no || entry.title))}</a>`).join("")}</nav><div class="guide-entry-list">${entries.map(entryCard).join("")}</div></section>`;
 }
 
 function renderPolicy(record) {
@@ -81,6 +81,7 @@ function renderError(error) {
 }
 
 async function init() {
+  history.scrollRestoration = "manual";
   const id = new URLSearchParams(location.search).get("id");
   try {
     if (!id) throw new Error("链接中缺少文件 ID");
@@ -92,6 +93,11 @@ async function init() {
   } finally {
     document.querySelector("#guide-loading").hidden = true;
     document.querySelector("#guide-app").hidden = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      let anchor;
+      try { anchor = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+      document.getElementById(anchor)?.scrollIntoView({ behavior: "instant", block: "start" });
+    }));
   }
 }
 

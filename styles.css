@@ -492,7 +492,7 @@ body.has-welcome { overflow: hidden; }
 .welcome-pavilion__background {
   position: absolute;
   inset: 0;
-  background: #061746 url("./assets/welcome-pavilion-clean.png") center / cover no-repeat;
+  background: #061746 center / cover no-repeat;
 }
 .welcome-pavilion__sparkles {
   position: absolute;
