@@ -47,10 +47,12 @@
   }
 
   class TraceRail {
-    constructor({ page, sections, archiveTrigger, beforeJump, offsetTop = 100 }) {
+    constructor({ page, sections, archiveTrigger, archiveLabel = "归档信息", archiveMode = "dates", beforeJump, offsetTop = 100 }) {
       this.page = page;
       this.sections = sections;
       this.archive = archiveTrigger;
+      this.archiveLabel = archiveLabel;
+      this.archiveMode = archiveMode;
       this.beforeJump = beforeJump;
       this.offsetTop = offsetTop;
       this.activeSection = sections[0]?.element.id;
@@ -161,6 +163,24 @@
         .filter(el => el.dataset.traceLabel.split(" / ").includes("周报"))
         .sort((a, b) => a.id.localeCompare(b.id)) : [];
       this.tree.replaceChildren();
+      if (this.archiveMode === "entries") {
+        for (const [index, element] of this.dates.entries()) {
+          const link = this.link(element.id, element.dataset.traceEntryLabel || `第${index + 1}期`, "trace-node trace-node--day");
+          link.setAttribute("aria-label", element.dataset.traceEntryLabel || `第${index + 1}期`);
+          this.tree.append(link);
+        }
+        if (!this.dates.length) {
+          const empty = document.createElement("p");
+          empty.className = "trace-rail__empty";
+          empty.textContent = this.archive?.dataset.traceEmpty || "暂无项目";
+          this.tree.append(empty);
+        }
+        if (!this.dates.includes(this.activeDate)) this.activeDate = this.dates[0] || null;
+        this.updateState();
+        this.scheduleObserve();
+        this.restoreHash();
+        return;
+      }
       for (const element of this.dates) {
         const { date, traceLabel } = element.dataset;
         const stamp = el => `${el.dataset.year}-${el.dataset.month}-${el.dataset.date}`;
@@ -252,7 +272,7 @@
       const expanded = !!this.archive && this.activeSection === this.archive.id;
       const current = this.sections.find(({ element }) => element.id === this.activeSection) || this.sections[0];
       const inArchive = current?.element === this.archive;
-      const label = inArchive ? (this.activeDate ? `${this.activeDate.dataset.year}·${this.activeDate.dataset.month}·${this.activeDate.dataset.date}` : "归档信息")
+      const label = inArchive ? (this.archiveMode === "entries" ? this.archiveLabel : (this.activeDate ? `${this.activeDate.dataset.year}·${this.activeDate.dataset.month}·${this.activeDate.dataset.date}` : this.archiveLabel))
         : current?.label || this.page.querySelector("h1, h2")?.textContent || "页面导航";
       this.launcher.textContent = label;
       this.rail.querySelector(".trace-heading").textContent = label;
@@ -262,7 +282,7 @@
       this.rail.classList.toggle("is-expanded", expanded);
       this.fold(this.branch, expanded);
       for (const { element, link } of this.sectionLinks) {
-        if (element === this.archive) link.textContent = "归档信息";
+        if (element === this.archive) link.textContent = this.archiveLabel;
         const selected = element.id === this.activeSection;
         link.classList.toggle("is-active", selected);
         if (selected) link.setAttribute("aria-current", "true"); else link.removeAttribute("aria-current");
@@ -300,7 +320,7 @@
         if (selected) link.setAttribute("aria-current", "true"); else link.removeAttribute("aria-current");
       });
       const hint = this.rail.querySelector(".trace-rail__current");
-      hint.textContent = expanded && this.activeDate ? `${this.activeDate.dataset.month} · ${this.activeDate.dataset.date}` : "";
+      hint.textContent = expanded && this.activeDate ? (this.archiveMode === "entries" ? this.activeDate.dataset.traceEntryLabel : `${this.activeDate.dataset.month} · ${this.activeDate.dataset.date}`) : "";
       cancelAnimationFrame(this.followFrame);
       this.followFrame = requestAnimationFrame(() => { this.followActive(); this.updateEdges(); });
     }

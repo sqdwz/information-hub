@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="description" content="私人知识库只读工作台" />
+    <title>知识库 · 瑞雪的小栈</title>
+    <link rel="icon" href="./favicon.ico" sizes="any" />
+    <link rel="stylesheet" href="./styles.css?v=20260925-knowledge-standalone" />
+    <link rel="stylesheet" href="./knowledge.css?v=20260925-knowledge-standalone" />
+  </head>
+  <body class="knowledge-app" data-knowledge-app>
+    <header class="knowledge-topbar">
+      <div class="knowledge-topbar__inner">
+        <a class="knowledge-back-link" href="./#showcase" aria-label="返回隐藏的演示与分享页面">← 返回</a>
+        <a class="knowledge-brand" href="./#showcase" aria-label="返回瑞雪的小栈演示与分享页面">
+          <img src="./assets/avatar-klee.webp" alt="" />
+          <span><strong>瑞雪的小栈</strong><small>私人知识工作台</small></span>
+        </a>
+        <div class="knowledge-topbar__actions">
+          <span class="knowledge-mode" id="knowledge-mode">正在检查会话</span>
+          <button class="button" id="knowledge-refresh" type="button">刷新索引</button>
+          <button class="button" id="knowledge-open-token" type="button" hidden>只读分享</button>
+          <button class="button knowledge-logout" id="knowledge-logout" type="button" hidden>安全退出</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="knowledge-shell">
+      <section class="knowledge-home" id="knowledge-home" aria-labelledby="knowledge-title">
+        <header class="knowledge-hero panel">
+          <div>
+            <p class="eyebrow"><span></span>PRIVATE KNOWLEDGE WORKBENCH</p>
+            <h1 id="knowledge-title">知识库</h1>
+            <p>把明确日程放进提醒与月历，把长期记录留在备忘录中。这里只读取，不在网页中修改。</p>
+          </div>
+          <dl class="knowledge-summary" aria-label="知识库概览">
+            <div><dt>提醒事项</dt><dd id="knowledge-reminder-count">—</dd></div>
+            <div><dt>备忘录</dt><dd id="knowledge-memo-count">—</dd></div>
+            <div><dt>最近更新</dt><dd id="knowledge-latest-date">—</dd></div>
+          </dl>
+        </header>
+
+        <section class="knowledge-search-panel panel" aria-labelledby="knowledge-search-title">
+          <div class="knowledge-section-heading">
+            <div><p class="eyebrow"><span></span>快速定位</p><h2 id="knowledge-search-title">搜索全部内容</h2></div>
+            <p id="knowledge-updated-at">正在读取索引状态…</p>
+          </div>
+          <div class="knowledge-search-box">
+            <span aria-hidden="true">⌕</span>
+            <label class="sr-only" for="knowledge-search">搜索知识库</label>
+            <input id="knowledge-search" type="search" placeholder="输入标题、日程、经验、项目或正文关键词" autocomplete="off" />
+            <button id="knowledge-search-clear" type="button" aria-label="清空知识库搜索" hidden>清空</button>
+          </div>
+          <p class="knowledge-status" id="knowledge-status" role="status" aria-live="polite">正在检查知识库会话…</p>
+        </section>
+
+        <div class="knowledge-dashboard">
+          <section class="knowledge-pane knowledge-reminders panel" aria-labelledby="knowledge-reminders-title">
+            <div class="knowledge-pane__head">
+              <div><p class="knowledge-pane__kicker">REMINDERS</p><h2 id="knowledge-reminders-title">提醒事项</h2></div>
+              <span id="knowledge-reminder-filter-count">0 条</span>
+            </div>
+            <div class="knowledge-reminder-groups" id="knowledge-reminders">
+              <p class="knowledge-empty">登录后读取日程记录。</p>
+            </div>
+          </section>
+
+          <section class="knowledge-pane knowledge-calendar panel" aria-labelledby="knowledge-calendar-title">
+            <div class="knowledge-pane__head knowledge-calendar__head">
+              <div><p class="knowledge-pane__kicker">CALENDAR</p><h2 id="knowledge-calendar-title">正在读取</h2></div>
+              <div class="knowledge-calendar__controls" aria-label="切换月份">
+                <button id="knowledge-calendar-prev" type="button" aria-label="上一个月">‹</button>
+                <button id="knowledge-calendar-today" type="button">今天</button>
+                <button id="knowledge-calendar-next" type="button" aria-label="下一个月">›</button>
+              </div>
+            </div>
+            <div class="knowledge-calendar__weekdays" aria-hidden="true"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+            <div class="knowledge-calendar__grid" id="knowledge-calendar-grid" role="grid" aria-label="日程月历"></div>
+            <div class="knowledge-calendar__selection" id="knowledge-calendar-selection" aria-live="polite">
+              <p class="knowledge-empty">选择有标记的日期查看日程。</p>
+            </div>
+          </section>
+
+          <section class="knowledge-pane knowledge-memos panel" aria-labelledby="knowledge-memos-title">
+            <div class="knowledge-pane__head">
+              <div><p class="knowledge-pane__kicker">NOTES</p><h2 id="knowledge-memos-title">备忘录</h2></div>
+              <span id="knowledge-result-count">等待读取</span>
+            </div>
+            <div class="knowledge-filters" aria-label="筛选备忘录">
+              <label>分类<select id="knowledge-category"><option value="">全部分类</option></select></label>
+              <label>标签<select id="knowledge-tag"><option value="">全部标签</option></select></label>
+              <button class="button knowledge-filter-clear" id="knowledge-filter-clear" type="button">清除筛选</button>
+            </div>
+            <div class="knowledge-list" id="knowledge-memos"><p class="knowledge-empty">登录后读取备忘录。</p></div>
+          </section>
+        </div>
+      </section>
+
+      <article class="knowledge-detail panel" id="knowledge-detail" hidden aria-labelledby="knowledge-detail-title">
+        <button class="knowledge-detail__back" id="knowledge-detail-back" type="button">← 返回知识工作台</button>
+        <header class="knowledge-detail__head">
+          <p class="eyebrow"><span></span><b id="knowledge-detail-category">知识记录</b></p>
+          <h1 id="knowledge-detail-title">正在读取条目</h1>
+          <p id="knowledge-detail-summary"></p>
+          <div class="knowledge-detail__meta" id="knowledge-detail-meta"></div>
+        </header>
+        <div class="knowledge-reader">
+          <aside class="knowledge-toc" id="knowledge-toc" aria-label="文章目录"></aside>
+          <div class="knowledge-markdown" id="knowledge-markdown"><p>正在读取正文…</p></div>
+        </div>
+      </article>
+    </main>
+
+    <dialog class="knowledge-auth" id="knowledge-auth" aria-labelledby="knowledge-auth-title">
+      <form method="dialog" class="knowledge-auth__body" id="knowledge-auth-form">
+        <button class="dialog__close" type="button" aria-label="关闭认证" data-close-knowledge-auth>×</button>
+        <p class="eyebrow"><span></span>知识库访问</p>
+        <h2 id="knowledge-auth-title">登录知识库</h2>
+        <p>完成认证后才能读取私人内容。</p>
+        <label class="sr-only">用户名<input name="username" type="text" value="owner" autocomplete="username" tabindex="-1" /></label>
+        <label>访问密码<input id="knowledge-password" type="password" autocomplete="current-password" required /></label>
+        <button class="button knowledge-auth__submit" type="submit">登录并进入</button>
+        <p class="knowledge-auth__status" id="knowledge-auth-status" role="alert" aria-live="polite"></p>
+      </form>
+    </dialog>
+
+    <dialog class="knowledge-token-dialog" id="knowledge-token-dialog" aria-labelledby="knowledge-token-dialog-title">
+      <div class="knowledge-token-dialog__body">
+        <button class="dialog__close" type="button" aria-label="关闭访问令牌" data-close-knowledge-token>×</button>
+        <div class="knowledge-token-dialog__heading">
+          <p>知识库只读分享</p>
+          <h2 id="knowledge-token-dialog-title">访问令牌</h2>
+          <span>网站只读取 GitHub 内容，不具备修改权限。</span>
+        </div>
+        <div class="knowledge-token-dialog__actions">
+          <label>有效期<select id="knowledge-token-ttl"><option value="86400">24 小时</option><option value="604800" selected>7 天</option><option value="2592000">30 天</option></select></label>
+          <button class="button" id="knowledge-create-master" type="button">生成本人令牌</button>
+          <button class="button" id="knowledge-create-share" type="button">生成分享链接</button>
+        </div>
+        <div class="knowledge-token-dialog__result" id="knowledge-token-result" hidden>
+          <label>新令牌<input id="knowledge-token-value" type="text" readonly autocomplete="off" /></label>
+          <label id="knowledge-share-link-row" hidden>分享链接<input id="knowledge-share-link" type="text" readonly autocomplete="off" /></label>
+          <div><button class="button" id="knowledge-copy-token" type="button">复制令牌</button><button class="button" id="knowledge-copy-share" type="button" hidden>复制分享链接</button><button class="button" id="knowledge-revoke-token" type="button">立即撤销</button></div>
+          <p id="knowledge-token-result-status" role="status"></p>
+        </div>
+      </div>
+    </dialog>
+
+    <script type="module" src="./knowledge.js?v=20260925-standalone"></script>
+  </body>
+</html>

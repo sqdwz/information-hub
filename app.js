@@ -8,7 +8,8 @@ const DATA_ENDPOINTS = {
   policyCategoriesSnapshot: "/data/policy/categories-snapshot.json",
   policyDocument: "/data/policy/document",
   policySnapshot: "/data/policy/snapshot.json",
-  policyLocalBase: "/data/policy/"
+  policyLocalBase: "/data/policy/",
+  showcaseIndex: "/data/showcase/index.json"
 };
 const statusMeta = { active: ["正在生效", "pill--active"], upcoming: ["即将生效", "pill--upcoming"], ended: ["已结束", "pill--ended"], new: ["本轮新增", "pill--upcoming"] };
 const policyStatusMeta = {
@@ -45,6 +46,48 @@ const policyRecordCache = new Map();
 let activePolicyDetailId = "";
 let previousRoute = "";
 let policyListPosition = 0;
+
+async function loadShowcaseIndex() {
+  const sharePage = $("#showcase-share-page");
+  if (!sharePage) return;
+  const grid = $("#showcase-grid", sharePage);
+  if (!grid) return;
+  try {
+    const response = await fetch(`${DATA_ENDPOINTS.showcaseIndex}?v=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Showcase HTTP ${response.status}`);
+    const data = await response.json();
+    const items = Array.isArray(data.items)
+      ? [...data.items].sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")))
+      : [];
+    grid.replaceChildren(...items.map((item, index) => {
+      const card = document.createElement("a");
+      card.className = "showcase-card";
+      const createdDate = String(item.created_at || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (createdDate) {
+        card.dataset.year = createdDate[1];
+        card.dataset.month = createdDate[2];
+        card.dataset.date = createdDate[3];
+      }
+      card.id = `showcase-${item.slug}`;
+      card.dataset.traceLabel = item.title || "演示项目";
+      card.dataset.traceEntryLabel = item.phase || `第${items.length - index}期`;
+      card.href = item.url || "#";
+      card.target = "_blank";
+      card.rel = "noopener";
+      const createdAt = item.created_at;
+      const dateLabel = createdAt && !Number.isNaN(Date.parse(createdAt))
+        ? new Date(createdAt).toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" })
+        : "日期待补充";
+      card.innerHTML = `<div class="showcase-card__meta"><span class="status status--active">${escapeHtml(item.status === "public" ? "公开访问" : item.status || "已收录")}</span><time datetime="${escapeHtml(createdAt || "")}">创建于 ${escapeHtml(dateLabel)}</time></div><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.description)}</p><span class="showcase-card__action">进入分享 <b aria-hidden="true">→</b></span>`;
+      return card;
+    }));
+    showcaseTrace?.refresh();
+    const note = $(".showcase-page__note", sharePage);
+    if (note && data.updated_at) note.textContent = `目录更新时间：${new Date(data.updated_at).toLocaleString("zh-CN")} · 自动读取仓库索引`;
+  } catch (error) {
+    console.error("Failed to load showcase index", error);
+  }
+}
 
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
@@ -366,7 +409,7 @@ setShowcaseTab("share");
 
 function route() {
   const leavingScrollY = window.scrollY;
-  const id = location.hash.slice(1) || "home";
+  const id = (location.hash.slice(1) || "home").split("?")[0];
   const traceRoute = window.TraceArchive?.resolveRoute();
   // Date anchors restore after asynchronous data rendering; avoid a second browser restoration.
   history.scrollRestoration = traceRoute ? "manual" : "auto";
@@ -1271,6 +1314,7 @@ document.addEventListener("click", event => { const button = event.target.closes
 $("#notice-dialog").addEventListener("click", event => { if (event.target === event.currentTarget) event.currentTarget.close(); });
 window.addEventListener("hashchange", route);
 initWelcomePavilion();
+loadShowcaseIndex();
 route();
 initData();
 placeUrbanViewFilter();
@@ -1337,6 +1381,9 @@ function initFunctionalTraces() {
   $("#policy-list").classList.add("trace-archive-surface");
   showcaseTrace = window.initTraceRail({
     page: $("#showcase"),
+    archiveTrigger: $("#showcase-share-page"),
+    archiveLabel: "分享",
+    archiveMode: "entries",
     sections: [
       { element: $("#showcase-demo-page"), label: "演示" },
       { element: $("#showcase-share-page"), label: "分享" }

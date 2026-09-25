@@ -7,7 +7,7 @@
     <meta name="description" content="个人长期使用的信息聚合中心：空域、AI、城市更新与文件资料。" />
     <title>信息聚合中心</title>
     <link rel="icon" href="./favicon.ico" sizes="any" />
-    <link rel="stylesheet" href="./styles.css?v=20260915-experience" />
+    <link rel="stylesheet" href="./styles.css?v=20260925-knowledge-standalone" />
     <link rel="stylesheet" href="./industry-brief.css?v=20260909-live-track" />
     <link rel="stylesheet" href="./assets/css/trace-rail.css?v=20260909-week-fold" />
     <link rel="stylesheet" href="./assets/css/tinted-glass.css?v=20260909-live-track" />
@@ -32,7 +32,7 @@
       <header class="topbar">
         <div class="topbar__inner">
           <div class="brand">
-            <button class="brand__avatar-button" id="avatar-unlock" type="button" aria-label="打开本站分享二维码，可左右拖动"><img class="brand__avatar" src="./assets/avatar-klee.webp" alt="" draggable="false" /></button>
+            <button class="brand__avatar-button" id="avatar-unlock" type="button" aria-label="滑动头像进入隐藏的演示与分享页面，可左右拖动"><img class="brand__avatar" src="./assets/avatar-klee.webp" alt="" draggable="false" /></button>
             <a class="brand__home" href="#home" aria-label="返回瑞雪的小栈首页">瑞雪的小栈</a>
           </div>
           <nav class="nav" aria-label="主导航">
@@ -116,26 +116,14 @@
             <div class="showcase-tabs" role="tablist" aria-label="演示与分享">
               <button class="showcase-tab" type="button" role="tab" aria-selected="false" aria-controls="showcase-demo-page" data-showcase-tab="demo">演示</button>
               <button class="showcase-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="showcase-share-page" data-showcase-tab="share">分享</button>
+              <a class="showcase-tab showcase-tab--link" id="showcase-knowledge-link" href="./knowledge.html">知识库</a>
             </div>
             <section class="showcase-page" id="showcase-demo-page" data-showcase-page="demo" role="tabpanel" hidden>
               <p class="showcase-empty">独立演示项目将在这里持续收录。</p>
             </section>
             <section class="showcase-page" id="showcase-share-page" data-showcase-page="share" role="tabpanel">
               <p class="showcase-page__note">按创建时间排序，较早创建的项目在前。</p>
-              <div class="showcase-grid">
-                <a class="showcase-card" href="https://sqdwz.github.io/demos-share/demos/ai-gis-share/">
-                  <span class="status status--active">公开访问</span>
-                  <h2>AI × GIS 会议互动分享</h2>
-                  <p>把重复工作变成可复用工具：AI Agent 使用经验与 GIS 自动化案例互动分享页。</p>
-                  <span class="showcase-card__action">进入分享 <b aria-hidden="true">→</b></span>
-                </a>
-                <a class="showcase-card" href="https://sqdwz.github.io/demos-share/demos/vibe-coding-share-0730/">
-                  <span class="status status--active">公开访问</span>
-                  <h2>Vibe Coding 互动演示</h2>
-                  <p>公司分享会使用的 Vibe Coding 互动演示页，支持现场展开案例与互动讲解。</p>
-                  <span class="showcase-card__action">进入分享 <b aria-hidden="true">→</b></span>
-                </a>
-              </div>
+              <div class="showcase-grid" id="showcase-grid"><p class="showcase-empty">正在读取仓库目录…</p></div>
             </section>
             <a class="showcase__back" href="#home">← 返回信息中心</a>
           </div>
@@ -221,9 +209,9 @@
     </dialog>
     <dialog class="detail-dialog" id="notice-dialog" aria-labelledby="dialog-title"><div class="dialog__body"><button class="dialog__close" type="button" aria-label="关闭详情" data-close-dialog>×</button><div id="dialog-content"></div></div></dialog>
     <script src="./assets/js/qrcode-generator.js" defer></script>
-    <script src="./assets/js/trace-rail.js?v=20260915-experience" defer></script>
+    <script src="./assets/js/trace-rail.js?v=20260925-showcase-knowledge" defer></script>
     <script src="./assets/js/urban-sources.js?v=20260915" defer></script>
-    <script src="./app.js?v=20260915-experience" defer></script>
+    <script src="./app.js?v=20260925-showcase-knowledge" defer></script>
     <script src="./industry-brief.js?v=20260909-live-track" defer></script>
   </body>
 </html>

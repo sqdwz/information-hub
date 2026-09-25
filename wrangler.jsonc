@@ -1,12 +1,13 @@
 {
   "name": "sqdwz-information-hub",
   "main": "./src/worker.js",
-  "compatibility_date": "2026-08-29",
+  "compatibility_date": "2026-09-25",
+  "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/data/airspace.json", "/data/brief/*", "/data/urban-renewal/*", "/data/policy/*"]
+    "run_worker_first": ["/api/knowledge/*", "/data/airspace.json", "/data/brief/*", "/data/urban-renewal/*", "/data/policy/*", "/data/showcase/*"]
   },
   "kv_namespaces": [
     {
@@ -16,11 +17,25 @@
     {
       "binding": "INDUSTRY_BRIEF_DATA",
       "id": "994908dd915644d2b56c90f310ffe5c0"
+    },
+    {
+      "binding": "KNOWLEDGE_AUTH",
+      "id": "39fa428b30a142aeb72186564803ec40"
     }
   ],
   "triggers": {
     "crons": ["*/15 * * * *"]
   },
+  "ratelimits": [
+    {
+      "name": "KNOWLEDGE_LOGIN_RATE_LIMITER",
+      "namespace_id": "2026092301",
+      "simple": {
+        "limit": 5,
+        "period": 60
+      }
+    }
+  ],
   "routes": [
     {
       "pattern": "new.103535.xyz",
