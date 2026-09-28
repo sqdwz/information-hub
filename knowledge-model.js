@@ -16,6 +16,19 @@ function addUtcDays(isoDate, amount) {
   return date.toISOString().slice(0, 10);
 }
 
+const REMINDER_CATEGORIES = new Set(["日程", "日程安排", "服务到期"]);
+
+export function isReminderItem(item = {}) {
+  return REMINDER_CATEGORIES.has(String(item.category || "").trim());
+}
+
+function explicitChineseDate(value) {
+  const match = String(value || "").match(/(?:^|\D)(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/);
+  if (!match) return "";
+  const normalized = `${match[1]}-${match[2].padStart(2, "0")}-${match[3].padStart(2, "0")}`;
+  return isoDateParts(normalized)?.iso || "";
+}
+
 export function canManageKnowledgeShares(authenticated, accessKind) {
   return authenticated === true && accessKind === "session";
 }
@@ -25,6 +38,7 @@ export function explicitEventDate(item = {}) {
     const parts = isoDateParts(value);
     if (parts) return parts.iso;
   }
+  if (isReminderItem(item)) return explicitChineseDate(item.summary);
   return "";
 }
 
@@ -32,7 +46,7 @@ export function partitionKnowledge(items = []) {
   const reminders = [];
   const memos = [];
   for (const item of items) {
-    if (item?.category === "日程") reminders.push(item);
+    if (isReminderItem(item)) reminders.push(item);
     else memos.push(item);
   }
   return { reminders, memos };
@@ -71,7 +85,7 @@ export function calendarMonth(year, month, items = []) {
   const schedulesByDate = new Map();
 
   for (const item of items) {
-    if (item?.category !== "日程") continue;
+    if (!isReminderItem(item)) continue;
     const date = explicitEventDate(item);
     if (!date) continue;
     const scheduled = schedulesByDate.get(date) || [];

@@ -22,3 +22,13 @@ test("the production build keeps knowledge behind the hidden secondary page", as
   assert.match(knowledge, /data-knowledge-app/);
   assert.match(knowledge, /href="\.\/#showcase"/);
 });
+
+test("the mobile knowledge toolbar keeps authenticated actions in one compact row", async () => {
+  execFileSync(process.execPath, ["scripts/build.mjs"], { cwd: root, stdio: "pipe" });
+  const css = await readFile(resolve(root, "dist/knowledge.css"), "utf8");
+  const mobile = css.match(/@media \(max-width: 820px\) \{[\s\S]*?\n\}/)?.[0] || "";
+  const narrow = css.match(/@media \(max-width: 460px\) \{[\s\S]*?\n\}/)?.[0] || "";
+
+  assert.match(mobile, /\.knowledge-topbar__actions\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.4fr\) repeat\(3,\s*minmax\(0,\s*1fr\)\)/);
+  assert.doesNotMatch(narrow, /#knowledge-logout\s*\{[^}]*grid-column:\s*1\s*\/\s*-1/);
+});

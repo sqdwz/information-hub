@@ -326,16 +326,16 @@
 }
 
 @media (max-width: 820px) {
-  .knowledge-topbar__inner { width: min(100% - 24px, 680px); grid-template-columns: auto minmax(0, 1fr); gap: 9px; padding: 9px 0; }
+  .knowledge-topbar__inner { width: min(100% - 24px, 680px); grid-template-columns: auto minmax(0, 1fr); gap: 6px 9px; padding: 6px 0 8px; }
   .knowledge-back-link { padding-inline: 10px; }
   .knowledge-brand { overflow: hidden; }
   .knowledge-brand img { display: none; }
   .knowledge-brand span { overflow: hidden; }
   .knowledge-brand strong, .knowledge-brand small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .knowledge-topbar__actions { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
-  .knowledge-topbar__actions .knowledge-mode { grid-column: 1 / -1; justify-content: center; }
-  .knowledge-topbar__actions:has(#knowledge-open-token[hidden]):has(#knowledge-logout[hidden]) #knowledge-refresh { grid-column: 1 / -1; }
-  .knowledge-topbar__actions .button { padding-inline: 8px; }
+  .knowledge-topbar__actions { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); width: 100%; gap: 6px; }
+  .knowledge-topbar__actions .knowledge-mode { min-width: 0; min-height: 44px; justify-content: center; padding-inline: 7px; overflow: hidden; text-overflow: ellipsis; }
+  .knowledge-topbar__actions:has(#knowledge-open-token[hidden]):has(#knowledge-logout[hidden]) #knowledge-refresh { grid-column: 2 / -1; }
+  .knowledge-topbar__actions .button { min-width: 0; padding-inline: 5px; font-size: 12px; }
   .knowledge-shell { width: min(100% - 24px, 680px); padding-top: 16px; }
   .knowledge-hero { min-height: auto; grid-template-columns: 1fr; padding: 24px 20px; }
   .knowledge-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -352,8 +352,6 @@
 }
 
 @media (max-width: 460px) {
-  .knowledge-topbar__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .knowledge-topbar__actions #knowledge-logout { grid-column: 1 / -1; }
   .knowledge-hero h1 { font-size: 43px; }
   .knowledge-summary { gap: 6px; }
   .knowledge-summary dt { min-height: 28px; }

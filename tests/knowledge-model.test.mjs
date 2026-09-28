@@ -24,20 +24,38 @@ test("explicitEventDate ignores note timestamps and accepts an explicit schedule
   assert.equal(explicitEventDate({ due_at: "2026-09-28T14:00:00+08:00" }), "2026-09-28");
 });
 
+test("explicitEventDate reads a complete Chinese date from reminder summaries", () => {
+  assert.equal(explicitEventDate({
+    category: "日程安排",
+    title: "10月1日新海港至广东徐闻船票",
+    summary: "2026年10月1日上午10:45，从新海港乘船出发前往广东徐闻。"
+  }), "2026-10-01");
+  assert.equal(explicitEventDate({
+    category: "服务到期",
+    summary: "WPS 超级会员有效期至 2028 年 6 月 20 日。"
+  }), "2028-06-20");
+  assert.equal(explicitEventDate({
+    category: "专业知识",
+    summary: "相关规范发布于 2026年10月1日。"
+  }), "");
+});
+
 test("explicitEventDate rejects malformed and impossible dates", () => {
   assert.equal(explicitEventDate({ event_at: "2026-02-30" }), "");
   assert.equal(explicitEventDate({ start_at: "下周一" }), "");
   assert.equal(explicitEventDate({ due_at: "2026-9-2" }), "");
 });
 
-test("partitionKnowledge exposes schedules only as reminders", () => {
+test("partitionKnowledge exposes schedule and expiry categories as reminders", () => {
   const result = partitionKnowledge([
     { id: "schedule", category: "日程" },
+    { id: "travel", category: "日程安排" },
+    { id: "expiry", category: "服务到期" },
     { id: "memo", category: "工作经验" },
     { id: "uncategorized", category: "" }
   ]);
 
-  assert.deepEqual(result.reminders.map(item => item.id), ["schedule"]);
+  assert.deepEqual(result.reminders.map(item => item.id), ["schedule", "travel", "expiry"]);
   assert.deepEqual(result.memos.map(item => item.id), ["memo", "uncategorized"]);
 });
 
@@ -74,4 +92,16 @@ test("calendarMonth returns a Monday-first 42-cell grid with explicit schedule c
     itemIds: ["a", "b"]
   });
   assert.equal(cells[41].date, "2026-10-11");
+});
+
+test("calendarMonth marks an adjacent-month date from an indexed schedule summary", () => {
+  const cells = calendarMonth(2026, 9, [{
+    id: "ferry",
+    category: "日程安排",
+    summary: "2026年10月1日上午10:45，从新海港乘船出发前往广东徐闻。"
+  }]);
+
+  const octoberFirst = cells.find(cell => cell.date === "2026-10-01");
+  assert.deepEqual(octoberFirst?.itemIds, ["ferry"]);
+  assert.equal(octoberFirst?.count, 1);
 });

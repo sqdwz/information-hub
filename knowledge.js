@@ -4,7 +4,7 @@ import {
   explicitEventDate,
   groupReminders,
   partitionKnowledge
-} from "./knowledge-model.js";
+} from "./knowledge-model.js?v=20260928-reminder-categories";
 
 const KNOWLEDGE_API = "/api/knowledge";
 const initialCalendarDate = new Date();
