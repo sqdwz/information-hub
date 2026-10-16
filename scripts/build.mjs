@@ -30,7 +30,7 @@ for (const file of [
 ]) {
   await cp(resolve(root, file), resolve(dist, file));
 }
-for (const directory of ["assets", "data"]) {
+for (const directory of ["assets", "data", "opening"]) {
   await cp(resolve(root, directory), resolve(dist, directory), { recursive: true });
 }
 

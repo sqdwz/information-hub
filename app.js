@@ -97,8 +97,7 @@ function initWelcomePavilion() {
   if (!welcome) return;
 
   const siteShell = $(".site-shell");
-  const enterButton = $("#welcome-enter");
-  const sparkles = $("#welcome-sparkles");
+  const frame = $("#welcome-frame");
   const themeColor = $("meta[name='theme-color']");
   const shouldShow = !location.hash || location.hash === "#welcome";
 
@@ -106,7 +105,7 @@ function initWelcomePavilion() {
     document.body.classList.remove("has-welcome");
     siteShell?.removeAttribute("inert");
     siteShell?.removeAttribute("aria-hidden");
-      if (themeColor) themeColor.content = "#2d4f9f";
+    if (themeColor) themeColor.content = "#2d4f9f";
     document.title = "信息聚合中心";
   };
 
@@ -117,45 +116,28 @@ function initWelcomePavilion() {
   }
 
   document.body.classList.add("has-welcome");
-  welcome.querySelector(".welcome-pavilion__background").style.backgroundImage = 'url("./assets/welcome-pavilion-clean.webp")';
-  document.title = "RUIXUE · Welcome";
+  if (themeColor) themeColor.content = "#040a13";
+  document.title = frame.title;
   siteShell?.setAttribute("inert", "");
   siteShell?.setAttribute("aria-hidden", "true");
 
-  for (let index = 0; index < 92; index += 1) {
-    const spark = document.createElement("i");
-    const useSideEdge = Math.random() < .5;
-    const left = useSideEdge
-      ? (Math.random() < .5 ? Math.random() * 18 : 82 + Math.random() * 18)
-      : 18 + Math.random() * 64;
-    const top = useSideEdge
-      ? Math.random() * 84
-      : (Math.random() < .5 ? Math.random() * 18 : 74 + Math.random() * 10);
-    spark.className = "welcome-pavilion__spark";
-    spark.style.left = `${left}%`;
-    spark.style.top = `${top}%`;
-    spark.style.setProperty("--size", `${1.5 + Math.random() * 3.5}px`);
-    spark.style.setProperty("--drift-x", `${-16 + Math.random() * 32}px`);
-    spark.style.setProperty("--drift-y", `${-22 + Math.random() * 18}px`);
-    spark.style.setProperty("--duration", `${3 + Math.random() * 4}s`);
-    spark.style.setProperty("--delay", `${-Math.random() * 4}s`);
-    sparkles?.appendChild(spark);
-  }
-
   let leaving = false;
-  enterButton?.addEventListener("click", () => {
-    if (leaving) return;
-    leaving = true;
-    enterButton.disabled = true;
-    window.setTimeout(() => {
+  // Listen inside the same-origin frame so the supplied runtime stays unchanged.
+  frame.addEventListener("load", () => {
+    frame.contentDocument?.addEventListener("starsea:enter", event => {
+      event.preventDefault();
+      if (leaving) return;
+      leaving = true;
       preparePanel();
       welcome.remove();
       location.hash = "home";
       const homeTitle = $("#home-title");
       homeTitle?.setAttribute("tabindex", "-1");
       homeTitle?.focus({ preventScroll: true });
-    }, 0);
+    });
   });
+  // Direct links to existing sections skip downloading the opening's assets.
+  frame.src = frame.dataset.src;
 }
 
 const avatarUnlock = $("#avatar-unlock");

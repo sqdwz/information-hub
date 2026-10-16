@@ -1,0 +1,181 @@
+{
+  "version": 5,
+  "method": "Bounded anatomical charts, arc-length grid with guide-triggered cell travel",
+  "charts": [
+    {
+      "id": "raised-finger",
+      "group": "hand",
+      "guide": "hand-raised-finger",
+      "gridSpacing": 25,
+      "firstGrid": 0.635,
+      "lastGrid": 2.128
+    },
+    {
+      "id": "extended-finger",
+      "group": "hand",
+      "guide": "hand-index-tip",
+      "gridSpacing": 25,
+      "firstGrid": 0.755,
+      "lastGrid": 2.252
+    },
+    {
+      "id": "palm",
+      "group": "hand",
+      "guide": "hand-palm-outer",
+      "gridSpacing": 29,
+      "firstGrid": 1.12,
+      "lastGrid": 2.736
+    },
+    {
+      "id": "front-lock",
+      "group": "hair",
+      "guide": "hair-bang-c",
+      "gridSpacing": 34,
+      "firstGrid": 1.217,
+      "lastGrid": 2.676
+    },
+    {
+      "id": "right-crown",
+      "group": "hair",
+      "guide": "hair-right-crown",
+      "gridSpacing": 36,
+      "firstGrid": 1.136,
+      "lastGrid": 2.606
+    },
+    {
+      "id": "right-temple",
+      "group": "hair",
+      "guide": "hair-right-temple",
+      "gridSpacing": 32,
+      "firstGrid": 2.063,
+      "lastGrid": 3.04
+    },
+    {
+      "id": "chin-curl",
+      "group": "hair",
+      "guide": "hair-chin-curl",
+      "gridSpacing": 30,
+      "firstGrid": 1.215,
+      "lastGrid": 2.237
+    },
+    {
+      "id": "outer-head",
+      "group": "hair",
+      "guide": "hair-rim-main",
+      "gridSpacing": 34,
+      "firstGrid": 0.919,
+      "lastGrid": 2.237
+    },
+    {
+      "id": "left-stream",
+      "group": "hair",
+      "guide": "hair-left-lock-a",
+      "gridSpacing": 31,
+      "firstGrid": 0.655,
+      "lastGrid": 2.567
+    },
+    {
+      "id": "lower-left",
+      "group": "hair",
+      "guide": "hair-low-silhouette",
+      "gridSpacing": 31,
+      "firstGrid": 1.123,
+      "lastGrid": 3.429
+    },
+    {
+      "id": "back-locks",
+      "group": "hair",
+      "guide": "hair-low-back-a",
+      "gridSpacing": 32,
+      "firstGrid": 2.13,
+      "lastGrid": 3.748
+    },
+    {
+      "id": "sleeve",
+      "group": "cloth",
+      "guide": "cloth-sleeve-top",
+      "gridSpacing": 39,
+      "firstGrid": 1.636,
+      "lastGrid": 2.971
+    },
+    {
+      "id": "shoulder",
+      "group": "cloth",
+      "guide": "cloth-shoulder",
+      "gridSpacing": 36,
+      "firstGrid": 1.815,
+      "lastGrid": 3.252
+    },
+    {
+      "id": "ribbon",
+      "group": "cloth",
+      "guide": "cloth-ribbon",
+      "gridSpacing": 33,
+      "firstGrid": 2.085,
+      "lastGrid": 3.044
+    },
+    {
+      "id": "ear",
+      "group": "cloth",
+      "guide": "cloth-ear",
+      "gridSpacing": 27,
+      "firstGrid": 1.395,
+      "lastGrid": 2.509
+    }
+  ],
+  "panelCount": 15,
+  "gridDelay": 0.035,
+  "crossCellDelay": 0.045,
+  "gridFadeIn": 0.18,
+  "materialFade": 0.92,
+  "materialLead": 0.1,
+  "materialStartFloor": 2.8,
+  "minimumGridBeforeMaterial": 0.2,
+  "lastGridBirth": 3.7481,
+  "gridOpacity": 0.64,
+  "retireDuringMaterial": true,
+  "solidSurfaceFill": false,
+  "diffusion": false,
+  "eyeGridPixels": 0,
+  "bareFaceGridPixels": 0,
+  "regionCoverage": {
+    "hair": {
+      "coveredFraction": 1.0,
+      "gridLineFraction": 0.1801,
+      "activeFractions": {
+        "1.2": 0.0579,
+        "1.8": 0.5123,
+        "2.4": 0.8464,
+        "2.8": 0.9132,
+        "3.4": 0.9687
+      }
+    },
+    "hand": {
+      "coveredFraction": 1.0,
+      "gridLineFraction": 0.2086,
+      "activeFractions": {
+        "1.2": 0.2433,
+        "1.8": 0.6137,
+        "2.4": 0.8839,
+        "2.8": 1.0,
+        "3.4": 1.0
+      }
+    },
+    "cloth": {
+      "coveredFraction": 1.0,
+      "gridLineFraction": 0.1645,
+      "activeFractions": {
+        "1.2": 0.0,
+        "1.8": 0.0795,
+        "2.4": 0.6417,
+        "2.8": 0.9019,
+        "3.4": 1.0
+      }
+    }
+  },
+  "encoding": {
+    "RG": "16-bit guide-triggered grid time / 5.5 seconds",
+    "B": "bounded chart mask",
+    "A": "curved grid edge pattern"
+  }
+}

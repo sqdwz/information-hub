@@ -1,0 +1,4 @@
+# Preserve the supplied opening files without line-ending conversion.
+/opening/** -text whitespace=cr-at-eol
+# Keep upstream Three.js formatting intact.
+/opening/vendor/** -whitespace

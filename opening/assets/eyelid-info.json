@@ -1,0 +1,31 @@
+{
+  "source": "Built-in image_gen precise-object-edit",
+  "originalCrop": [
+    1050,
+    250,
+    360,
+    360
+  ],
+  "featureAlignment": {
+    "matrix": [
+      [
+        1.000287237245956,
+        7.49014111847234e-05,
+        -0.44366655611193545
+      ],
+      [
+        -7.49014111847234e-05,
+        1.000287237245956,
+        -0.055413532587406285
+      ]
+    ],
+    "inliers": 377
+  },
+  "colorBias": [
+    -4.0,
+    3.0,
+    3.0
+  ],
+  "compositing": "Authored eye region, source foreground-hair protection, forehead color matching",
+  "rawAsset": "artwork/eyelid-closed-v9.png"
+}

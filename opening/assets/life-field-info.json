@@ -1,0 +1,15 @@
+{
+  "version": 9,
+  "size": [
+    836,
+    471
+  ],
+  "channels": {
+    "R": "root-anchored rear hair and side lock",
+    "G": "root-anchored fringe and front curl",
+    "B": "left ear and fur, anchored at 844/276",
+    "A": "opaque data preservation"
+  },
+  "method": "authored polygons, root-distance falloff, source blue-hair classification, smooth masks",
+  "edgeDetector": false
+}

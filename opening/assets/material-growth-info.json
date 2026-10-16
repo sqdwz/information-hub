@@ -1,0 +1,61 @@
+{
+  "version": 6,
+  "method": "Actual grid-edge seeds to cell interiors; authored contours for face and iris",
+  "cellInfillDuration": 0.34,
+  "pixelEaseDuration": 0.7,
+  "ease": "cosine with zero endpoint velocity",
+  "materialSource": "grid edge clock and local cell-edge distance; original broad arrival field is debug fallback only",
+  "lastMaterialCompletion": 4.9459,
+  "firstEdgeBirth": 2.8,
+  "probes": [
+    {
+      "group": "hair",
+      "edge": [
+        1243,
+        166
+      ],
+      "interior": [
+        1243,
+        175
+      ],
+      "testTime": 3.4145,
+      "edgeBirth": 3.1045,
+      "interiorBirth": 3.3816
+    },
+    {
+      "group": "hand",
+      "edge": [
+        478,
+        788
+      ],
+      "interior": [
+        470,
+        779
+      ],
+      "testTime": 3.6903,
+      "edgeBirth": 3.3803,
+      "interiorBirth": 3.6388
+    },
+    {
+      "group": "cloth",
+      "edge": [
+        832,
+        820
+      ],
+      "interior": [
+        845,
+        825
+      ],
+      "testTime": 3.6576,
+      "edgeBirth": 3.3476,
+      "interiorBirth": 3.6398
+    }
+  ],
+  "originalArtworkChanged": false,
+  "gridAnimationChanged": false,
+  "encoding": {
+    "RG": "16-bit material clock at the source edge / 5.5 seconds",
+    "B": "normalized inward distance from actual grid or contour edge",
+    "A": "opaque to preserve PNG data channels"
+  }
+}

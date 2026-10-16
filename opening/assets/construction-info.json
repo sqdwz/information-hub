@@ -1,0 +1,49 @@
+{
+  "version": 3,
+  "method": "Causal fronts from authored growthBirth + tangent/arc-length grid patches",
+  "curveCount": 75,
+  "surfaceDelay": 0.1,
+  "birthTimeBin": 0.06,
+  "boundaryFeatherPixels": 14,
+  "regions": {
+    "hair": {
+      "firstSurface": 0.76,
+      "lastSurface": 3.138
+    },
+    "hand": {
+      "firstSurface": 0.76,
+      "lastSurface": 1.856
+    },
+    "face": {
+      "firstSurface": 1.9,
+      "lastSurface": 3.27
+    },
+    "eye": {
+      "firstSurface": 2.032,
+      "lastSurface": 2.785
+    },
+    "cloth": {
+      "firstSurface": 1.48,
+      "lastSurface": 2.847
+    },
+    "ornament": {
+      "firstSurface": 1.68,
+      "lastSurface": 2.416
+    }
+  },
+  "gridPatchCurves": [
+    "hair-rim-main",
+    "hair-chin-curl",
+    "cloth-cuff-outer",
+    "cloth-shoulder"
+  ],
+  "gridCoverageFraction": 0.00632,
+  "faceEyeHandGridPixels": 0,
+  "originalMaterialAtlasChanged": false,
+  "originalPortraitChanged": false,
+  "encoding": {
+    "RG": "16-bit surface arrival / 5.5 seconds",
+    "B": "coarse monochrome lighting",
+    "A": "four curve-aligned grid patches"
+  }
+}

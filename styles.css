@@ -597,7 +597,7 @@ body::before {
   .policy-detail__actions .button { width: 100%; text-align: center; }
 }
 
-/* Full-screen welcome pavilion adapted from the supplied self-contained page. */
+/* The supplied opening runs in its own full-screen document. */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -616,155 +616,14 @@ body.has-welcome { overflow: hidden; }
   inset: 0;
   overflow: hidden;
   isolation: isolate;
-  background: #061746;
+  background: #040a13;
 }
-.welcome-pavilion__background {
-  position: absolute;
-  inset: 0;
-  background: #061746 center / cover no-repeat;
-}
-.welcome-pavilion__sparkles {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  pointer-events: none;
-}
-.welcome-pavilion__spark {
-  position: absolute;
-  width: var(--size, 3px);
-  height: var(--size, 3px);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, .95);
-  box-shadow: 0 0 10px rgba(173, 207, 255, .85);
-  opacity: .16;
-  animation: welcome-spark-twinkle var(--duration) ease-in-out infinite var(--delay), welcome-spark-drift calc(var(--duration) * 1.8) ease-in-out infinite var(--delay);
-}
-.welcome-pavilion__enter {
-  position: absolute;
-  z-index: 20;
-  top: 65%;
-  left: 50%;
-  width: clamp(260px, 32vw, 360px);
-  height: clamp(230px, 22vw, 260px);
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  cursor: pointer;
-  touch-action: manipulation;
-  transform: translate(-50%, -50%);
-}
-.welcome-enter__surface {
-  --active: 0;
-  --transition: .3s ease-in-out;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .5rem;
-  width: min(224px, 74vw);
-  min-height: 58px;
-  padding: .9rem 1.35rem;
-  overflow: visible;
-  border-radius: 999px;
-  color: #fff;
-  isolation: isolate;
-  transform: translate(-50%, -50%) scale(calc(1 + (var(--active) * .06)));
-  transition: transform var(--transition);
-}
-.welcome-enter__surface::before,
-.welcome-enter__surface::after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+.welcome-pavilion__frame {
+  display: block;
   width: 100%;
   height: 100%;
-  border-radius: inherit;
-  content: "";
-  transform: translate(-50%, -50%);
-}
-.welcome-enter__surface::before {
-  z-index: 1;
-  border: 1px solid rgba(228, 239, 255, .56);
-  background: rgba(8, 29, 91, .58);
-  backdrop-filter: blur(12px) saturate(125%);
-  -webkit-backdrop-filter: blur(12px) saturate(125%);
-  box-shadow: inset 0 1px rgba(255, 255, 255, .58), inset 0 -2px 5px rgba(0, 10, 48, .82), 0 8px 20px rgba(2, 13, 55, .45), 0 0 0 calc(var(--active) * .36rem) rgba(159, 184, 255, .44);
-  transition: box-shadow var(--transition), border-color var(--transition);
-}
-.welcome-enter__surface::after {
-  z-index: 2;
-  background-image: radial-gradient(at 52% 96%, rgba(196, 211, 255, .95), transparent 52%), radial-gradient(at 100% 100%, rgba(112, 134, 239, .78), transparent 56%), radial-gradient(at 14% 92%, rgba(137, 198, 255, .54), transparent 56%);
-  opacity: var(--active);
-  transition: opacity var(--transition);
-}
-.welcome-enter__dots-border {
-  position: absolute;
-  z-index: 0;
-  inset: -2px;
-  overflow: hidden;
-  border-radius: inherit;
-}
-.welcome-enter__dots-border::before {
-  position: absolute;
-  top: -40%;
-  left: 50%;
-  width: 54%;
-  height: 180%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .96), transparent);
-  content: "";
-  transform-origin: 0 50%;
-  animation: welcome-enter-border-spin 2.2s linear infinite;
-}
-.welcome-enter__sparkle,
-.welcome-enter__text {
-  position: relative;
-  z-index: 3;
-}
-.welcome-enter__sparkle { width: 1.35rem; filter: drop-shadow(0 0 7px rgba(224, 237, 255, .8)); }
-.welcome-enter__sparkle path { fill: currentColor; transform-box: fill-box; transform-origin: center; }
-.welcome-enter__text {
-  background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, calc(.72 + var(--active) * .28)) 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: .16em;
-  text-indent: .16em;
-}
-.welcome-pavilion__enter:hover .welcome-enter__surface,
-.welcome-pavilion__enter:focus-visible .welcome-enter__surface { --active: 1; }
-.welcome-pavilion__enter:hover .welcome-enter__sparkle path,
-.welcome-pavilion__enter:focus-visible .welcome-enter__sparkle path { animation: welcome-enter-sparkle 1.45s linear infinite; }
-.welcome-pavilion__enter:active .welcome-enter__surface { transform: translate(-50%, -50%) scale(1); }
-.welcome-pavilion__enter:focus-visible { outline: 0; }
-.welcome-pavilion__enter:focus-visible .welcome-enter__surface::before { border-color: rgba(255, 255, 255, .96); }
-}
-@keyframes welcome-spark-twinkle {
-  0%, 100% { opacity: .08; transform: scale(.75); }
-  50% { opacity: .75; transform: scale(1.5); }
-}
-@keyframes welcome-spark-drift {
-  0%, 100% { translate: 0 0; }
-  50% { translate: var(--drift-x) var(--drift-y); }
-}
-@keyframes welcome-enter-border-spin {
-  to { transform: rotate(360deg); }
-}
-@keyframes welcome-enter-sparkle {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.23); }
-}
-@media (max-width: 900px) {
-  .welcome-pavilion__enter { top: 65%; width: min(72vw, 300px); height: 250px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .welcome-pavilion__spark,
-  .welcome-enter__dots-border::before,
-  .welcome-enter__sparkle path { animation: none !important; }
+  border: 0;
+  background: #040a13;
 }
 
 /* Sayo panel theme: the welcome pavilion keeps its own visual language. */

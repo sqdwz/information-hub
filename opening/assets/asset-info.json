@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "width": 1672,
+  "height": 941,
+  "source": "星海之中的蓝发少女.png",
+  "method": "Art-directed Catmull-Rom structure curves + per-region nearest-curve material arrival field",
+  "curveCount": 75,
+  "regions": {
+    "hair": {
+      "curves": 34,
+      "firstMaterial": 2.835,
+      "lastMaterialBirth": 3.77,
+      "pixels": 156595
+    },
+    "hand": {
+      "curves": 8,
+      "firstMaterial": 2.869,
+      "lastMaterialBirth": 3.343,
+      "pixels": 24890
+    },
+    "face": {
+      "curves": 7,
+      "firstMaterial": 2.999,
+      "lastMaterialBirth": 3.3,
+      "pixels": 33635
+    },
+    "eye": {
+      "curves": 17,
+      "firstMaterial": 3.009,
+      "lastMaterialBirth": 3.23,
+      "pixels": 7619
+    },
+    "cloth": {
+      "curves": 8,
+      "firstMaterial": 3.055,
+      "lastMaterialBirth": 3.968,
+      "pixels": 70455
+    },
+    "ornament": {
+      "curves": 1,
+      "firstMaterial": 3.171,
+      "lastMaterialBirth": 3.486,
+      "pixels": 3605
+    }
+  },
+  "encoding": {
+    "RG": "16-bit material arrival; decode (R*256+G)/257*5.5 seconds",
+    "B": "blue-hair weight",
+    "A": "preserved source portrait matte"
+  },
+  "characterFragments": 0,
+  "returningParticles": 0,
+  "edgeDetector": false,
+  "appearance": "Original RGB artwork and original derived matte only; no generative repainting.",
+  "arrivalRange": [
+    2.835,
+    3.968
+  ]
+}

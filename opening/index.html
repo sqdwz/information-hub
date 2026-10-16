@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#040a13">
+  <meta name="description" content="沿发束与轮廓优雅描绘，由线生色。五秒数字生命苏醒，欢迎来到星火。">
+  <title>瑞雪 · 欢迎来到星火</title>
+  <link rel="icon" type="image/webp" href="./assets/ruixue-emblem.webp?v=15">
+  <link rel="stylesheet" href="./art-direction.css?v=20261017-release">
+</head>
+<body>
+  <main id="experience" aria-label="瑞雪：数字生命动态开屏">
+    <canvas id="world" aria-label="沿蓝发少女的发束、脸廓、眼睛与手部生长结构线，再沿线显现原画材质的实时动画"></canvas>
+    <canvas id="light" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="masthead">
+      <a class="brand" href="./" aria-label="瑞雪首页">
+        <img class="brand-mark" src="./assets/ruixue-emblem.webp?v=15" width="1254" height="1254" alt="" decoding="async" fetchpriority="high">
+        <span class="brand-name">瑞雪 <span class="brand-divider">/</span> <span class="brand-en">RUIXUE</span><small>PERSONAL UNIVERSE<br>FOR A BRIGHTER TOMORROW</small></span>
+      </a>
+      <div class="brand-rule" aria-hidden="true"><i></i><span>+</span></div>
+      <div class="edition micro" aria-hidden="true">RUIXUE<br>V1.0<span></span></div>
+    </header>
+    <aside class="process-hud micro" aria-hidden="true"><span>IMAGINING</span><span>THINKING</span><span>CREATING</span><span>CONNECTING</span><span>WITH YOU</span><i></i></aside>
+
+    <section class="welcome" aria-label="欢迎来到星火">
+      <span class="title-axis" aria-hidden="true"></span>
+      <h1 aria-label="欢迎来到星火"><span class="title-line" data-text="欢迎来到星火" aria-hidden="true"></span></h1>
+      <p class="subtitle" lang="en"><span aria-hidden="true">//////</span> WELCOME TO SPARK <span aria-hidden="true">//////</span></p>
+      <button id="enter-site" class="entry-link" type="button" data-enter-url="" aria-label="进入星火" aria-hidden="true" disabled>
+        <svg class="entry-spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1c1.1 8.5 2.5 9.9 11 11-8.5 1.1-9.9 2.5-11 11C10.9 14.5 9.5 13.1 1 12c8.5-1.1 9.9-2.5 11-11Z" fill="currentColor" stroke="none"/></svg>
+        <span class="entry-copy"><span class="entry-label">进入星火</span><span class="entry-en" lang="en">ENTER SPARK</span></span>
+        <svg class="entry-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+        <span class="entry-pulse" aria-hidden="true"></span>
+      </button>
+      <div class="terminal" aria-label="瑞雪连接成功，欢迎到访"><p><span aria-hidden="true">&gt;</span> <span id="terminal-1"></span></p><p><span aria-hidden="true">&gt;</span> <span id="terminal-2"></span></p><p><span aria-hidden="true">&gt;</span> <span id="terminal-3"></span><i class="terminal-cursor" aria-hidden="true"></i></p></div>
+    </section>
+
+    <aside class="side-hud micro" aria-hidden="true">MORE<br>CURIOUS<br>MORE<br>CREATIVE<br>TOGETHER<i></i></aside>
+    <footer class="art-footer micro" aria-hidden="true"><div class="footer-left"><span class="footer-lines"></span>SAME CURIOSITY<br>BRIGHTER TOMORROW</div><div class="footer-right"><span class="footer-lines"></span>CODE × HUMAN<br>A BRIGHTER TOMORROW<img class="footer-emblem" src="./assets/ruixue-emblem.webp?v=15" width="1254" height="1254" alt="" decoding="async"></div></footer>
+    <div class="loading" id="loading" role="status"><span class="loading-orbit"></span><span>正在连接瑞雪</span><small class="mono">CONNECTING TO RUIXUE</small></div>
+    <div class="error-panel" id="error-panel" hidden role="alert"><p id="error-message"></p><button id="retry">重新连接</button></div>
+  </main>
+  <noscript><p class="noscript">瑞雪需要 JavaScript 才能呈现实时动画。请启用后重新打开。</p></noscript>
+  <script type="module" src="./app.js?v=20261017-release"></script>
+</body>
+</html>
