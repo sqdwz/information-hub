@@ -22,6 +22,11 @@ body[data-theme]::before {
   content:""; position:fixed; z-index:-1; inset:0; pointer-events:none; opacity:1;
   background:linear-gradient(90deg,rgba(3,8,14,.25),transparent 78%),var(--u-scene) center top/cover no-repeat;
 }
+/* Moving light belongs to the four public column backgrounds. */
+body[data-page='airspace'] { --u-scene:url('../scenes/airspace-flow.svg'); }
+body[data-page='ai'] { --u-scene:url('../scenes/brief-flow.svg'); }
+body[data-page='urban'] { --u-scene:url('../scenes/urban-flow.svg'); }
+body[data-page='policy'] { --u-scene:url('../scenes/policy-flow.svg'); }
 body[data-theme] .site-shell { background:transparent; }
 body[data-theme] :is(.topbar,.knowledge-topbar,.guide-topbar) { background:rgba(5,12,21,.84); border-color:var(--line); box-shadow:0 6px 30px #0003; backdrop-filter:blur(22px); }
 body[data-theme] :is(.brand,.knowledge-brand,.guide-brand,.nav a) { color:var(--u-text); }
@@ -162,3 +167,9 @@ body[data-page='home'].is-exploring .topbar { visibility:visible; opacity:1; tra
   #home .portal .status { display:none; }
 }
 @media(prefers-reduced-motion:reduce) { .home-world,.topbar,#home .portal { transition:none !important; } .home-explore,#home .portal { animation:none !important; } }
+@media(prefers-reduced-motion:reduce) {
+  body[data-page='airspace'] { --u-scene:url('../scenes/airspace.svg'); }
+  body[data-page='ai'] { --u-scene:url('../scenes/brief.svg'); }
+  body[data-page='urban'] { --u-scene:url('../scenes/urban.svg'); }
+  body[data-page='policy'] { --u-scene:url('../scenes/policy.svg'); }
+}
