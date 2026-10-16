@@ -7,15 +7,13 @@
     <meta name="description" content="个人长期使用的信息聚合中心：空域、AI、城市更新与文件资料。" />
     <title>信息聚合中心</title>
     <link rel="icon" href="./favicon.ico" sizes="any" />
-    <link rel="stylesheet" href="./styles.css?v=20261017-welcome-release" />
+    <link rel="stylesheet" href="./styles.css?v=20261017-home-universe" />
     <link rel="stylesheet" href="./industry-brief.css?v=20260909-live-track" />
     <link rel="stylesheet" href="./assets/css/trace-rail.css?v=20260909-week-fold" />
     <link rel="stylesheet" href="./assets/css/tinted-glass.css?v=20260909-live-track" />
+    <link rel="stylesheet" href="./assets/css/universe.css?v=20261017-home" />
   </head>
-  <body>
-    <div class="welcome-pavilion" id="welcome-pavilion" aria-label="欢迎来到星火">
-      <iframe class="welcome-pavilion__frame" id="welcome-frame" data-src="./opening/?v=20261017-release" title="瑞雪 · 欢迎来到星火" allow="fullscreen"></iframe>
-    </div>
+  <body data-page="home" data-theme="home">
     <div class="site-shell">
       <header class="topbar">
         <div class="topbar__inner">
@@ -35,17 +33,23 @@
       </header>
 
       <main class="container">
-        <section class="page" id="home" data-page="home" aria-labelledby="home-title">
-          <div class="hero panel">
+        <section class="page home-universe" id="home" data-page="home" aria-label="星火首页">
+          <div class="home-world">
+            <iframe id="home-frame" data-src="./opening/?v=20261017-home" title="瑞雪 · 欢迎来到星火"></iframe>
+          </div>
+          <div class="home-explore" id="home-explore" hidden>
+            <button class="home-collapse" id="home-collapse" type="button">← 返回首页</button>
+          <div class="home-intro">
             <p class="eyebrow"><span></span>个人信息聚合中心</p>
             <h1 id="home-title">把分散的信息，整理成每天能用的内容。</h1>
             <p class="hero__copy">收集、整理并沉淀日常信息，让重要内容先呈现结论，来源可追溯，历史可检索。</p>
           </div>
-          <div class="portal-grid" aria-label="信息板块入口">
+          <div class="portal-grid home-portals" aria-label="信息板块入口">
             <button class="portal portal--air" data-go="airspace" style="--portal-accent:#6f9ce1;--portal-tint:rgba(122, 166, 235, .33)"><span class="portal__topline"><span class="portal__code">AIRSPACE</span><span class="status">每日巡检</span></span><h2>空域信息</h2><p>聚合海南禁飞、临时管制与无人机作业公告，优先呈现当前生效和即将生效事项。</p><span class="portal__metric" id="home-airspace-metric">加载巡检信息中…</span><span class="portal__arrow">进入 <b>→</b></span></button>
             <button class="portal" data-go="ai" style="--portal-accent:#9d83bc;--portal-tint:rgba(177, 139, 210, .3)"><span class="portal__topline"><span class="portal__code">INDUSTRY BRIEF</span><span class="status">日报 · 周报</span></span><h2>行业简报</h2><p>汇集 AI、GIS、测绘与无人机动态；按日速览，按周沉淀，并支持回看历史内容。</p><span class="portal__metric">日报 / 周报 / 归档</span><span class="portal__arrow">查看 <b>→</b></span></button>
             <button class="portal" data-go="urban" style="--portal-accent:#d2a36d;--portal-tint:rgba(237, 186, 116, .3)"><span class="portal__topline"><span class="portal__code">URBAN RENEWAL</span><span class="status">项目巡检</span></span><h2>城市更新</h2><p>跟踪海南城市更新相关招标、征收、测绘与实施信息，聚焦新发布和当前有效项目。</p><span class="portal__metric" id="home-urban-metric">加载巡检信息中…</span><span class="portal__arrow">查看巡检 <b>→</b></span></button>
             <button class="portal" data-go="policy" style="--portal-accent:#62a8a5;--portal-tint:rgba(105, 184, 179, .3)"><span class="portal__topline"><span class="portal__code">POLICY LIBRARY</span><span class="status">主题检索</span></span><h2>资料库</h2><p>整理城市更新、征收补偿与实施意见等公开文件，可按主题和效力状态快速查阅。</p><span class="portal__metric" id="home-policy-metric">加载资料索引中…</span><span class="portal__arrow">检索资料 <b>→</b></span></button>
+          </div>
           </div>
         </section>
 
@@ -199,7 +203,7 @@
     <script src="./assets/js/qrcode-generator.js" defer></script>
     <script src="./assets/js/trace-rail.js?v=20260925-showcase-knowledge" defer></script>
     <script src="./assets/js/urban-sources.js?v=20260915" defer></script>
-    <script src="./app.js?v=20261017-welcome-release" defer></script>
+    <script src="./app.js?v=20261017-home-universe" defer></script>
     <script src="./industry-brief.js?v=20260909-live-track" defer></script>
   </body>
 </html>

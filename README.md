@@ -6,10 +6,11 @@
 
 ```powershell
 cd F:\A2\ppt创建\information-hub
-python -m http.server 4173 --bind 127.0.0.1
+npm run build
+npm run preview
 ```
 
-打开 `http://127.0.0.1:4173/`。
+打开 `http://127.0.0.1:8786/`。预览服务显式设置 SVG 类型，并只转发公开数据读取，不转发私人知识库凭据。
 
 ## 行业简报
 

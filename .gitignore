@@ -2,3 +2,4 @@
 output/
 dist/
 .wrangler/
+__pycache__/

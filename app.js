@@ -92,52 +92,58 @@ async function loadShowcaseIndex() {
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
 
-function initWelcomePavilion() {
-  const welcome = $("#welcome-pavilion");
-  if (!welcome) return;
-
-  const siteShell = $(".site-shell");
-  const frame = $("#welcome-frame");
-  const themeColor = $("meta[name='theme-color']");
-  const shouldShow = !location.hash || location.hash === "#welcome";
-
-  const preparePanel = () => {
-    document.body.classList.remove("has-welcome");
-    siteShell?.removeAttribute("inert");
-    siteShell?.removeAttribute("aria-hidden");
-    if (themeColor) themeColor.content = "#2d4f9f";
-    document.title = "信息聚合中心";
-  };
-
-  if (!shouldShow) {
-    preparePanel();
-    welcome.remove();
-    return;
+let homeUniverse;
+function initHomeUniverse() {
+  const home = $("#home");
+  const frame = $("#home-frame");
+  const explore = $("#home-explore");
+  let expanded = false;
+  const notifyScene = () => frame.contentDocument?.dispatchEvent(new CustomEvent("starsea:visibility", {
+    detail: { active: document.body.dataset.page === "home" }
+  }));
+  function setExpanded(value, focus = true) {
+    expanded = value;
+    home.classList.toggle("is-exploring", value);
+    document.body.classList.toggle("is-exploring", value);
+    explore.hidden = !value;
+    frame.toggleAttribute("inert", value);
+    if (focus) {
+      if (value) {
+        const title = $("#home-title");
+        title.setAttribute("tabindex", "-1");
+        title.focus({ preventScroll: true });
+      } else {
+        frame.contentDocument?.querySelector("#enter-site")?.focus({ preventScroll: true });
+      }
+    }
   }
-
-  document.body.classList.add("has-welcome");
-  if (themeColor) themeColor.content = "#040a13";
-  document.title = frame.title;
-  siteShell?.setAttribute("inert", "");
-  siteShell?.setAttribute("aria-hidden", "true");
-
-  let leaving = false;
-  // Listen inside the same-origin frame so the supplied runtime stays unchanged.
   frame.addEventListener("load", () => {
-    frame.contentDocument?.addEventListener("starsea:enter", event => {
+    const doc = frame.contentDocument;
+    if (!doc?.querySelector("#experience")) return;
+    doc.addEventListener("starsea:enter", event => {
       event.preventDefault();
-      if (leaving) return;
-      leaving = true;
-      preparePanel();
-      welcome.remove();
-      location.hash = "home";
-      const homeTitle = $("#home-title");
-      homeTitle?.setAttribute("tabindex", "-1");
-      homeTitle?.focus({ preventScroll: true });
+      if (document.body.dataset.page === "home") setExpanded(true);
     });
+    notifyScene();
   });
-  // Direct links to existing sections skip downloading the opening's assets.
-  frame.src = frame.dataset.src;
+  $("#home-collapse").addEventListener("click", () => setExpanded(false));
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && expanded && !document.querySelector("dialog[open]")) setExpanded(false);
+  });
+  document.querySelectorAll(".brand__home,.nav [data-route='home']").forEach(link => {
+    link.addEventListener("click", () => { if (document.body.dataset.page === "home") setExpanded(false); });
+  });
+  return {
+    sync(page) {
+      document.body.dataset.page = page;
+      document.body.dataset.theme = page === "policy-detail" ? "policy" : page;
+      const colors = { home: "#040a13", airspace: "#06131f", ai: "#100e20", urban: "#0c1818", policy: "#191613", "policy-detail": "#191613", showcase: "#1b1021" };
+      $("meta[name='theme-color']").content = colors[page] || "#040a13";
+      if (page !== "home") setExpanded(false, false);
+      else if (!frame.getAttribute("src")) frame.src = frame.dataset.src;
+      notifyScene();
+    }
+  };
 }
 
 const avatarUnlock = $("#avatar-unlock");
@@ -398,6 +404,7 @@ function route() {
   const policyDetailMatch = id.match(/^policy\/([^/]+)$/);
   const page = traceRoute?.page || (policyDetailMatch ? "policy-detail" : ([...document.querySelectorAll("[data-page]")].some(node => node.dataset.page === id) ? id : "home"));
   document.querySelectorAll("[data-page]").forEach(node => node.classList.toggle("is-active", node.dataset.page === page));
+  homeUniverse?.sync(page);
   if (previousRoute === "policy" && page === "policy-detail") policyListPosition = leavingScrollY;
   const returningToResults = previousRoute === "policy-detail" && page === "policy" && !traceRoute;
   const activeRoute = page === "policy-detail" ? "policy" : page;
@@ -411,7 +418,12 @@ function route() {
     if (nav && activeLink) nav.scrollTo({ left: Math.max(0, activeLink.offsetLeft + activeLink.offsetWidth - nav.clientWidth), behavior: "instant" });
   }
   if (!traceRoute) window.scrollTo({ top: returningToResults ? policyListPosition : 0, behavior: "instant" });
-  if (!document.body.classList.contains("has-welcome")) document.title = `${sharePageNames[page] || "信息聚合中心"}｜瑞雪的小栈`;
+  document.title = `${sharePageNames[page] || "信息聚合中心"}｜瑞雪的小栈`;
+  if (previousRoute && previousRoute !== page && page !== "home" && !traceRoute) {
+    const heading = document.querySelector("[data-page='" + page + "'] h1");
+    heading?.setAttribute("tabindex", "-1");
+    heading?.focus({ preventScroll: true });
+  }
   previousRoute = page;
   if (policyDetailMatch && !traceRoute) loadPolicyDetail(decodeURIComponent(policyDetailMatch[1]));
   window.dispatchEvent(new CustomEvent("app:route", { detail: { page, anchor: traceRoute?.anchor } }));
@@ -1106,196 +1118,11 @@ async function initData() {
   }
 }
 
-function initHomePortalCarousel() {
-  const carousel = $(".portal-grid");
-  const cards = carousel ? [...carousel.querySelectorAll(".portal")] : [];
-  const homePage = $("[data-page='home']");
-  if (!carousel || cards.length < 2) return;
-
-  carousel.classList.add("portal-carousel");
-  const navigation = document.createElement("div");
-  navigation.className = "portal-carousel__nav";
-  navigation.setAttribute("aria-label", "切换首页信息板块");
-  const navButtons = cards.map((card, index) => {
-    const button = document.createElement("button");
-    const title = card.querySelector("h2")?.textContent?.trim() || `第 ${index + 1} 张卡片`;
-    button.type = "button";
-    button.setAttribute("aria-label", `显示${title}`);
-    button.addEventListener("click", () => setActive(index, { scrollIntoView: compactViewport.matches }));
-    navigation.appendChild(button);
-    return button;
-  });
-  carousel.appendChild(navigation);
-  let activeIndex = 0;
-  let autoplay = null;
-  let paused = false;
-  let pointerStart = null;
-  let suppressClick = false;
-  let wheelLocked = false;
-  let scrollTimer = null;
-  let resumeTimer = null;
-  let programmaticScroll = false;
-  const compactViewport = window.matchMedia("(max-width: 820px)");
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-  const signedOffset = (index) => {
-    let offset = index - activeIndex;
-    if (offset > cards.length / 2) offset -= cards.length;
-    if (offset < -cards.length / 2) offset += cards.length;
-    return offset;
-  };
-
-  function updateCards({ scrollIntoView = false } = {}) {
-    cards.forEach((card, index) => {
-      const offset = signedOffset(index);
-      const position = offset === 0 ? "current" : Math.abs(offset) === 2 ? "rear" : offset < 0 ? "left" : "right";
-      card.dataset.carouselPosition = position;
-      card.classList.toggle("is-carousel-active", position === "current");
-      card.setAttribute("aria-current", position === "current" ? "true" : "false");
-      navButtons[index].classList.toggle("is-active", position === "current");
-      navButtons[index].setAttribute("aria-current", position === "current" ? "true" : "false");
-    });
-
-    if (compactViewport.matches && scrollIntoView) {
-      programmaticScroll = true;
-      cards[activeIndex].scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "nearest", inline: "center" });
-      window.setTimeout(() => { programmaticScroll = false; }, 700);
-    }
-  }
-
-  function setActive(nextIndex, options) {
-    activeIndex = (nextIndex + cards.length) % cards.length;
-    updateCards(options);
-  }
-
-  function advance(direction, options) {
-    setActive(activeIndex + direction, options);
-  }
-
-  function isHomeVisible() {
-    return homePage?.classList.contains("is-active") && document.visibilityState === "visible";
-  }
-
-  function startAutoplay() {
-    if (autoplay || reducedMotion.matches) return;
-    autoplay = window.setInterval(() => {
-      if (!paused && !compactViewport.matches && isHomeVisible()) advance(1);
-    }, 2800);
-  }
-
-  function pauseTemporarily() {
-    paused = true;
-    window.clearTimeout(resumeTimer);
-    resumeTimer = window.setTimeout(() => { paused = false; }, 2800);
-  }
-
-  carousel.addEventListener("mouseenter", () => {
-    paused = true;
-    window.clearTimeout(resumeTimer);
-  });
-  carousel.addEventListener("mouseleave", () => { paused = false; });
-
-  carousel.addEventListener("wheel", event => {
-    if (compactViewport.matches || wheelLocked) return;
-    const direction = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-    if (Math.abs(direction) < 8) return;
-    event.preventDefault();
-    wheelLocked = true;
-    advance(direction > 0 ? 1 : -1);
-    window.setTimeout(() => { wheelLocked = false; }, 660);
-  }, { passive: false });
-
-  carousel.addEventListener("dragstart", event => event.preventDefault());
-  carousel.addEventListener("pointerdown", event => {
-    if (event.button !== 0 || !event.isPrimary || event.target.closest(".portal-carousel__nav")) return;
-    suppressClick = false;
-    pointerStart = { x: event.clientX, y: event.clientY, pointerId: event.pointerId,
-      scroll: carousel.scrollLeft, mouse: event.pointerType === "mouse", dragging: false };
-    paused = true;
-  });
-  carousel.addEventListener("pointermove", event => {
-    const g = pointerStart;
-    if (!g || g.pointerId !== event.pointerId) return;
-    const dx = event.clientX - g.x, dy = event.clientY - g.y;
-    if (!g.dragging && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy) * 1.2) g.dragging = true;
-    if (!g.dragging) return;
-    suppressClick = true;
-    // Touch remains native on the horizontal overflow container, including momentum.
-    if (compactViewport.matches && !g.mouse) return;
-    event.preventDefault();
-    carousel.setPointerCapture(event.pointerId);
-    carousel.classList.add("is-dragging");
-    if (compactViewport.matches) carousel.scrollLeft = g.scroll - dx;
-    else cards.forEach(card => { card.style.translate = `${dx * .65}px 0`; });
-  }, { passive: false });
-  const finishPortalDrag = event => {
-    const g = pointerStart;
-    if (!g || g.pointerId !== event.pointerId) return;
-    if (event.type === "pointerup" && g.dragging && !compactViewport.matches) {
-      const distance = event.clientX - g.x;
-      if (Math.abs(distance) > 42) advance(distance < 0 ? 1 : -1);
-    }
-    cards.forEach(card => card.style.removeProperty("translate"));
-    carousel.classList.remove("is-dragging");
-    pointerStart = null;
-    if (carousel.hasPointerCapture(event.pointerId)) carousel.releasePointerCapture(event.pointerId);
-    pauseTemporarily();
-  };
-  carousel.addEventListener("pointerup", finishPortalDrag);
-  carousel.addEventListener("pointercancel", finishPortalDrag);
-  carousel.addEventListener("lostpointercapture", finishPortalDrag);
-  carousel.addEventListener("click", event => {
-    if (suppressClick && event.detail !== 0) {
-      event.preventDefault(); event.stopImmediatePropagation(); suppressClick = false;
-    }
-  }, true);
-  cards.forEach((card, index) => card.addEventListener("click", event => {
-    if (suppressClick) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      suppressClick = false;
-      return;
-    }
-    if (index !== activeIndex) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      setActive(index, { scrollIntoView: compactViewport.matches });
-    }
-  }));
-
-  carousel.addEventListener("scroll", () => {
-    if (!compactViewport.matches || programmaticScroll) return;
-    window.clearTimeout(scrollTimer);
-    scrollTimer = window.setTimeout(() => {
-      const midpoint = carousel.getBoundingClientRect().left + carousel.clientWidth / 2;
-      const closestIndex = cards.reduce((bestIndex, card, index) => {
-        const best = cards[bestIndex].getBoundingClientRect();
-        const current = card.getBoundingClientRect();
-        return Math.abs(current.left + current.width / 2 - midpoint) < Math.abs(best.left + best.width / 2 - midpoint) ? index : bestIndex;
-      }, 0);
-      if (closestIndex !== activeIndex) setActive(closestIndex);
-      pauseTemporarily();
-    }, 100);
-  }, { passive: true });
-
-  compactViewport.addEventListener("change", () => updateCards());
-  reducedMotion.addEventListener("change", () => {
-    window.clearInterval(autoplay);
-    autoplay = null;
-    startAutoplay();
-  });
-  document.addEventListener("visibilitychange", () => { if (document.visibilityState !== "visible") paused = true; else paused = false; });
-
-  updateCards();
-  startAutoplay();
-}
-
-initHomePortalCarousel();
 document.querySelectorAll("[data-go]").forEach(button => button.addEventListener("click", () => { location.hash = button.dataset.go; }));
 document.addEventListener("click", event => { const button = event.target.closest("[data-detail]"); if (button) openDetail(button.dataset.detail); if (event.target.matches("[data-close-dialog]")) $("#notice-dialog").close(); });
 $("#notice-dialog").addEventListener("click", event => { if (event.target === event.currentTarget) event.currentTarget.close(); });
 window.addEventListener("hashchange", route);
-initWelcomePavilion();
+homeUniverse = initHomeUniverse();
 loadShowcaseIndex();
 route();
 initData();

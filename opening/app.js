@@ -13,7 +13,7 @@ for(const line of document.querySelectorAll('[data-text]')){
     const span=document.createElement('span');span.className='title-char';span.textContent=text;span.dataset.char=text;line.append(span);chars.push(span);
   }
 }
-let scene,time=0,playing=true,ready=false,last=0,raf=0,visibilityPlaying=false;
+let scene,time=0,playing=true,ready=false,last=0,raf=0,visibilityPlaying=false,hostActive=true;
 const terminalLines=['Initializing Ruixue_Mascot...','Loading personal space...','Hello, nice to meet you! :)'];
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(reduced){time=DURATION;playing=false;}
@@ -37,7 +37,7 @@ function updateUI(){
 }
 function draw(dt=0){scene?.render(time,dt);updateUI();}
 function frame(now){
-  if(!ready)return;
+  if(!ready||!hostActive)return;
   const dt=last?Math.min((now-last)/1000,.1):0;last=now;
   if(playing)time=nextTime(time,dt);
   draw(playing?dt:0);raf=requestAnimationFrame(frame);
@@ -53,14 +53,19 @@ window.addEventListener('blur',()=>scene?.releasePointer?.());
 window.addEventListener('resize',()=>scene?.resize());
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){visibilityPlaying=playing;playing=false;cancelAnimationFrame(raf);}
-  else if(ready){playing=visibilityPlaying;last=0;raf=requestAnimationFrame(frame);}
+  else if(ready&&hostActive){playing=visibilityPlaying;last=0;raf=requestAnimationFrame(frame);}
+});
+document.addEventListener('starsea:visibility',event=>{
+  hostActive=event.detail?.active!==false;
+  cancelAnimationFrame(raf);
+  if(hostActive&&ready&&!document.hidden){last=0;raf=requestAnimationFrame(frame);}
 });
 $('world').addEventListener('webglcontextlost',e=>{e.preventDefault();ready=false;cancelAnimationFrame(raf);showError('图形连接暂时中断，请重新连接瑞雪。');});
 function showError(message){loading.hidden=true;$('error-message').textContent=message;$('error-panel').hidden=false;}
 try{
   scene=new StarseaScene($('world'),$('light'));scene.resize();await scene.load();ready=true;draw();
   loading.classList.add('finished');setTimeout(()=>{loading.hidden=true;},550);
-  last=0;raf=requestAnimationFrame(frame);
+  last=0;if(hostActive)raf=requestAnimationFrame(frame);
 }catch(error){console.error('RUIXUE initialization:',error);showError('暂时无法打开瑞雪。请确认浏览器支持 WebGL 2，并检查本地素材是否完整。');}
 window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);scene?.dispose();disposeCursor();entrance.dispose();});
 window.addEventListener('pageshow',event=>{if(event.persisted)location.reload();});
