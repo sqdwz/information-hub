@@ -13,10 +13,10 @@ for(const line of document.querySelectorAll('[data-text]')){
     const span=document.createElement('span');span.className='title-char';span.textContent=text;span.dataset.char=text;line.append(span);chars.push(span);
   }
 }
-let scene,time=0,playing=true,ready=false,last=0,raf=0,visibilityPlaying=false,hostActive=true;
+let scene,time=0,ready=false,last=0,raf=0,hostActive=true;
 const terminalLines=['Initializing Ruixue_Mascot...','Loading personal space...','Hello, nice to meet you! :)'];
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if(reduced){time=DURATION;playing=false;}
+if(reduced)time=DURATION;
 
 function updateUI(){
   experience.style.setProperty('--copy-reveal',smooth(3.5,3.95,time));
@@ -37,10 +37,16 @@ function updateUI(){
 }
 function draw(dt=0){scene?.render(time,dt);updateUI();}
 function frame(now){
-  if(!ready||!hostActive)return;
+  raf=0;
+  if(!ready||!hostActive||document.hidden||reduced)return;
   const dt=last?Math.min((now-last)/1000,.1):0;last=now;
-  if(playing)time=nextTime(time,dt);
-  draw(playing?dt:0);raf=requestAnimationFrame(frame);
+  time=nextTime(time,dt);
+  draw(dt);raf=requestAnimationFrame(frame);
+}
+function syncPlayback(){
+  cancelAnimationFrame(raf);raf=0;last=0;
+  // Playback follows current visibility, never a pause flag saved on another page.
+  if(ready&&hostActive&&!document.hidden&&!reduced)raf=requestAnimationFrame(frame);
 }
 $('retry').addEventListener('click',()=>location.reload());
 experience.addEventListener('pointermove',e=>{
@@ -51,21 +57,18 @@ experience.addEventListener('pointermove',e=>{
 experience.addEventListener('pointerleave',()=>scene?.releasePointer?.());
 window.addEventListener('blur',()=>scene?.releasePointer?.());
 window.addEventListener('resize',()=>scene?.resize());
-document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){visibilityPlaying=playing;playing=false;cancelAnimationFrame(raf);}
-  else if(ready&&hostActive){playing=visibilityPlaying;last=0;raf=requestAnimationFrame(frame);}
-});
+document.addEventListener('visibilitychange',syncPlayback);
+window.addEventListener('focus',syncPlayback);
 document.addEventListener('starsea:visibility',event=>{
   hostActive=event.detail?.active!==false;
-  cancelAnimationFrame(raf);
-  if(hostActive&&ready&&!document.hidden){last=0;raf=requestAnimationFrame(frame);}
+  syncPlayback();
 });
 $('world').addEventListener('webglcontextlost',e=>{e.preventDefault();ready=false;cancelAnimationFrame(raf);showError('图形连接暂时中断，请重新连接瑞雪。');});
 function showError(message){loading.hidden=true;$('error-message').textContent=message;$('error-panel').hidden=false;}
 try{
   scene=new StarseaScene($('world'),$('light'));scene.resize();await scene.load();ready=true;draw();
   loading.classList.add('finished');setTimeout(()=>{loading.hidden=true;},550);
-  last=0;if(hostActive)raf=requestAnimationFrame(frame);
+  syncPlayback();
 }catch(error){console.error('RUIXUE initialization:',error);showError('暂时无法打开瑞雪。请确认浏览器支持 WebGL 2，并检查本地素材是否完整。');}
 window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);scene?.dispose();disposeCursor();entrance.dispose();});
 window.addEventListener('pageshow',event=>{if(event.persisted)location.reload();});
