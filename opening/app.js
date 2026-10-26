@@ -1,11 +1,9 @@
 import { StarseaScene } from './scene.js?v=10';
 import { DURATION, smooth, nextTime } from './timeline.js?v=8';
-import { mountCursor } from './cursor.js?v=11';
 import { mountEntry } from './entry.js?v=16';
 
 const $ = id => document.getElementById(id);
 const experience=$('experience'),loading=$('loading');
-const disposeCursor=mountCursor(experience);
 const entrance=mountEntry($('enter-site'));
 const chars=[];
 for(const line of document.querySelectorAll('[data-text]')){
@@ -70,5 +68,5 @@ try{
   loading.classList.add('finished');setTimeout(()=>{loading.hidden=true;},550);
   syncPlayback();
 }catch(error){console.error('RUIXUE initialization:',error);showError('暂时无法打开瑞雪。请确认浏览器支持 WebGL 2，并检查本地素材是否完整。');}
-window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);scene?.dispose();disposeCursor();entrance.dispose();});
+window.addEventListener('pagehide',()=>{cancelAnimationFrame(raf);scene?.dispose();entrance.dispose();});
 window.addEventListener('pageshow',event=>{if(event.persisted)location.reload();});

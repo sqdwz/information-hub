@@ -19,13 +19,6 @@ h1{font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-weight:900;font-s
 .subtitle{font-weight:600;letter-spacing:.49em;font-size:1.02vw}
 @media(max-aspect-ratio:1/1){.subtitle{font-size:1.65vw;letter-spacing:.31em}}
 
-#site-cursor{position:fixed;left:0;top:0;width:0;height:0;z-index:100;pointer-events:none;opacity:0;visibility:hidden;will-change:transform}
-#site-cursor.visible{opacity:1;visibility:visible}
-.cursor-ring{position:absolute;left:0;top:0;width:13px;height:13px;border:1px solid #e4faff;border-radius:50%;background:#9eeaff33;box-shadow:0 0 9px #62c9ff88;transform:translate(-50%,-50%);transition:transform .14s ease,background-color .14s ease,box-shadow .14s ease}
-#site-cursor.interactive .cursor-ring{transform:translate(-50%,-50%) scale(1.32);background:#9eeaff44;box-shadow:0 0 11px #62c9ff99}
-#site-cursor.pressed .cursor-ring{transform:translate(-50%,-50%) scale(.82);background:#d6f3ff77}
-@media(any-hover:hover) and (any-pointer:fine){#experience.custom-cursor-active,#experience.custom-cursor-active *{cursor:none!important}}
-@media(prefers-reduced-motion:reduce){.cursor-ring{transition:none}}
 
 /* Blend the supplied emblem's dark backdrop at the stacking-context boundary. */
 .masthead,.art-footer{mix-blend-mode:screen}
