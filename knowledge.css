@@ -28,13 +28,15 @@
   text-decoration: none;
   color: #31528d;
 }
-.knowledge-tools-footer a:hover { background: #fff; }
+.knowledge-app .knowledge-tools-footer a:hover { background: rgba(var(--u-rgb), .16); }
 .knowledge-tools-footer a:focus-visible { outline: 2px solid #31528d; outline-offset: 4px; }
 @media (max-width: 600px) { .knowledge-tools-footer { padding: 20px; } .knowledge-tools-footer a { width: 100%; } }
 
 .knowledge-app {
+  --knowledge-alert: #ffb3c7;
   min-width: 320px;
   min-height: 100vh;
+  color-scheme: dark;
   color: var(--ink);
   background-position: 54% center;
 }
@@ -117,7 +119,13 @@
 }
 
 .knowledge-topbar__actions .button { min-height: 44px; }
-.knowledge-app .knowledge-mode { margin: 0; white-space: nowrap; }
+.knowledge-app .knowledge-mode {
+  margin: 0;
+  border-color: var(--line);
+  background: var(--u-soft);
+  white-space: nowrap;
+}
+.knowledge-app .knowledge-mode.is-private { color: var(--u-accent); }
 
 .knowledge-shell {
   width: min(100% - 40px, 1440px);
@@ -178,7 +186,9 @@
 }
 
 .knowledge-app .knowledge-section-heading { margin-bottom: 11px; }
-.knowledge-app .knowledge-search-box { background: rgba(255, 255, 255, .62); }
+.knowledge-app .knowledge-search-box input::placeholder { color: var(--muted); }
+.knowledge-app .knowledge-search-box button { background: rgba(var(--u-rgb), .10); }
+.knowledge-app .knowledge-status.is-error { color: var(--knowledge-alert); }
 
 .knowledge-dashboard {
   display: grid;
@@ -239,7 +249,7 @@
 .knowledge-reminder:focus-visible { border-color: rgba(176, 110, 147, .55); outline: 2px solid rgba(176, 110, 147, .18); outline-offset: 2px; }
 .knowledge-reminder strong { display: block; font-size: 14px; line-height: 1.45; }
 .knowledge-reminder small { display: block; margin-top: 5px; color: var(--muted); line-height: 1.45; }
-.knowledge-reminder.is-past small { color: #a25f79; }
+.knowledge-reminder.is-past small { color: var(--knowledge-alert); }
 
 .knowledge-calendar__head { align-items: center; }
 .knowledge-calendar__controls { display: flex; gap: 5px; }
@@ -272,9 +282,8 @@
   background: transparent;
   cursor: pointer;
 }
-.knowledge-calendar__day:not(.is-month) { color: rgba(85, 108, 150, .38); }
-.knowledge-calendar__day.is-today { border-color: rgba(176, 110, 147, .45); }
-.knowledge-calendar__day.is-selected { color: #fff; background: linear-gradient(145deg, #7d9bd3, #b8799f); box-shadow: 0 8px 18px rgba(67, 91, 146, .24); }
+.knowledge-app .knowledge-calendar__day:not(.is-month) { color: var(--muted); }
+.knowledge-app .knowledge-calendar__day.is-today { border-color: var(--u-accent); }
 .knowledge-calendar__day:focus-visible { outline: 2px solid #7d9bd3; outline-offset: 2px; }
 .knowledge-calendar__dot {
   position: absolute;
@@ -282,9 +291,8 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #b06e93;
+  background: var(--u-accent);
 }
-.knowledge-calendar__day.is-selected .knowledge-calendar__dot { background: #fff; }
 .knowledge-calendar__selection { min-height: 92px; margin-top: 13px; padding-top: 13px; border-top: 1px solid rgba(105, 139, 202, .18); }
 .knowledge-calendar__selection .knowledge-reminder + .knowledge-reminder { margin-top: 7px; }
 
@@ -295,8 +303,18 @@
 }
 .knowledge-filter-clear { grid-column: 1 / -1; }
 .knowledge-list { grid-template-columns: 1fr; max-height: 650px; overflow-y: auto; padding-right: 4px; }
-.knowledge-app .knowledge-card { min-height: 190px; padding: 18px; }
+.knowledge-app .knowledge-card {
+  min-height: 190px;
+  padding: 18px;
+  border-color: var(--line);
+  background: var(--u-soft);
+}
+.knowledge-app .knowledge-card:is(:hover, :focus-visible) {
+  border-color: var(--u-accent);
+  outline-offset: -3px;
+}
 .knowledge-app .knowledge-card__title { margin-top: 13px; font-size: 20px; }
+.knowledge-app .knowledge-card__tags span { background: rgba(var(--u-rgb), .10); }
 
 .knowledge-empty {
   min-height: 96px;
@@ -318,6 +336,11 @@
 }
 .knowledge-app .knowledge-detail__back { min-width: 160px; text-align: left; }
 .knowledge-app .knowledge-reader { grid-template-columns: minmax(160px, 220px) minmax(0, 820px); justify-content: center; }
+.knowledge-app .knowledge-detail__meta > span,
+.knowledge-app .knowledge-markdown table { background: var(--u-soft); }
+.knowledge-app .knowledge-markdown th,
+.knowledge-app .knowledge-markdown :not(pre) > code { background: rgba(var(--u-rgb), .10); }
+.knowledge-app .knowledge-markdown :not(pre) > code { color: var(--u-accent); }
 
 .knowledge-token-dialog {
   width: min(520px, calc(100% - 28px));
