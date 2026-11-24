@@ -42,6 +42,15 @@ test("every atlas code has a bundled WebP scene at its own URL", async () => {
   }
 });
 
+test("every code resolves to a separate gallery file", async () => {
+  for (const record of catalog.records) {
+    const url = landSceneUrl(record, { highResolution: true });
+    assert.match(url.pathname, /\/hd\/\d+\.webp$/);
+    const content = await readFile(url);
+    assert.equal(content.subarray(8, 12).toString("ascii"), "WEBP", record.code);
+  }
+});
+
 test("CSV retains string codes, sanitizes spreadsheet formulas and carries teaching symbol status", () => {
   const orchard = catalog.byCode.get("0201");
   const csv = landCsv([{ ...orchard, summary: ' =HYPERLINK("fixture")' }]);

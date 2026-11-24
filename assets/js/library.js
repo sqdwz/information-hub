@@ -1,6 +1,7 @@
 import {
   classificationSource, featuredLandCodes, filterLand, landCsv, landSceneUrl, readLandData, symbolForLand, symbolVariants
-} from "./library-model.js?v=20261124-scenes";
+} from "./library-model.js?v=20261124-hd";
+import { initializeLandGallery } from "./land-gallery.js?v=20261124-hd";
 
 const sections = [
   { id: "library", title: "资料库首页" },
@@ -35,6 +36,7 @@ const icons = {
   layers: '<path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5"/>',
   scale: '<path d="M12 3v17M6 21h12M4 7h16M6 7l-4 8h8L6 7Zm12 0-4 8h8l-4-8Z"/>',
   search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/>',
+  enlarge: '<path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/>',
   grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
   list: '<path d="M8 6h13M8 12h13M8 18h13M3 6h1M3 12h1M3 18h1"/>',
   arrow: '<path d="M4 12h15m-6-6 6 6-6 6"/>',
@@ -68,6 +70,8 @@ function download(filename, content, type) {
 
 export function initializeLibrary(escapeHtml, copyText) {
   const atlas = { ...initialAtlas };
+  const gallery = initializeLandGallery();
+  let atlasResults = [];
   let policyItems;
   let land;
   let landLoad;
@@ -83,6 +87,7 @@ export function initializeLibrary(escapeHtml, copyText) {
   const landingQuery = select("#library-query");
   const scopeSelect = select("#library-scope");
   const atlasQuery = select("#atlas-query");
+  const galleryButton = select("#atlas-gallery");
   const detail = select("#land-detail-content");
   const sectionCounts = {
     policy: () => policyItems?.length,
@@ -203,12 +208,15 @@ export function initializeLibrary(escapeHtml, copyText) {
 
   function atlasCard(record) {
     const root = land.byCode.get(record.code.slice(0, 2));
-    return '<a class="atlas-card library-panel" href="' + landLink(record.code) + '" data-land-code="' + record.code + '">' +
+    const description = escapeHtml("查看 " + record.code + " " + record.name + " 高清图");
+    return '<div class="atlas-card-shell"><a class="atlas-card library-panel" href="' + landLink(record.code) + '" data-land-code="' + record.code + '">' +
       '<div class="atlas-card__cover">' + sceneImage(record) +
       '<span class="atlas-card__photo-label">场景示意</span><span class="library-tag">' + escapeHtml(root.name) + '</span></div>' +
       '<div class="atlas-card__body"><h3><b>' + record.code + '</b> ' + escapeHtml(record.name) + '</h3>' +
       '<p>' + escapeHtml(record.summary) + '</p></div><div class="atlas-card__symbol"><span>教学示意 <small>未核验</small></span><div>' +
-      symbolSvg(record, "color") + '</div></div></a>';
+      symbolSvg(record, "color") + '</div></div></a>' +
+      '<button type="button" class="atlas-photo-open" data-open-land-photo="' + record.code +
+      '" aria-label="' + description + '" title="' + description + '">' + icon("enlarge") + '</button></div>';
   }
 
   function emptyState(message, action = "") {
@@ -219,13 +227,15 @@ export function initializeLibrary(escapeHtml, copyText) {
     const cards = select("#atlas-cards");
     select("#atlas-pagination").hidden = true;
     if (!land) {
+      galleryButton.disabled = true;
       select("#atlas-count").textContent = landError ? "地类数据暂未载入" : "正在载入地类…";
       cards.innerHTML = landError ? emptyState("暂时无法读取地类分类数据。",
         '<button type="button" class="library-button" data-land-retry>重试</button>') : "";
       return;
     }
 
-    const results = filterLand(land.records, atlas);
+    const results = atlasResults = filterLand(land.records, atlas);
+    galleryButton.disabled = results.length === 0;
     const pages = Math.max(1, Math.ceil(results.length / atlasSize));
     atlas.page = Math.min(atlas.page, pages);
     select("#atlas-count").textContent = "找到 " + results.length + " 条 / 收录 " + land.records.length + " 条";
@@ -349,7 +359,8 @@ export function initializeLibrary(escapeHtml, copyText) {
       sceneImage(record, { eager: true }) + '<div class="library-hero__heading"><span class="library-emblem">' + icon("layers") + '</span><div>' +
       '<h1 id="land-detail-title">' + escapeHtml(selected) + '</h1><div class="land-tags"><span class="library-tag">一级类 · ' +
       escapeHtml(root.name) + '</span><span class="library-tag">' + record.level + ' 级 · ' + escapeHtml(record.medium) +
-      '</span><button type="button" class="library-button" data-land-copy>复制代码</button><span class="library-note" role="status" id="land-copy-status"></span></div></div></div>' +
+      '</span><button type="button" class="library-button" data-land-copy>复制代码</button><button type="button" class="library-button" data-land-gallery>查看高清图</button>' +
+      '<span class="library-note" role="status" id="land-copy-status"></span></div></div></div>' +
       '<span class="land-hero__photo-label">场景示意</span></header>' +
       '<div class="library-bar">' + renderTabs("land-atlas", back) + '</div>' +
       '<div class="land-note-grid">' + panels + '</div>' +
@@ -452,7 +463,10 @@ export function initializeLibrary(escapeHtml, copyText) {
     });
   }
   select("#atlas-reset").addEventListener("click", resetAtlas);
+  galleryButton.addEventListener("click", () => gallery.open(atlasResults, atlasResults[(atlas.page - 1) * atlasSize]?.code));
   select("#atlas-cards").addEventListener("click", event => {
+    const photo = event.target.closest("[data-open-land-photo]");
+    if (photo) gallery.open(atlasResults, photo.dataset.openLandPhoto);
     const card = event.target.closest("[data-land-code]");
     if (card) atlasReturnCode = card.dataset.landCode;
     if (event.target.closest("[data-atlas-clear]")) {
@@ -468,6 +482,7 @@ export function initializeLibrary(escapeHtml, copyText) {
     if (event.target.closest("[data-land-retry]")) loadLand();
     const record = land?.byCode.get(detailCode);
     if (!record) return;
+    if (event.target.closest("[data-land-gallery]")) gallery.open(land.records, record.code);
     const variant = event.target.closest("[data-land-variant]");
     if (variant) {
       select("#land-symbol-preview").innerHTML = symbolSvg(record, variant.dataset.landVariant);
@@ -500,6 +515,7 @@ export function initializeLibrary(escapeHtml, copyText) {
       renderLanding();
     },
     route(nextPage, previousPage, params, scrollY) {
+      gallery.close();
       page = nextPage;
       if (previousPage === "land-atlas" && page !== "land-atlas") atlasPosition = scrollY;
       let restorePosition = 0;

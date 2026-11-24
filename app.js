@@ -1,4 +1,4 @@
-import { initializeLibrary, isLibraryPage } from "./assets/js/library.js?v=20261124-scenes";
+import { initializeLibrary, isLibraryPage } from "./assets/js/library.js?v=20261124-hd";
 
 const DATA_ENDPOINTS = {
   airspace: "/data/airspace.json",

@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="./assets/css/trace-rail.css?v=20260909-week-fold" />
     <link rel="stylesheet" href="./assets/css/tinted-glass.css?v=20260909-live-track" />
     <link rel="stylesheet" href="./assets/css/universe.css?v=20261017-flow" />
-    <link rel="stylesheet" href="./assets/css/library.css?v=20261124-scenes" />
+    <link rel="stylesheet" href="./assets/css/library.css?v=20261124-hd" />
+    <link rel="stylesheet" href="./assets/css/land-gallery.css?v=20261124-hd" />
   </head>
   <body data-page="home" data-theme="home">
     <div class="site-shell">
@@ -182,6 +183,7 @@
                 <div class="library-section-head atlas-catalog__head">
                   <div><h2 id="atlas-catalog-title">分类浏览</h2><p id="atlas-count" class="library-note" role="status">正在载入地类…</p></div>
                   <div class="atlas-catalog__controls">
+                    <button type="button" class="library-button" id="atlas-gallery" disabled>高清图集</button>
                     <label><span class="library-visually-hidden">排列顺序</span><select id="atlas-sort"><option value="featured">默认排序</option><option value="code">代码顺序</option><option value="name">名称顺序</option></select></label>
                     <div class="library-pills" role="group" aria-label="浏览视图">
                       <button type="button" data-atlas-view="grid" aria-label="卡片视图" data-library-icon="grid"></button>
@@ -313,10 +315,33 @@
       </div>
     </dialog>
     <dialog class="detail-dialog" id="notice-dialog" aria-labelledby="dialog-title"><div class="dialog__body"><button class="dialog__close" type="button" aria-label="关闭详情" data-close-dialog>×</button><div id="dialog-content"></div></div></dialog>
+    <dialog class="land-gallery" id="land-gallery" aria-labelledby="land-gallery-title">
+      <header class="land-gallery__header">
+        <div>
+          <h2 id="land-gallery-title">地类高清图集</h2>
+          <p class="land-gallery__meta"><span>AI 场景示意</span><span id="land-gallery-position"></span><span id="land-gallery-size"></span></p>
+        </div>
+        <button type="button" data-gallery-action="close" aria-label="关闭图集" autofocus>×</button>
+      </header>
+      <div class="land-gallery__stage" id="land-gallery-stage" role="region" tabindex="0" aria-label="高清图片，放大后可滚动或拖动查看">
+        <div class="land-gallery__frame"><img id="land-gallery-image" alt="" draggable="false" hidden /></div>
+      </div>
+      <p class="land-gallery__status" id="land-gallery-status" role="status" hidden></p>
+      <div class="land-gallery__controls" role="group" aria-label="图片浏览和缩放">
+        <button type="button" data-gallery-action="previous" aria-label="上一张">‹</button>
+        <button type="button" data-gallery-action="out" aria-label="缩小">−</button>
+        <button type="button" data-gallery-action="fit">适合窗口</button>
+        <button type="button" data-gallery-action="actual">100%</button>
+        <button type="button" data-gallery-action="in" aria-label="放大">＋</button>
+        <button type="button" data-gallery-action="next" aria-label="下一张">›</button>
+        <a id="land-gallery-download" download>下载高清图</a>
+      </div>
+      <div class="land-gallery__strip" id="land-gallery-strip" role="group" aria-label="附近图片"></div>
+    </dialog>
     <script src="./assets/js/qrcode-generator.js" defer></script>
     <script src="./assets/js/trace-rail.js?v=20260925-showcase-knowledge" defer></script>
     <script src="./assets/js/urban-sources.js?v=20260915" defer></script>
-    <script src="./app.js?v=20261124-scenes" type="module"></script>
+    <script src="./app.js?v=20261124-hd" type="module"></script>
     <script src="./industry-brief.js?v=20260909-live-track" defer></script>
   </body>
 </html>

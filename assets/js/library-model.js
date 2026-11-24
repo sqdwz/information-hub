@@ -37,8 +37,9 @@ export function readLandData(entries) {
   };
 }
 
-export function landSceneUrl(record) {
-  return new URL(`../library/scenes/${record.code}.webp`, import.meta.url);
+export function landSceneUrl(record, { highResolution = false } = {}) {
+  const folder = highResolution ? "hd" : "scenes";
+  return new URL(`../library/${folder}/${record.code}.webp`, import.meta.url);
 }
 
 export function filterLand(records, { query = "", medium = "", level = "", category = "", sort = "featured" } = {}) {
