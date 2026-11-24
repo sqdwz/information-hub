@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="./assets/css/trace-rail.css?v=20260909-week-fold" />
     <link rel="stylesheet" href="./assets/css/tinted-glass.css?v=20260909-live-track" />
     <link rel="stylesheet" href="./assets/css/universe.css?v=20261017-flow" />
+    <link rel="stylesheet" href="./assets/css/library.css?v=20261124-scenes" />
   </head>
   <body data-page="home" data-theme="home">
     <div class="site-shell">
@@ -26,7 +27,7 @@
             <a href="#airspace" data-route="airspace">空域信息</a>
             <a href="#ai" data-route="ai">行业简报</a>
             <a href="#urban" data-route="urban">城市更新</a>
-            <a href="#policy" data-route="policy">资料库</a>
+            <a href="#library" data-route="library">资料库</a>
           </nav>
           <button class="topbar__action" id="topbar-share" type="button" aria-haspopup="dialog">分享</button>
         </div>
@@ -48,7 +49,7 @@
             <button class="portal portal--air" data-go="airspace" style="--portal-accent:#6f9ce1;--portal-tint:rgba(122, 166, 235, .33)"><span class="portal__topline"><span class="portal__code">AIRSPACE</span><span class="status">每日巡检</span></span><h2>空域信息</h2><p>聚合海南禁飞、临时管制与无人机作业公告，优先呈现当前生效和即将生效事项。</p><span class="portal__metric" id="home-airspace-metric">加载巡检信息中…</span><span class="portal__arrow">进入 <b>→</b></span></button>
             <button class="portal" data-go="ai" style="--portal-accent:#9d83bc;--portal-tint:rgba(177, 139, 210, .3)"><span class="portal__topline"><span class="portal__code">INDUSTRY BRIEF</span><span class="status">日报 · 周报</span></span><h2>行业简报</h2><p>汇集 AI、GIS、测绘与无人机动态；按日速览，按周沉淀，并支持回看历史内容。</p><span class="portal__metric">日报 / 周报 / 归档</span><span class="portal__arrow">查看 <b>→</b></span></button>
             <button class="portal" data-go="urban" style="--portal-accent:#d2a36d;--portal-tint:rgba(237, 186, 116, .3)"><span class="portal__topline"><span class="portal__code">URBAN RENEWAL</span><span class="status">项目巡检</span></span><h2>城市更新</h2><p>跟踪海南城市更新相关招标、征收、测绘与实施信息，聚焦新发布和当前有效项目。</p><span class="portal__metric" id="home-urban-metric">加载巡检信息中…</span><span class="portal__arrow">查看巡检 <b>→</b></span></button>
-            <button class="portal" data-go="policy" style="--portal-accent:#62a8a5;--portal-tint:rgba(105, 184, 179, .3)"><span class="portal__topline"><span class="portal__code">POLICY LIBRARY</span><span class="status">主题检索</span></span><h2>资料库</h2><p>整理城市更新、征收补偿与实施意见等公开文件，可按主题和效力状态快速查阅。</p><span class="portal__metric" id="home-policy-metric">加载资料索引中…</span><span class="portal__arrow">检索资料 <b>→</b></span></button>
+            <button class="portal" data-go="library" style="--portal-accent:#62a8a5;--portal-tint:rgba(105, 184, 179, .3)"><span class="portal__topline"><span class="portal__code">LIBRARY</span><span class="status">主题检索</span></span><h2>资料库</h2><p>查阅城市更新、征收补偿等公开政策文件，也可按代码和名称查询地类。</p><span class="portal__metric" id="home-policy-metric">加载资料索引中…</span><span class="portal__arrow">检索资料 <b>→</b></span></button>
           </div>
           </div>
         </section>
@@ -71,20 +72,57 @@
 
         <section class="page" id="ai" data-page="ai" aria-labelledby="ai-title"><div class="page-head panel"><div><p class="eyebrow"><span></span>行业动态</p><h1 id="ai-title">行业简报</h1><p>AI 模型、工具与行业动态，后续支持日报、周报和重点事件归档。</p></div></div><div class="empty-state panel"><span>AI</span><h2>数据暂未接入</h2><p>已预留行业日报、行业周报、模型发布与工具动态的数据接口。</p><div><i>行业日报</i><i>行业周报</i><i>模型发布</i><i>AI工具</i></div></div></section>
         <section class="page" id="urban" data-page="urban" aria-labelledby="urban-title"><div class="page-head panel"><div><p class="eyebrow"><span></span>海南 · 每日巡检</p><h1 id="urban-title" class="page-head__split-title"><span>城市更新</span><span class="page-head__title-separator" aria-hidden="true">｜</span><time id="urban-title-date">正在读取</time></h1><p>海南省城市更新领域招投标信息每日巡检报告。</p></div><div class="urban-page-head-actions"><div class="filter-panel urban-view-filter"><span class="filter-panel__label">内容视图</span><div class="filter-panel__controls" role="tablist" aria-label="城市更新信息视图"><button class="filter-panel__button is-active" type="button" role="tab" aria-selected="true" data-urban-view-button="current">正在招标 <span id="urban-current-count">0</span></button><button class="filter-panel__button" type="button" role="tab" aria-selected="false" data-urban-view-button="history">近三年历史库 <span id="urban-history-count">0</span></button></div><p class="filter-panel__hint">点击按钮切换当前招标与近三年历史记录。</p></div></div></div><div data-urban-section="current"><section class="summary panel urban-summary" aria-labelledby="urban-summary-title"><div class="summary__message"><p class="eyebrow"><span></span>巡检摘要</p><div class="urban-summary__content" id="urban-summary-title" data-urban-message aria-live="polite"><h2>正在读取巡检结论…</h2></div><p>信息中心每 15 分钟同步公开巡检数据；项目要求、资格条件、截止时间及变更事项以官方原文为准。</p></div><div class="summary__stats" id="urban-stats" aria-label="城市更新巡检统计"></div></section><p class="filter-status" id="urban-filter-status" aria-live="polite"></p><section class="content-section" aria-labelledby="urban-active-title"><div class="section-heading"><div><p class="eyebrow"><span></span>重点项目</p><h2 id="urban-active-title">正在招标</h2></div><p id="urban-active-note"></p></div><div class="notice-grid" id="urban-active-list"></div></section><section class="content-section panel source-panel" aria-labelledby="urban-source-title"><div class="section-heading"><div><p class="eyebrow"><span></span>检索范围</p><h2 id="urban-source-title">本次检索来源</h2></div><p>官方优先，聚合线索待回溯</p></div><ul class="source-list" id="urban-source-list"></ul></section></div><section class="content-section" data-urban-section="history" aria-labelledby="urban-history-title" hidden><div class="section-heading"><div><p class="eyebrow"><span></span>近三年历史库</p><h2 id="urban-history-title">历史招标信息</h2></div><p id="urban-history-note">正在读取历史索引…</p></div><div class="urban-history-timeline" id="urban-history-timeline" aria-label="历史招标时间线"></div><section class="urban-history-filter panel" aria-label="筛选历史招标信息"><label>关键词<input id="urban-history-search" type="search" placeholder="项目名称、编号、采购人"></label><label>地区<select id="urban-history-region"><option value="">全部地区</option></select></label><label>项目类型<select id="urban-history-type"><option value="">全部项目类型</option></select></label><label>服务类型<select id="urban-history-service"><option value="">全部服务类型</option></select></label><label>核验状态<select id="urban-history-verification"><option value="">全部核验状态</option></select></label><button class="button urban-history-clear" id="urban-history-clear" type="button">清除筛选</button><p id="urban-history-filter-status" aria-live="polite">正在加载历史记录…</p></section><div class="urban-history-summary panel"><p id="urban-history-message">正在汇总历史招标信息…</p><div class="urban-history-stats" id="urban-history-stats" aria-label="历史招标信息统计"></div></div><div class="notice-grid" id="urban-history-list"></div><button class="button urban-history-more" id="urban-history-more" type="button" hidden>加载更多历史招标信息</button></section></section>
-        <section class="page" id="policy" data-page="policy" aria-labelledby="policy-title">
-          <div class="page-head panel">
-            <div><h1 id="policy-title">资料库</h1><p>围绕城市更新、征收补偿和老旧小区改造建立文件索引；先看内容要点，再回到发文机关核对原文。</p></div>
+        <section class="page library-page" id="library" data-page="library" aria-labelledby="library-title">
+          <div class="library-layout">
+            <div class="library-content">
+              <header class="library-hero" id="library-overview">
+                <h1 id="library-title">资料库</h1>
+                <p>查阅城市更新、征收补偿与老旧小区改造政策，按名称或代码查找国土空间用地用海分类。</p>
+              </header>
+              <div class="library-bar" id="library-find">
+                <div data-library-nav="library"></div>
+                <form id="library-search-form" class="library-search">
+                  <label class="library-visually-hidden" for="library-query">检索资料库</label>
+                  <span data-library-icon="search"></span>
+                  <input id="library-query" type="search" placeholder="搜索文件、文号、地类代码" />
+                  <button class="library-button" type="submit">搜索</button>
+                </form>
+              </div>
+              <div class="library-category-grid" id="library-categories"></div>
+              <section class="library-panel library-highlights" id="library-highlights" aria-labelledby="library-highlights-title">
+                <div class="library-section-head">
+                  <h2 id="library-highlights-title"><span data-library-icon="book"></span>推荐内容</h2>
+                  <label id="library-scope-label" hidden>搜索范围
+                    <select id="library-scope"><option value="">全部栏目</option></select>
+                  </label>
+                </div>
+                <p id="library-search-status" class="library-note" role="status"></p>
+                <div class="library-highlights-grid" id="library-highlights-grid"></div>
+              </section>
+            </div>
+            <aside class="library-rail" data-library-rail aria-label="资料库页内目录"></aside>
           </div>
+        </section>
+
+        <section class="page library-page" id="policy" data-page="policy" aria-labelledby="policy-title">
+          <nav class="library-crumb" aria-label="当前位置"><a href="#library">资料库</a><span aria-hidden="true">›</span><span aria-current="page">政策法规类</span></nav>
+          <div class="page-head panel library-hero" data-library-art="books">
+            <div class="library-hero__heading"><span class="library-emblem" data-library-icon="scale"></span><div>
+              <h1 id="policy-title">政策法规类</h1><p>围绕城市更新、征收补偿和老旧小区改造建立文件索引；先看内容要点，再回到发文机关核对原文。</p>
+            </div></div>
+          </div>
+          <div class="library-bar" data-library-nav="policy"></div>
           <section class="policy-overview" aria-label="文件资料快捷筛选">
-            <div class="filter-panel"><span class="filter-panel__label">资料筛选</span><div class="filter-panel__controls" id="policy-stats"></div><p class="filter-panel__hint">点击按钮筛选资料，再次点击即可取消。</p><p id="policy-overview-note" hidden>正在整理文件层级、主题和效力状态…</p></div>
+            <div class="filter-panel"><span class="filter-panel__label">资料概览</span><div class="filter-panel__controls" id="policy-stats"></div><p class="filter-panel__hint">点击按钮筛选资料，再次点击即可取消。</p><p id="policy-overview-note" hidden>正在整理文件层级、主题和效力状态…</p></div>
           </section>
-          <section class="policy-gaps panel" aria-labelledby="policy-gaps-title">
-            <div class="policy-gaps__head"><div><p class="eyebrow"><span></span>待补齐资料</p><h2 id="policy-gaps-title">国家依据已接入，属地标准仍需收集</h2></div><p>缺口清单与资料库一起更新</p></div>
+          <details class="policy-gaps panel">
+            <summary><span>资料缺口</span><span id="policy-gaps-total">正在核对…</span></summary>
+            <div class="policy-gaps__head"><h2>国家依据已接入，属地标准仍需收集</h2><p>缺口清单与资料库一起更新</p></div>
             <div class="policy-gaps__summary" id="policy-gaps-summary">正在核对省级和市县级配套文件…</div>
             <div class="policy-gaps__list" id="policy-gaps-list"></div>
-          </section>
+          </details>
           <section class="policy-workbench" aria-labelledby="policy-search-title">
-            <div class="section-heading"><div><p class="eyebrow"><span></span>检索工作台</p><h2 id="policy-search-title">筛选文件资料</h2></div><p>层级、主题和效力状态独立筛选</p></div>
+            <h2 id="policy-search-title" class="library-visually-hidden">筛选文件资料</h2>
             <div class="filter-panel policy-topic-filter" aria-label="文件专题快捷筛选"><span class="filter-panel__label">主题筛选</span><div class="policy-topics" id="policy-topics"></div><p class="filter-panel__hint">点击主题筛选，可配合下方条件继续缩小范围。</p></div>
             <div class="policy-filter panel">
               <label class="policy-filter__search">搜索资料<input id="policy-search" type="search" placeholder="文件名称、文号、发文机关、要点关键词"></label>
@@ -94,15 +132,90 @@
               <button class="button policy-filter__clear" id="policy-clear" type="button">清除筛选</button>
               <p id="policy-filter-status" aria-live="polite">正在加载文件资料…</p>
             </div>
+            <h2 class="policy-results-title"><span data-library-icon="doc"></span>资料列表</h2>
             <div class="policy-list" id="policy-list"></div>
           </section>
         </section>
-        <section class="page" id="policy-detail" data-page="policy-detail" aria-labelledby="policy-detail-title">
+        <section class="page library-page" id="policy-detail" data-page="policy-detail" aria-labelledby="policy-detail-title">
           <div class="policy-detail-shell">
-            <a class="policy-detail__back" href="#policy">← 返回资料库</a>
+            <nav class="library-crumb" aria-label="当前位置"><a href="#library">资料库</a><span aria-hidden="true">›</span><a class="policy-detail__back" href="#policy">政策法规类</a><span aria-hidden="true">›</span><span aria-current="page">文件详情</span></nav>
+            <div class="library-bar" data-library-nav="policy"></div>
             <article class="policy-detail panel" id="policy-detail-content"><div class="empty-card">正在读取文件详情…</div></article>
           </div>
         </section>
+        <section class="page library-page" id="land-atlas" data-page="land-atlas" aria-labelledby="atlas-title">
+          <div class="library-layout">
+            <div class="library-content">
+              <nav class="library-crumb" aria-label="当前位置"><a href="#library">资料库</a><span aria-hidden="true">›</span><span aria-current="page">地类图鉴</span></nav>
+              <header class="library-hero" id="atlas-overview" data-library-art="layers">
+                <div><h1 id="atlas-title">地类图鉴</h1>
+                <p>查询国土空间用地用海分类的编码、释义和识别要点，浏览常见地类与教学图式。</p></div>
+              </header>
+              <div class="library-bar" data-library-nav="land-atlas"></div>
+              <section class="library-panel atlas-search-panel" id="atlas-find" aria-label="地类检索">
+                <form id="atlas-search-form" class="library-search">
+                  <label class="library-visually-hidden" for="atlas-query">搜索地类</label>
+                  <span data-library-icon="search"></span>
+                  <input id="atlas-query" type="search" placeholder="输入地类代码或名称，如 0103、旱地" />
+                  <button class="library-button library-button--primary" type="submit">搜索</button>
+                </form>
+                <div class="atlas-filters">
+                  <div class="library-pills" role="group" aria-label="陆海分类">
+                    <button type="button" data-atlas-medium="">陆域及海域</button>
+                    <button type="button" data-atlas-medium="陆域">陆域</button>
+                    <button type="button" data-atlas-medium="海域">海域</button>
+                  </div>
+                  <div class="library-pills" role="group" aria-label="分类层级">
+                    <button type="button" data-atlas-level="">全部层级</button>
+                    <button type="button" data-atlas-level="1">一级</button>
+                    <button type="button" data-atlas-level="2">二级</button>
+                    <button type="button" data-atlas-level="3">三级</button>
+                  </div>
+                  <label class="atlas-category"><span class="library-visually-hidden">一级分类</span>
+                    <select id="atlas-category"><option value="">全部一级分类</option></select>
+                  </label>
+                  <button class="library-button" type="button" id="atlas-reset">重置</button>
+                </div>
+              </section>
+              <dl class="library-panel atlas-stats" id="atlas-stats" aria-label="本库收录统计"></dl>
+              <section id="atlas-catalog" aria-labelledby="atlas-catalog-title">
+                <div class="library-section-head atlas-catalog__head">
+                  <div><h2 id="atlas-catalog-title">分类浏览</h2><p id="atlas-count" class="library-note" role="status">正在载入地类…</p></div>
+                  <div class="atlas-catalog__controls">
+                    <label><span class="library-visually-hidden">排列顺序</span><select id="atlas-sort"><option value="featured">默认排序</option><option value="code">代码顺序</option><option value="name">名称顺序</option></select></label>
+                    <div class="library-pills" role="group" aria-label="浏览视图">
+                      <button type="button" data-atlas-view="grid" aria-label="卡片视图" data-library-icon="grid"></button>
+                      <button type="button" data-atlas-view="list" aria-label="列表视图" data-library-icon="list"></button>
+                    </div>
+                  </div>
+                </div>
+                <div id="atlas-cards" class="atlas-cards" data-view="grid"></div>
+                <div class="atlas-pagination" id="atlas-pagination" hidden>
+                  <button type="button" class="library-button" id="atlas-prev">上一页</button>
+                  <span class="library-note" id="atlas-page-number"></span>
+                  <button type="button" class="library-button" id="atlas-next">下一页</button>
+                </div>
+              </section>
+              <section class="library-panel atlas-sources" id="atlas-sources" aria-labelledby="atlas-sources-title">
+                <div class="library-section-head">
+                  <h2 id="atlas-sources-title"><span data-library-icon="book"></span>分类依据与数据导出</h2>
+                  <button class="library-button" type="button" id="atlas-export" disabled>导出全部地类 CSV</button>
+                </div>
+                <div data-atlas-sources></div>
+                <p class="library-note">导入电子表格时请将代码列指定为文本，以保留前导零。</p>
+              </section>
+            </div>
+            <aside class="library-rail" data-library-rail aria-label="地类图鉴页内目录"></aside>
+          </div>
+        </section>
+
+        <section class="page library-page" id="land-detail" data-page="land-detail" aria-label="地类详情">
+          <div class="library-layout">
+            <div class="library-content" id="land-detail-content"></div>
+            <aside class="library-rail" data-library-rail aria-label="地类详情页内目录"></aside>
+          </div>
+        </section>
+
         <section class="page" id="showcase" data-page="showcase" aria-label="演示与分享">
           <div class="showcase panel">
             <div class="showcase-tabs" role="tablist" aria-label="演示与分享">
@@ -141,7 +254,7 @@
             <a href="#airspace" data-route="airspace">空域信息</a>
             <a href="#ai" data-route="ai">行业简报</a>
             <a href="#urban" data-route="urban">城市更新</a>
-            <a href="#policy" data-route="policy">资料库</a>
+            <a href="#library" data-route="library">资料库</a>
           </nav>
 
           <section class="site-footer__section site-footer__links" aria-labelledby="footer-links-title">
@@ -203,7 +316,7 @@
     <script src="./assets/js/qrcode-generator.js" defer></script>
     <script src="./assets/js/trace-rail.js?v=20260925-showcase-knowledge" defer></script>
     <script src="./assets/js/urban-sources.js?v=20260915" defer></script>
-    <script src="./app.js?v=20261017-home-universe" defer></script>
+    <script src="./app.js?v=20261124-scenes" type="module"></script>
     <script src="./industry-brief.js?v=20260909-live-track" defer></script>
   </body>
 </html>

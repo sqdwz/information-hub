@@ -1,3 +1,5 @@
+import { initializeLibrary, isLibraryPage } from "./assets/js/library.js?v=20261124-scenes";
+
 const DATA_ENDPOINTS = {
   airspace: "/data/airspace.json",
   urban: "/data/urban-renewal/latest.json",
@@ -46,6 +48,7 @@ const policyRecordCache = new Map();
 let activePolicyDetailId = "";
 let previousRoute = "";
 let policyListPosition = 0;
+let library;
 
 async function loadShowcaseIndex() {
   const sharePage = $("#showcase-share-page");
@@ -136,9 +139,9 @@ function initHomeUniverse() {
   return {
     sync(page) {
       document.body.dataset.page = page;
-      document.body.dataset.theme = page === "policy-detail" ? "policy" : page;
-      const colors = { home: "#040a13", airspace: "#06131f", ai: "#100e20", urban: "#0c1818", policy: "#191613", "policy-detail": "#191613", showcase: "#1b1021" };
-      $("meta[name='theme-color']").content = colors[page] || "#040a13";
+      document.body.dataset.theme = isLibraryPage(page) ? "policy" : page;
+      const colors = { home: "#040a13", airspace: "#06131f", ai: "#100e20", urban: "#0c1818", showcase: "#1b1021" };
+      $("meta[name='theme-color']").content = isLibraryPage(page) ? "#121314" : colors[page] || "#040a13";
       if (page !== "home") setExpanded(false, false);
       else if (!frame.getAttribute("src")) frame.src = frame.dataset.src;
       notifyScene();
@@ -248,15 +251,18 @@ const sharePageNames = {
   airspace: "空域信息",
   ai: "行业简报 · 日报周报",
   urban: "城市更新",
-  policy: "资料库",
+  library: "资料库",
+  policy: "政策法规类",
   "policy-detail": "资料库 · 文件详情",
+  "land-atlas": "地类图鉴",
+  "land-detail": "资料库 · 地类详情",
   showcase: "演示与分享"
 };
 
 function getSharePageName() {
   const activePage = document.querySelector("[data-page].is-active");
   if (activePage?.dataset.page && sharePageNames[activePage.dataset.page]) return sharePageNames[activePage.dataset.page];
-  const hashId = decodeURIComponent(location.hash.slice(1) || "home").split("/")[0];
+  const hashId = (location.hash.slice(1) || "home").split(/[/?]/)[0];
   return sharePageNames[hashId] || "信息聚合中心";
 }
 
@@ -291,21 +297,27 @@ const openShareDialog = () => {
   shareDialog?.showModal();
 };
 
-async function copyShareUrl() {
-  const url = window.location.href;
+async function copyText(value) {
+  if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(value);
+  const input = document.createElement("textarea");
+  input.value = value;
+  input.setAttribute("readonly", "");
+  input.style.position = "fixed";
+  input.style.opacity = "0";
+  const focused = document.activeElement;
+  (document.querySelector("dialog[open]") || document.body).append(input);
   try {
-    if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(url);
-    else {
-      const input = document.createElement("textarea");
-      input.value = url;
-      input.setAttribute("readonly", "");
-      input.style.position = "fixed";
-      input.style.opacity = "0";
-      document.body.append(input);
-      input.select();
-      document.execCommand("copy");
-      input.remove();
-    }
+    input.select();
+    if (!document.execCommand("copy")) throw new Error("Clipboard unavailable");
+  } finally {
+    input.remove();
+    focused?.focus({ preventScroll: true });
+  }
+}
+
+async function copyShareUrl() {
+  try {
+    await copyText(window.location.href);
     if (shareStatus) shareStatus.textContent = "链接已复制，快把这一页分享给朋友吧。";
   } catch (error) {
     if (shareStatus) shareStatus.textContent = "复制失败，请长按或手动复制上方链接。";
@@ -397,17 +409,19 @@ setShowcaseTab("share");
 
 function route() {
   const leavingScrollY = window.scrollY;
-  const id = (location.hash.slice(1) || "home").split("?")[0];
+  const [id, query] = (location.hash.slice(1) || "home").split(/\?(.*)/s, 2);
+  const params = new URLSearchParams(query);
   const traceRoute = window.TraceArchive?.resolveRoute();
-  // Date anchors restore after asynchronous data rendering; avoid a second browser restoration.
-  history.scrollRestoration = traceRoute ? "manual" : "auto";
   const policyDetailMatch = id.match(/^policy\/([^/]+)$/);
-  const page = traceRoute?.page || (policyDetailMatch ? "policy-detail" : ([...document.querySelectorAll("[data-page]")].some(node => node.dataset.page === id) ? id : "home"));
+  const requestedPage = id === "land-atlas" && params.has("code") ? "land-detail" : id;
+  const page = traceRoute?.page || (policyDetailMatch ? "policy-detail" : ([...document.querySelectorAll(".page[data-page]")].some(node => node.dataset.page === requestedPage) ? requestedPage : "home"));
+  // Atlas and date anchors manage their own restoration after rendering.
+  history.scrollRestoration = traceRoute || page.startsWith("land-") ? "manual" : "auto";
   document.querySelectorAll("[data-page]").forEach(node => node.classList.toggle("is-active", node.dataset.page === page));
   homeUniverse?.sync(page);
   if (previousRoute === "policy" && page === "policy-detail") policyListPosition = leavingScrollY;
   const returningToResults = previousRoute === "policy-detail" && page === "policy" && !traceRoute;
-  const activeRoute = page === "policy-detail" ? "policy" : page;
+  const activeRoute = isLibraryPage(page) ? "library" : page;
   document.querySelectorAll("[data-route]").forEach(node => {
     if (node.dataset.route === activeRoute) node.setAttribute("aria-current", "page");
     else node.removeAttribute("aria-current");
@@ -417,15 +431,21 @@ function route() {
     const activeLink = document.querySelector(`[data-route="${activeRoute}"]`);
     if (nav && activeLink) nav.scrollTo({ left: Math.max(0, activeLink.offsetLeft + activeLink.offsetWidth - nav.clientWidth), behavior: "instant" });
   }
-  if (!traceRoute) window.scrollTo({ top: returningToResults ? policyListPosition : 0, behavior: "instant" });
   document.title = `${sharePageNames[page] || "信息聚合中心"}｜瑞雪的小栈`;
-  if (previousRoute && previousRoute !== page && page !== "home" && !traceRoute) {
+  const libraryPosition = library.route(page, previousRoute, params, leavingScrollY);
+  if (!traceRoute) window.scrollTo({ top: returningToResults ? policyListPosition : libraryPosition, behavior: "instant" });
+  const restoredAtlasFocus = page === "land-atlas" && document.activeElement?.hasAttribute("data-land-code");
+  if (previousRoute && previousRoute !== page && page !== "home" && !traceRoute && !restoredAtlasFocus) {
     const heading = document.querySelector("[data-page='" + page + "'] h1");
     heading?.setAttribute("tabindex", "-1");
     heading?.focus({ preventScroll: true });
   }
   previousRoute = page;
-  if (policyDetailMatch && !traceRoute) loadPolicyDetail(decodeURIComponent(policyDetailMatch[1]));
+  if (policyDetailMatch && !traceRoute) {
+    let policyId = policyDetailMatch[1];
+    try { policyId = decodeURIComponent(policyId); } catch { /* An invalid escape cannot match a policy id. */ }
+    loadPolicyDetail(policyId);
+  }
   window.dispatchEvent(new CustomEvent("app:route", { detail: { page, anchor: traceRoute?.anchor } }));
 }
 
@@ -946,6 +966,7 @@ function renderPolicyTopics() {
 function renderPolicyCoverageGaps() {
   const gaps = policyCategories.coverage_gaps || [];
   const highPriority = gaps.filter(item => item.priority === "high").length;
+  $("#policy-gaps-total").textContent = gaps.length ? `${gaps.length} 类待补齐` : "暂无登记";
   $("#policy-gaps-summary").innerHTML = gaps.length
     ? `<b>当前缺少 ${gaps.length} 类配套文件</b><span>其中 ${highPriority} 类为优先收集：市县补偿标准、补偿办法、省级细化规则和城市更新属地办法。</span>`
     : "当前未登记资料覆盖缺口。";
@@ -1034,12 +1055,15 @@ async function initPolicyData() {
   try {
     [policyData, policyCategories] = await Promise.all([fetchPolicyIndex(), fetchPolicyCategories()]);
     renderPolicyIndex();
-    route();
+    library.updatePolicy(policyItems);
+    if (previousRoute === "policy-detail") route();
   } catch (error) {
     console.error("Failed to load policy library", error);
     $("#policy-overview-note").textContent = "无法读取资料索引，请稍后重试。";
+    $("#policy-gaps-total").textContent = "暂未载入";
     $("#policy-list").innerHTML = '<div class="empty-card">资料源与本地快照均未能载入。</div>';
     $("#home-policy-metric").textContent = "资料索引暂未载入";
+    library.updatePolicy(null);
   }
 }
 
@@ -1123,6 +1147,7 @@ document.addEventListener("click", event => { const button = event.target.closes
 $("#notice-dialog").addEventListener("click", event => { if (event.target === event.currentTarget) event.currentTarget.close(); });
 window.addEventListener("hashchange", route);
 homeUniverse = initHomeUniverse();
+library = initializeLibrary(escapeHtml, copyText);
 loadShowcaseIndex();
 route();
 initData();
@@ -1179,7 +1204,7 @@ function initFunctionalTraces() {
   policyTrace = window.initTraceRail({
     page: $("#policy"), archiveTrigger: $("#policy-list"),
     sections: [
-      section("#policy .page-head", "policy-overview", "资料库"),
+      section("#policy .page-head", "policy-overview", "政策法规类"),
       section("#policy .policy-overview", "policy-quick-filter", "快捷筛选"),
       section("#policy .policy-gaps", "policy-coverage", "资料缺口"),
       section("#policy .policy-topic-filter", "policy-topics-section", "主题筛选"),
